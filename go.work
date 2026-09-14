@@ -1,0 +1,9 @@
+go 1.26.5
+
+use (
+	.
+	./gateway
+	./services/auth-service
+	./services/user-service
+	./services/work-service
+)

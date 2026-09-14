@@ -1,0 +1,14 @@
+{
+  "registration_type": "business",
+  "business_name": "Test Electricals Pvt Ltd",
+  "business_type_id": "40b2eac1-f5e7-485e-aa79-ccf3a7825bce",
+  "first_name": "Owner",
+  "last_name": "Test",
+  "date_of_birth": "1990-01-01",
+  "email": "owner.test@example.com",
+  "country": "India",
+  "state": "Karnataka",
+  "city": "Bangalore",
+  "postal_code": "560001",
+  "preferred_language": "en"
+}

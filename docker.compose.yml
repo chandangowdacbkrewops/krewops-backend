@@ -1,0 +1,9 @@
+# Docker Compose is optional for KrewOps local development.
+# PostgreSQL 18 is expected to run locally on port 5432 with a shared `krewops` database.
+#
+# To create the database (run once):
+#   psql -U postgres -c "CREATE DATABASE krewops;"
+#
+# Or use: go run ./scripts/init_db.go (from repo root, requires auth-service deps)
+
+services: {}

@@ -1,0 +1,214 @@
+package handler
+
+import (
+	"context"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/response"
+	userv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+type UserHandler struct {
+	userClient userv1.UserServiceClient
+}
+
+type CreateProfileRequest struct {
+	FirstName  string `json:"first_name" binding:"required"`
+	LastName   string `json:"last_name" binding:"required"`
+	Country    string `json:"country" binding:"required"`
+	State      string `json:"state" binding:"required"`
+	City       string `json:"city" binding:"required"`
+	PostalCode string `json:"postal_code" binding:"required"`
+}
+
+type CreateWorkerProfileRequest struct {
+	WorkerType         string   `json:"worker_type" binding:"required"`
+	CrewName           *string  `json:"crew_name"`
+	CrewSize           int32    `json:"crew_size"`
+	ExperienceYears    *float64 `json:"experience_years"`
+	ExpectedRate       *float64 `json:"expected_rate"`
+	RateType           *string  `json:"rate_type"`
+	AvailabilityStatus *string  `json:"availability_status"`
+	Bio                *string  `json:"bio"`
+	WorkTypeIDs        []string `json:"work_type_ids" binding:"required,min=1"`
+}
+
+func NewUserHandler(
+	userClient userv1.UserServiceClient,
+) *UserHandler {
+
+	return &UserHandler{
+		userClient: userClient,
+	}
+}
+
+func (h *UserHandler) ListWorkTypes(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	workTypesResp, err := h.userClient.ListWorkTypes(
+		ctx,
+		&userv1.ListWorkTypesRequest{},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch work types", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, workTypesResp)
+}
+
+func (h *UserHandler) GetProfile(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+
+	if !exists || !valid || userIDString == "" {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(
+		c.Request.Context(),
+		3*time.Second,
+	)
+	defer cancel()
+
+	profileResp, err := h.userClient.GetProfile(
+		ctx,
+		&userv1.GetProfileRequest{
+			UserId: userIDString,
+		},
+	)
+
+	if err != nil {
+		switch status.Code(err) {
+		case codes.NotFound:
+			response.NotFound(c, "profile not found", nil)
+		default:
+			response.Internal(c, "failed to fetch profile", nil)
+		}
+		return
+	}
+
+	if profileResp == nil || profileResp.Profile == nil {
+		response.NotFound(c, "profile not found", nil)
+		return
+	}
+
+	response.Success(
+		c,
+		http.StatusOK,
+		profileResp,
+	)
+}
+
+func (h *UserHandler) CreateProfile(
+	c *gin.Context,
+) {
+	var request CreateProfileRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+
+	if !exists || !valid || userIDString == "" {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel :=
+		context.WithTimeout(
+			c.Request.Context(),
+			3*time.Second,
+		)
+
+	defer cancel()
+
+	createResp, err :=
+		h.userClient.CreateProfile(
+			ctx,
+			&userv1.CreateProfileRequest{
+				UserId:     userIDString,
+				FirstName:  request.FirstName,
+				LastName:   request.LastName,
+				Country:    request.Country,
+				State:      request.State,
+				City:       request.City,
+				PostalCode: request.PostalCode,
+			},
+		)
+
+	if err != nil {
+		switch status.Code(err) {
+		case codes.AlreadyExists:
+			response.Conflict(c, "profile already exists", nil)
+		case codes.InvalidArgument:
+			response.BadRequest(c, "invalid profile data", nil)
+		default:
+			response.Internal(c, "failed to save profile", nil)
+		}
+		return
+	}
+
+	response.Success(
+		c,
+		http.StatusCreated,
+		createResp,
+	)
+}
+
+func (h *UserHandler) CreateWorkerProfile(c *gin.Context) {
+	var request CreateWorkerProfileRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.BadRequest(c, "invalid worker profile data", nil)
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+	if !exists || !valid || userIDString == "" {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	createResp, err := h.userClient.CreateWorkerProfile(
+		ctx,
+		&userv1.CreateWorkerProfileRequest{
+			UserId:             userIDString,
+			WorkerType:         request.WorkerType,
+			CrewName:           request.CrewName,
+			CrewSize:           request.CrewSize,
+			ExperienceYears:    request.ExperienceYears,
+			ExpectedRate:       request.ExpectedRate,
+			RateType:           request.RateType,
+			AvailabilityStatus: request.AvailabilityStatus,
+			Bio:                request.Bio,
+			WorkTypeIds:        request.WorkTypeIDs,
+		},
+	)
+	if err != nil {
+		switch status.Code(err) {
+		case codes.InvalidArgument:
+			response.BadRequest(c, "invalid worker profile data", nil)
+		case codes.AlreadyExists:
+			response.Conflict(c, "worker profile already exists", nil)
+		default:
+			response.Internal(c, "failed to save worker profile", nil)
+		}
+		return
+	}
+
+	response.Success(c, http.StatusCreated, createResp)
+}

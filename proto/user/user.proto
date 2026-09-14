@@ -1,0 +1,208 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package =
+    "github.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1;userv1";
+
+service UserService {
+
+  rpc GetProfile(GetProfileRequest)
+      returns (GetProfileResponse);
+
+  rpc CreateProfile(CreateProfileRequest)
+      returns (CreateProfileResponse);
+
+  rpc CreateWorkerProfile(CreateWorkerProfileRequest)
+      returns (CreateWorkerProfileResponse);
+
+  rpc CreateOwnerProfile(CreateOwnerProfileRequest)
+      returns (CreateOwnerProfileResponse);
+
+  rpc ListBusinessTypes(ListBusinessTypesRequest)
+      returns (ListBusinessTypesResponse);
+
+  rpc ListWorkTypes(ListWorkTypesRequest)
+      returns (ListWorkTypesResponse);
+}
+
+enum WorkerType {
+  WORKER_TYPE_UNSPECIFIED = 0;
+  WORKER_TYPE_INDIVIDUAL = 1;
+  WORKER_TYPE_CONTRACTOR = 2;
+}
+
+enum RateType {
+  RATE_TYPE_UNSPECIFIED = 0;
+  RATE_TYPE_HOURLY = 1;
+  RATE_TYPE_DAILY = 2;
+  RATE_TYPE_FIXED = 3;
+}
+
+message GetProfileRequest {
+  string user_id = 1;
+}
+
+message GetProfileResponse {
+  UserProfile profile = 1;
+}
+
+message CreateProfileRequest {
+  string user_id = 1;
+
+  string first_name = 2;
+  string last_name = 3;
+  string country = 4;
+  string state = 5;
+  string city = 6;
+  string postal_code = 7;
+}
+
+message CreateProfileResponse {
+  UserProfile profile = 1;
+}
+
+message UserProfile {
+  string id = 1;
+  string user_id = 2;
+
+  string first_name = 3;
+  string last_name = 4;
+
+  string user_type = 5;
+
+  bool profile_completed = 6;
+  bool onboarding_completed = 7;
+
+  string date_of_birth = 8;
+  string email = 9;
+  string country = 10;
+  string state = 11;
+  string city = 12;
+  string postal_code = 13;
+  string preferred_language = 14;
+}
+
+message CreateWorkerProfileRequest {
+  string user_id = 1;
+  string worker_type = 2;
+
+  optional string crew_name = 3;
+  int32 crew_size = 4;
+
+  optional double experience_years = 5;
+  optional double expected_rate = 6;
+  optional string rate_type = 7;
+
+  optional string bio = 8;
+
+  repeated string work_type_ids = 9;
+  optional string availability_status = 10;
+}
+
+message WorkerProfile {
+  string id = 1;
+  string user_id = 2;
+
+  WorkerType worker_type = 3;
+
+  optional string crew_name = 4;
+  int32 crew_size = 5;
+
+  optional double experience_years = 6;
+  optional double expected_rate = 7;
+  RateType rate_type = 8;
+
+  string availability_status = 9;
+  string verification_status = 10;
+
+  optional string bio = 11;
+
+  bool profile_completed = 12;
+
+  repeated WorkerSkill skills = 13;
+}
+
+message WorkerSkill {
+  string skill_id = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message CreateWorkerProfileResponse {
+  WorkerProfile profile = 1;
+}
+
+message BusinessType {
+  string id = 1;
+  string name = 2;
+}
+
+message WorkType {
+  string id = 1;
+  string name = 2;
+}
+
+message OwnerProfileDetails {
+  string registration_type = 1;
+  optional string business_name = 2;
+  BusinessType business_type = 3;
+  optional string business_size = 4;
+  optional string gst_registration_number = 5;
+  optional string business_description = 6;
+}
+
+message OwnerProfile {
+  bool profile_completed = 1;
+  string user_type = 2;
+
+  string first_name = 3;
+  optional string last_name = 4;
+  string date_of_birth = 5;
+  optional string email = 6;
+  string country = 7;
+  string state = 8;
+  string city = 9;
+  string postal_code = 10;
+  string preferred_language = 11;
+
+  OwnerProfileDetails owner_profile = 12;
+}
+
+message CreateOwnerProfileRequest {
+  string user_id = 1;
+
+  string registration_type = 2;
+  optional string business_name = 3;
+  string business_type_id = 4;
+  optional string business_size = 5;
+  optional string gst_registration_number = 6;
+
+  string first_name = 7;
+  optional string last_name = 8;
+  string date_of_birth = 9;
+  optional string email = 10;
+  string country = 11;
+  string state = 12;
+  string city = 13;
+  string postal_code = 14;
+  string preferred_language = 15;
+
+  optional string business_description = 16;
+}
+
+message CreateOwnerProfileResponse {
+  OwnerProfile profile = 1;
+}
+
+message ListBusinessTypesRequest {}
+
+message ListBusinessTypesResponse {
+  repeated BusinessType business_types = 1;
+}
+
+message ListWorkTypesRequest {}
+
+message ListWorkTypesResponse {
+  repeated WorkType work_types = 1;
+}

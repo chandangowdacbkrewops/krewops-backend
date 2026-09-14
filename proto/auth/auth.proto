@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "github.com/chandangowdacbkrewops/krewops-backend/gen/go/auth/v1;authv1";
+
+service AuthService {
+
+  rpc RequestOTP(RequestOTPRequest)
+      returns (RequestOTPResponse);
+
+  rpc VerifyOTP(VerifyOTPRequest)
+      returns (VerifyOTPResponse);
+}
+
+message RequestOTPRequest {
+  string phone_number = 1;
+}
+
+message RequestOTPResponse {
+  string message = 1;
+}
+
+message VerifyOTPRequest {
+  string phone_number = 1;
+  string otp = 2;
+}
+
+message VerifyOTPResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  bool is_new_user = 3;
+
+  AuthUser user = 4;
+}
+
+message AuthUser {
+  string id = 1;
+  string phone_number = 2;
+  bool phone_verified = 3;
+}

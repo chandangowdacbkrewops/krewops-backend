@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package work.v1;
+
+option go_package =
+    "github.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1";
+
+service WorkService {
+
+  rpc CreateWork(CreateWorkRequest)
+      returns (CreateWorkResponse);
+}
+
+message CreateWorkRequest {
+  string user_id = 1;
+
+  optional string status = 2;
+  optional string title = 3;
+  optional string work_type_id = 4;
+  optional string description = 5;
+  optional string address = 6;
+  optional string city = 7;
+  optional string state = 8;
+  optional double latitude = 9;
+  optional double longitude = 10;
+  optional int32 workers_needed = 11;
+  optional string experience_level = 12;
+  repeated string skills = 13;
+  optional bool tools_provided = 14;
+  optional bool materials_provided = 15;
+  optional string start_date = 16;
+  optional int32 duration_value = 17;
+  optional string duration_unit = 18;
+  optional string shift_timing = 19;
+  optional string payment_type = 20;
+  optional double budget_rate = 21;
+  optional string payment_notes = 22;
+  optional bool accommodation_provided = 23;
+  optional bool meals_provided = 24;
+}
+
+message CreateWorkResponse {
+  WorkPosting work = 1;
+}
+
+message WorkPosting {
+  string id = 1;
+  string user_id = 2;
+  string status = 3;
+
+  optional string title = 4;
+  optional string work_type_id = 5;
+  optional string description = 6;
+
+  optional string address = 7;
+  optional string city = 8;
+  optional string state = 9;
+  optional double latitude = 10;
+  optional double longitude = 11;
+
+  optional int32 workers_needed = 12;
+  optional string experience_level = 13;
+  repeated string skills = 14;
+  optional bool tools_provided = 15;
+  optional bool materials_provided = 16;
+
+  optional string start_date = 17;
+  optional int32 duration_value = 18;
+  optional string duration_unit = 19;
+  optional string shift_timing = 20;
+
+  optional string payment_type = 21;
+  optional double budget_rate = 22;
+  optional string payment_notes = 23;
+  optional bool accommodation_provided = 24;
+  optional bool meals_provided = 25;
+
+  optional string published_at = 26;
+  string created_at = 27;
+  string updated_at = 28;
+}
