@@ -11,6 +11,8 @@ import (
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/response"
 	authv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/auth/v1"
 	userv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -67,6 +69,10 @@ func (h *AuthHandler) RequestOTP(
 		)
 
 	if err != nil {
+		if status.Code(err) == codes.ResourceExhausted {
+			response.TooManyRequests(c, status.Convert(err).Message(), nil)
+			return
+		}
 		response.Internal(c, "authentication service unavailable", nil)
 
 		return

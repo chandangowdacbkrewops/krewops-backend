@@ -23,7 +23,7 @@ func (r *WorkTypeRepository) FindByID(ctx context.Context, id string) (*model.Wo
 	err := r.db.QueryRow(ctx, `
 		SELECT id, name
 		FROM work_types
-		WHERE id = $1
+		WHERE id = $1 AND status = TRUE
 	`, id).Scan(&wt.ID, &wt.Name)
 
 	if errors.Is(err, pgx.ErrNoRows) {

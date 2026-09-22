@@ -8,6 +8,7 @@ const (
 	CodeForbidden       = "FORBIDDEN"
 	CodeNotFound        = "NOT_FOUND"
 	CodeConflict        = "CONFLICT"
+	CodeTooManyRequests = "TOO_MANY_REQUESTS"
 	CodeInternalError   = "INTERNAL_ERROR"
 )
 
@@ -17,6 +18,7 @@ var statusToCode = map[int]string{
 	http.StatusForbidden:           CodeForbidden,
 	http.StatusNotFound:            CodeNotFound,
 	http.StatusConflict:            CodeConflict,
+	http.StatusTooManyRequests:     CodeTooManyRequests,
 	http.StatusInternalServerError: CodeInternalError,
 }
 

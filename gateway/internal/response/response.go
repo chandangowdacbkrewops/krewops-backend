@@ -82,3 +82,7 @@ func Conflict(c *gin.Context, message string, details interface{}) {
 func Internal(c *gin.Context, message string, details interface{}) {
 	Error(c, http.StatusInternalServerError, CodeForStatus(http.StatusInternalServerError), message, details)
 }
+
+func TooManyRequests(c *gin.Context, message string, details interface{}) {
+	Error(c, http.StatusTooManyRequests, CodeForStatus(http.StatusTooManyRequests), message, details)
+}

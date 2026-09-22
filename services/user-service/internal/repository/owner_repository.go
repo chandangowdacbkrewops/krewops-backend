@@ -59,7 +59,7 @@ func (r *OwnerRepository) upsertProfile(
 	req model.CreateOwnerProfileRequest,
 	dob time.Time,
 ) (*model.ProfileRecord, error) {
-	userType := model.UserTypeWorkOwner
+	userType := model.UserTypeUser
 
 	query := `
 		INSERT INTO profiles (
@@ -269,7 +269,7 @@ func (r *OwnerRepository) GetOwnerProfileByAuthUserID(
 		return nil, nil, err
 	}
 
-	if profile.UserType == nil || *profile.UserType != model.UserTypeWorkOwner {
+	if profile.UserType == nil || *profile.UserType != model.UserTypeUser {
 		return profile, nil, nil
 	}
 

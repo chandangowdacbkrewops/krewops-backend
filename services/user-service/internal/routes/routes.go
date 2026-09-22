@@ -17,11 +17,18 @@ func RegisterRoutes(
 
 	v1 := router.Group("/api/v1")
 	{
+		v1.GET(
+			"/work-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypes,
+		)
+
 		users := v1.Group("/users")
 		users.Use(middleware.AuthMiddleware(jwtSecret))
 		{
 			users.GET("/profile", profileHandler.GetMe)
 			users.POST("/profile", profileHandler.CreateProfile)
+			users.PUT("/profile", profileHandler.UpdateProfile)
 			users.POST("/worker-profile", profileHandler.CreateWorkerProfile)
 		}
 	}

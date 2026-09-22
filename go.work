@@ -4,6 +4,7 @@ use (
 	.
 	./gateway
 	./services/auth-service
+	./services/search-service
 	./services/user-service
 	./services/work-service
 )

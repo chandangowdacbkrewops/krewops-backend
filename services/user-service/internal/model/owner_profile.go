@@ -3,7 +3,7 @@ package model
 import "time"
 
 const (
-	UserTypeWorkOwner      = "work_owner"
+	UserTypeUser           = "user"
 	RegistrationBusiness   = "business"
 	RegistrationIndividual = "individual"
 )

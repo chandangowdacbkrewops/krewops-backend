@@ -13,6 +13,9 @@ service UserService {
   rpc CreateProfile(CreateProfileRequest)
       returns (CreateProfileResponse);
 
+  rpc UpdateProfile(UpdateProfileRequest)
+      returns (UpdateProfileResponse);
+
   rpc CreateWorkerProfile(CreateWorkerProfileRequest)
       returns (CreateWorkerProfileResponse);
 
@@ -56,9 +59,26 @@ message CreateProfileRequest {
   string state = 5;
   string city = 6;
   string postal_code = 7;
+  string user_type = 8;
 }
 
 message CreateProfileResponse {
+  UserProfile profile = 1;
+}
+
+message UpdateProfileRequest {
+  string user_id = 1;
+
+  string first_name = 2;
+  string last_name = 3;
+  string country = 4;
+  string state = 5;
+  string city = 6;
+  string postal_code = 7;
+  string user_type = 8;
+}
+
+message UpdateProfileResponse {
   UserProfile profile = 1;
 }
 

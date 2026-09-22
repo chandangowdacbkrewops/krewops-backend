@@ -113,7 +113,7 @@ func buildOwnerProfileResponse(
 ) *model.OwnerProfileResponse {
 	resp := &model.OwnerProfileResponse{
 		ProfileCompleted:  profile.ProfileCompleted,
-		UserType:          model.UserTypeWorkOwner,
+		UserType:          model.UserTypeUser,
 		FirstName:         derefString(profile.FirstName),
 		LastName:          profile.LastName,
 		Email:             profile.Email,

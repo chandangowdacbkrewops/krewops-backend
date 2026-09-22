@@ -43,6 +43,21 @@ func (s *UserService) CreateProfile(
 	return profile, nil
 }
 
+func (s *UserService) UpdateProfile(
+	ctx context.Context,
+	authUserID string,
+	req model.UpdateProfileRequest,
+) (*model.ProfileResponse, error) {
+	profile, err := s.profileService.UpdateProfile(ctx, authUserID, req)
+	if err != nil {
+		return nil, err
+	}
+	if profile != nil && profile.AuthUserID == "" {
+		profile.AuthUserID = authUserID
+	}
+	return profile, nil
+}
+
 func (s *UserService) CreateWorkerProfile(
 	ctx context.Context,
 	authUserID string,

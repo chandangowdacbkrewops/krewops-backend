@@ -20,6 +20,7 @@ func (r *WorkTypeRepository) ListAll(ctx context.Context) ([]model.WorkType, err
 	rows, err := r.db.Query(ctx, `
 		SELECT id, name
 		FROM work_types
+		WHERE is_active = TRUE
 		ORDER BY name ASC
 	`)
 	if err != nil {

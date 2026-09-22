@@ -86,9 +86,10 @@ func (s *ProfileService) CreateProfile(
 	req.State = strings.TrimSpace(req.State)
 	req.City = strings.TrimSpace(req.City)
 	req.PostalCode = strings.TrimSpace(req.PostalCode)
+	req.UserType = strings.TrimSpace(req.UserType)
 
 	if req.FirstName == "" || req.LastName == "" || req.Country == "" ||
-		req.State == "" || req.City == "" || req.PostalCode == "" {
+		req.State == "" || req.City == "" || req.PostalCode == "" || !model.ValidUserType(req.UserType) {
 		return nil, ErrInvalidProfile
 	}
 
@@ -115,6 +116,46 @@ func (s *ProfileService) CreateProfile(
 	}
 
 	return BuildProfileResponse(record, nil), nil
+}
+
+func (s *ProfileService) UpdateProfile(
+	ctx context.Context,
+	authUserID string,
+	req model.UpdateProfileRequest,
+) (*model.ProfileResponse, error) {
+	req.FirstName = strings.TrimSpace(req.FirstName)
+	req.LastName = strings.TrimSpace(req.LastName)
+	req.Country = strings.TrimSpace(req.Country)
+	req.State = strings.TrimSpace(req.State)
+	req.City = strings.TrimSpace(req.City)
+	req.PostalCode = strings.TrimSpace(req.PostalCode)
+
+	if req.FirstName == "" || req.LastName == "" || req.Country == "" ||
+		req.State == "" || req.City == "" || req.PostalCode == "" {
+		return nil, ErrInvalidProfile
+	}
+
+	profile, err := s.profileRepository.UpdateProfile(ctx, authUserID, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return BuildProfileResponse(&model.ProfileRecord{
+		ID:                  profile.ID,
+		AuthUserID:          profile.AuthUserID,
+		FirstName:           profile.FirstName,
+		LastName:            profile.LastName,
+		UserType:            profile.UserType,
+		DateOfBirth:         profile.DateOfBirth,
+		Email:               profile.Email,
+		Country:             profile.Country,
+		State:               profile.State,
+		City:                profile.City,
+		PostalCode:          profile.PostalCode,
+		PreferredLanguage:   profile.PreferredLanguage,
+		ProfileCompleted:    profile.ProfileCompleted,
+		OnboardingCompleted: profile.OnboardingCompleted,
+	}, nil), nil
 }
 
 func (s *ProfileService) CreateWorkerProfile(

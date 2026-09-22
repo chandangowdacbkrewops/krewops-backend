@@ -14,7 +14,10 @@ type ProfileRepository struct {
 	db *pgxpool.Pool
 }
 
-var ErrProfileAlreadyExists = errors.New("profile already exists")
+var (
+	ErrProfileAlreadyExists = errors.New("profile already exists")
+	ErrProfileNotFound      = errors.New("profile not found")
+)
 
 func NewProfileRepository(db *pgxpool.Pool) *ProfileRepository {
 	return &ProfileRepository{db: db}
@@ -89,6 +92,7 @@ func (r *ProfileRepository) CreateProfile(
 			user_id,
 			first_name,
 			last_name,
+			user_type,
 			country,
 			state,
 			city,
@@ -96,7 +100,7 @@ func (r *ProfileRepository) CreateProfile(
 			profile_completed,
 			onboarding_completed
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE, TRUE)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE, TRUE)
 		ON CONFLICT (user_id) DO NOTHING
 		RETURNING
 			id,
@@ -115,7 +119,7 @@ func (r *ProfileRepository) CreateProfile(
 			onboarding_completed,
 			created_at,
 			updated_at
-	`, authUserID, req.FirstName, req.LastName, req.Country, req.State, req.City, req.PostalCode).Scan(
+	`, authUserID, req.FirstName, req.LastName, req.UserType, req.Country, req.State, req.City, req.PostalCode).Scan(
 		&profile.ID,
 		&profile.AuthUserID,
 		&profile.FirstName,
@@ -135,6 +139,54 @@ func (r *ProfileRepository) CreateProfile(
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, ErrProfileAlreadyExists
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return profile, nil
+}
+
+func (r *ProfileRepository) UpdateProfile(
+	ctx context.Context,
+	authUserID string,
+	req model.UpdateProfileRequest,
+) (*model.Profile, error) {
+	profile := &model.Profile{}
+	err := r.db.QueryRow(ctx, `
+		UPDATE profiles
+		SET first_name = $2,
+			last_name = $3,
+			country = $4,
+			state = $5,
+			city = $6,
+			postal_code = $7,
+			updated_at = NOW()
+		WHERE user_id = $1
+		RETURNING
+			id, user_id, first_name, last_name, user_type, date_of_birth,
+			email, country, state, city, postal_code, preferred_language,
+			profile_completed, onboarding_completed, created_at, updated_at
+	`, authUserID, req.FirstName, req.LastName, req.Country, req.State, req.City, req.PostalCode).Scan(
+		&profile.ID,
+		&profile.AuthUserID,
+		&profile.FirstName,
+		&profile.LastName,
+		&profile.UserType,
+		&profile.DateOfBirth,
+		&profile.Email,
+		&profile.Country,
+		&profile.State,
+		&profile.City,
+		&profile.PostalCode,
+		&profile.PreferredLanguage,
+		&profile.ProfileCompleted,
+		&profile.OnboardingCompleted,
+		&profile.CreatedAt,
+		&profile.UpdatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, ErrProfileNotFound
 	}
 	if err != nil {
 		return nil, err

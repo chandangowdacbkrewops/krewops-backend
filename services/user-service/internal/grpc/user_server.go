@@ -60,6 +60,7 @@ func (s *UserServer) CreateProfile(
 			model.CreateProfileRequest{
 				FirstName:  req.FirstName,
 				LastName:   req.LastName,
+				UserType:   req.UserType,
 				Country:    req.Country,
 				State:      req.State,
 				City:       req.City,
@@ -80,6 +81,36 @@ func (s *UserServer) CreateProfile(
 	return &userv1.CreateProfileResponse{
 		Profile: toUserProfile(profile),
 	}, nil
+}
+
+func (s *UserServer) UpdateProfile(
+	ctx context.Context,
+	req *userv1.UpdateProfileRequest,
+) (*userv1.UpdateProfileResponse, error) {
+	profile, err := s.userService.UpdateProfile(
+		ctx,
+		req.UserId,
+		model.UpdateProfileRequest{
+			FirstName:  req.FirstName,
+			LastName:   req.LastName,
+			Country:    req.Country,
+			State:      req.State,
+			City:       req.City,
+			PostalCode: req.PostalCode,
+		},
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, repository.ErrProfileNotFound):
+			return nil, status.Error(codes.NotFound, "profile not found")
+		case errors.Is(err, service.ErrInvalidProfile):
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		default:
+			return nil, status.Error(codes.Internal, "unable to update profile")
+		}
+	}
+
+	return &userv1.UpdateProfileResponse{Profile: toUserProfile(profile)}, nil
 }
 
 func (s *UserServer) CreateWorkerProfile(

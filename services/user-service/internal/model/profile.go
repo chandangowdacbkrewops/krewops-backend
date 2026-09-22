@@ -8,10 +8,10 @@ const (
 )
 
 // ValidUserType reports whether userType (expected lowercase) is one of the
-// known roles. UserTypeWorkOwner is defined in owner_profile.go (same package).
+// known roles. UserTypeUser is defined in owner_profile.go (same package).
 func ValidUserType(userType string) bool {
 	switch userType {
-	case UserTypeWorker, UserTypeWorkOwner, UserTypeAdmin:
+	case UserTypeWorker, UserTypeUser, UserTypeAdmin:
 		return true
 	default:
 		return false
@@ -38,6 +38,16 @@ type Profile struct {
 }
 
 type CreateProfileRequest struct {
+	FirstName  string `json:"first_name" binding:"required"`
+	LastName   string `json:"last_name" binding:"required"`
+	Country    string `json:"country" binding:"required"`
+	State      string `json:"state" binding:"required"`
+	City       string `json:"city" binding:"required"`
+	PostalCode string `json:"postal_code" binding:"required"`
+	UserType   string `json:"user_type" binding:"required"`
+}
+
+type UpdateProfileRequest struct {
 	FirstName  string `json:"first_name" binding:"required"`
 	LastName   string `json:"last_name" binding:"required"`
 	Country    string `json:"country" binding:"required"`

@@ -2,9 +2,13 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 
 	authv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/auth/v1"
+	"github.com/chandangowdacbkrewops/krewops-backend/services/auth-service/internal/repository"
 	"github.com/chandangowdacbkrewops/krewops-backend/services/auth-service/internal/service"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AuthServer struct {
@@ -33,6 +37,10 @@ func (s *AuthServer) RequestOTP(
 	)
 
 	if err != nil {
+		var otpErr *repository.OTPError
+		if errors.As(err, &otpErr) && (otpErr == repository.ErrOTPRateLimited || otpErr == repository.ErrOTPResendTooSoon) {
+			return nil, status.Error(codes.ResourceExhausted, otpErr.Message)
+		}
 		return nil, err
 	}
 

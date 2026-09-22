@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -20,10 +21,21 @@ type UserHandler struct {
 type CreateProfileRequest struct {
 	FirstName  string `json:"first_name" binding:"required"`
 	LastName   string `json:"last_name" binding:"required"`
+	UserType   string `json:"user_type" binding:"required"`
 	Country    string `json:"country" binding:"required"`
 	State      string `json:"state" binding:"required"`
 	City       string `json:"city" binding:"required"`
 	PostalCode string `json:"postal_code" binding:"required"`
+}
+
+type UpdateProfileRequest struct {
+	FirstName  string `json:"first_name" binding:"required"`
+	LastName   string `json:"last_name" binding:"required"`
+	Country    string `json:"country" binding:"required"`
+	State      string `json:"state" binding:"required"`
+	City       string `json:"city" binding:"required"`
+	PostalCode string `json:"postal_code" binding:"required"`
+	UserType   string `json:"user_type" binding:"required"`
 }
 
 type CreateWorkerProfileRequest struct {
@@ -110,9 +122,13 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 func (h *UserHandler) CreateProfile(
 	c *gin.Context,
 ) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	log.Printf("create profile started: request_id=%s", requestID)
+
 	var request CreateProfileRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
+		log.Printf("create profile rejected: request_id=%s stage=bind error=%v", requestID, err)
 		response.BadRequest(c, "invalid request", nil)
 		return
 	}
@@ -121,9 +137,11 @@ func (h *UserHandler) CreateProfile(
 	userIDString, valid := userID.(string)
 
 	if !exists || !valid || userIDString == "" {
+		log.Printf("create profile rejected: request_id=%s stage=auth reason=missing_user_id", requestID)
 		response.Unauthorized(c, "unauthorized", nil)
 		return
 	}
+	log.Printf("create profile request accepted: request_id=%s user_id=%s user_type=%s", requestID, userIDString, request.UserType)
 
 	ctx, cancel :=
 		context.WithTimeout(
@@ -140,6 +158,7 @@ func (h *UserHandler) CreateProfile(
 				UserId:     userIDString,
 				FirstName:  request.FirstName,
 				LastName:   request.LastName,
+				UserType:   request.UserType,
 				Country:    request.Country,
 				State:      request.State,
 				City:       request.City,
@@ -148,6 +167,7 @@ func (h *UserHandler) CreateProfile(
 		)
 
 	if err != nil {
+		log.Printf("create profile failed: request_id=%s user_id=%s grpc_code=%s error=%v", requestID, userIDString, status.Code(err), err)
 		switch status.Code(err) {
 		case codes.AlreadyExists:
 			response.Conflict(c, "profile already exists", nil)
@@ -158,12 +178,54 @@ func (h *UserHandler) CreateProfile(
 		}
 		return
 	}
+	log.Printf("create profile completed: request_id=%s user_id=%s profile_id=%s", requestID, userIDString, createResp.GetProfile().GetId())
 
 	response.Success(
 		c,
 		http.StatusCreated,
 		createResp,
 	)
+}
+
+func (h *UserHandler) UpdateProfile(c *gin.Context) {
+	var request UpdateProfileRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+	if !exists || !valid || userIDString == "" {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	updateResp, err := h.userClient.UpdateProfile(ctx, &userv1.UpdateProfileRequest{
+		UserId:     userIDString,
+		FirstName:  request.FirstName,
+		LastName:   request.LastName,
+		Country:    request.Country,
+		State:      request.State,
+		City:       request.City,
+		PostalCode: request.PostalCode,
+	})
+	if err != nil {
+		switch status.Code(err) {
+		case codes.NotFound:
+			response.NotFound(c, "profile not found", nil)
+		case codes.InvalidArgument:
+			response.BadRequest(c, "invalid profile data", nil)
+		default:
+			response.Internal(c, "failed to update profile", nil)
+		}
+		return
+	}
+
+	response.Success(c, http.StatusOK, updateResp)
 }
 
 func (h *UserHandler) CreateWorkerProfile(c *gin.Context) {

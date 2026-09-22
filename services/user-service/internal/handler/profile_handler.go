@@ -65,6 +65,35 @@ func (h *ProfileHandler) CreateProfile(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": profile})
 }
 
+func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
+	authUserID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	var req model.UpdateProfileRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	profile, err := h.profileService.UpdateProfile(c.Request.Context(), authUserID, req)
+	if err != nil {
+		switch {
+		case errors.Is(err, repository.ErrProfileNotFound):
+			c.JSON(http.StatusNotFound, gin.H{"error": "profile not found"})
+		case errors.Is(err, service.ErrInvalidProfile):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update profile"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": profile})
+}
+
 func (h *ProfileHandler) CreateWorkerProfile(c *gin.Context) {
 	authUserID, ok := middleware.GetAuthUserID(c)
 	if !ok {
