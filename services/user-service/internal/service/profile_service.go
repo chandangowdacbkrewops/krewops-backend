@@ -10,9 +10,11 @@ import (
 )
 
 type ProfileService struct {
-	profileRepository  *repository.ProfileRepository
-	ownerService       *OwnerService
-	workTypeRepository *repository.WorkTypeRepository
+	profileRepository       *repository.ProfileRepository
+	ownerService            *OwnerService
+	workTypeRepository      *repository.WorkTypeRepository
+	workCategoryRepository  *repository.WorkCategoryRepository
+	workTypeFieldRepository *repository.WorkTypeFieldRepository
 }
 
 var ErrInvalidProfile = errors.New("first_name, last_name, country, state, city, and postal_code are required")
@@ -21,11 +23,15 @@ func NewProfileService(
 	profileRepository *repository.ProfileRepository,
 	ownerService *OwnerService,
 	workTypeRepository *repository.WorkTypeRepository,
+	workCategoryRepository *repository.WorkCategoryRepository,
+	workTypeFieldRepository *repository.WorkTypeFieldRepository,
 ) *ProfileService {
 	return &ProfileService{
-		profileRepository:  profileRepository,
-		ownerService:       ownerService,
-		workTypeRepository: workTypeRepository,
+		profileRepository:       profileRepository,
+		ownerService:            ownerService,
+		workTypeRepository:      workTypeRepository,
+		workCategoryRepository:  workCategoryRepository,
+		workTypeFieldRepository: workTypeFieldRepository,
 	}
 }
 
@@ -189,4 +195,16 @@ func (s *ProfileService) ListBusinessTypes(ctx context.Context) ([]model.Busines
 
 func (s *ProfileService) ListWorkTypes(ctx context.Context) ([]model.WorkType, error) {
 	return s.workTypeRepository.ListAll(ctx)
+}
+
+func (s *ProfileService) ListWorkCategories(ctx context.Context) ([]model.WorkCategory, error) {
+	return s.workCategoryRepository.ListAll(ctx)
+}
+
+func (s *ProfileService) ListWorkTypesByCategory(ctx context.Context, categoryID string) ([]model.WorkType, error) {
+	return s.workTypeRepository.ListByCategoryID(ctx, categoryID)
+}
+
+func (s *ProfileService) ListWorkTypeFields(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
+	return s.workTypeFieldRepository.ListByWorkTypeID(ctx, workTypeID)
 }

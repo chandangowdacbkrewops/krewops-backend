@@ -129,7 +129,7 @@ func (s *UserServer) CreateWorkerProfile(
 			RateType:           req.RateType,
 			AvailabilityStatus: req.AvailabilityStatus,
 			Bio:                req.Bio,
-			WorkTypeIDs:        req.WorkTypeIds,
+			WorkCategoryID:     req.WorkCategoryId,
 		},
 	)
 	if err != nil {
@@ -137,7 +137,7 @@ func (s *UserServer) CreateWorkerProfile(
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			case "22P02", "23503":
-				return nil, status.Error(codes.InvalidArgument, "invalid work type id")
+				return nil, status.Error(codes.InvalidArgument, "invalid work category id")
 			case "23505":
 				return nil, status.Error(codes.AlreadyExists, "worker profile already exists")
 			}
@@ -169,8 +169,12 @@ func toWorkerProfile(profile *model.WorkerProfile) *userv1.WorkerProfile {
 		Bio:                profile.Bio,
 		ProfileCompleted:   profile.ProfileCompleted,
 	}
-	for _, skill := range profile.Skills {
-		result.Skills = append(result.Skills, &userv1.WorkerSkill{SkillId: skill.WorkTypeID})
+	if profile.WorkCategory != nil {
+		result.WorkCategory = &userv1.WorkCategory{
+			Id:   profile.WorkCategory.WorkCategoryID,
+			Code: profile.WorkCategory.Code,
+			Name: profile.WorkCategory.Name,
+		}
 	}
 	return result
 }
@@ -274,9 +278,116 @@ func (s *UserServer) ListWorkTypes(
 		WorkTypes: make([]*userv1.WorkType, 0, len(workTypes)),
 	}
 	for _, wt := range workTypes {
-		resp.WorkTypes = append(resp.WorkTypes, &userv1.WorkType{
-			Id:   wt.ID,
-			Name: wt.Name,
+		resp.WorkTypes = append(resp.WorkTypes, toWorkTypeProto(wt))
+	}
+
+	return resp, nil
+}
+
+func (s *UserServer) ListWorkTypesByCategory(
+	ctx context.Context,
+	req *userv1.ListWorkTypesByCategoryRequest,
+) (*userv1.ListWorkTypesResponse, error) {
+
+	workTypes, err := s.userService.ListWorkTypesByCategory(ctx, req.CategoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkTypesResponse{
+		WorkTypes: make([]*userv1.WorkType, 0, len(workTypes)),
+	}
+	for _, wt := range workTypes {
+		resp.WorkTypes = append(resp.WorkTypes, toWorkTypeProto(wt))
+	}
+
+	return resp, nil
+}
+
+func toWorkTypeProto(wt model.WorkType) *userv1.WorkType {
+	return &userv1.WorkType{
+		Id:           wt.ID,
+		Name:         wt.Name,
+		CategoryId:   wt.CategoryID,
+		Code:         wt.Code,
+		Description:  wt.Description,
+		DisplayOrder: wt.DisplayOrder,
+		IsActive:     wt.IsActive,
+	}
+}
+
+func (s *UserServer) ListWorkTypeFields(
+	ctx context.Context,
+	req *userv1.ListWorkTypeFieldsRequest,
+) (*userv1.ListWorkTypeFieldsResponse, error) {
+
+	fields, err := s.userService.ListWorkTypeFields(ctx, req.WorkTypeId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkTypeFieldsResponse{
+		Fields: make([]*userv1.WorkTypeField, 0, len(fields)),
+	}
+	for _, f := range fields {
+		resp.Fields = append(resp.Fields, toWorkTypeFieldProto(f))
+	}
+
+	return resp, nil
+}
+
+func toWorkTypeFieldProto(f model.WorkTypeField) *userv1.WorkTypeField {
+	pbField := &userv1.WorkTypeField{
+		Id:           f.ID,
+		WorkTypeId:   f.WorkTypeID,
+		FieldKey:     f.FieldKey,
+		Label:        f.Label,
+		FieldType:    f.FieldType,
+		Placeholder:  f.Placeholder,
+		HelpText:     f.HelpText,
+		IsRequired:   f.IsRequired,
+		Unit:         f.Unit,
+		MinValue:     f.MinValue,
+		MaxValue:     f.MaxValue,
+		MinLength:    f.MinLength,
+		MaxLength:    f.MaxLength,
+		DisplayOrder: f.DisplayOrder,
+		IsActive:     f.IsActive,
+		Options:      make([]*userv1.WorkTypeFieldOption, 0, len(f.Options)),
+	}
+	for _, opt := range f.Options {
+		pbField.Options = append(pbField.Options, &userv1.WorkTypeFieldOption{
+			Id:           opt.ID,
+			Value:        opt.Value,
+			Label:        opt.Label,
+			DisplayOrder: opt.DisplayOrder,
+			IsActive:     opt.IsActive,
+		})
+	}
+	return pbField
+}
+
+func (s *UserServer) ListWorkCategories(
+	ctx context.Context,
+	_ *userv1.ListWorkCategoriesRequest,
+) (*userv1.ListWorkCategoriesResponse, error) {
+
+	categories, err := s.userService.ListWorkCategories(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkCategoriesResponse{
+		Categories: make([]*userv1.WorkCategory, 0, len(categories)),
+	}
+	for _, wc := range categories {
+		resp.Categories = append(resp.Categories, &userv1.WorkCategory{
+			Id:           wc.ID,
+			Code:         wc.Code,
+			Name:         wc.Name,
+			Description:  wc.Description,
+			DisplayOrder: wc.DisplayOrder,
+			IsActive:     wc.IsActive,
 		})
 	}
 

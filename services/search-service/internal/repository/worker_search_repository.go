@@ -11,7 +11,7 @@ import (
 )
 
 // WorkerSearchRepository issues read-only search queries against the
-// profiles / worker_profiles / worker_profile_skills tables (owned by
+// profiles / worker_profiles / worker_work_types tables (owned by
 // user-service) and the shared work_types lookup table. It intentionally
 // does not write to any of these tables.
 type WorkerSearchRepository struct {
@@ -36,8 +36,8 @@ func (r *WorkerSearchRepository) SearchWorkers(
 
 	if v := trimmed(filters.WorkTypeID); v != "" {
 		addCondition(`EXISTS (
-			SELECT 1 FROM worker_profile_skills wps
-			WHERE wps.worker_profile_id = wp.id AND wps.work_type_id = $%d
+			SELECT 1 FROM worker_work_types wwt
+			WHERE wwt.worker_profile_id = wp.id AND wwt.work_type_id = $%d AND wwt.is_active = TRUE
 		)`, v)
 	}
 	if v := trimmed(filters.City); v != "" {
@@ -166,11 +166,11 @@ func (r *WorkerSearchRepository) attachSkills(
 	byID map[string]*model.WorkerSearchResult,
 ) error {
 	rows, err := r.db.Query(ctx, `
-		SELECT wps.worker_profile_id, wt.id, wt.name, wps.experience_years
-		FROM worker_profile_skills wps
-		JOIN work_types wt ON wt.id = wps.work_type_id
-		WHERE wps.worker_profile_id = ANY($1)
-		ORDER BY wps.created_at
+		SELECT wwt.worker_profile_id, wt.id, wt.name, wwt.years_experience
+		FROM worker_work_types wwt
+		JOIN work_types wt ON wt.id = wwt.work_type_id
+		WHERE wwt.worker_profile_id = ANY($1) AND wwt.is_active = TRUE
+		ORDER BY wwt.is_primary DESC, wwt.created_at
 	`, workerProfileIDs)
 	if err != nil {
 		return err

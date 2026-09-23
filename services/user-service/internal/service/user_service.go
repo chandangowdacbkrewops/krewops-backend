@@ -81,3 +81,15 @@ func (s *UserService) ListBusinessTypes(ctx context.Context) ([]model.BusinessTy
 func (s *UserService) ListWorkTypes(ctx context.Context) ([]model.WorkType, error) {
 	return s.profileService.ListWorkTypes(ctx)
 }
+
+func (s *UserService) ListWorkCategories(ctx context.Context) ([]model.WorkCategory, error) {
+	return s.profileService.ListWorkCategories(ctx)
+}
+
+func (s *UserService) ListWorkTypesByCategory(ctx context.Context, categoryID string) ([]model.WorkType, error) {
+	return s.profileService.ListWorkTypesByCategory(ctx, categoryID)
+}
+
+func (s *UserService) ListWorkTypeFields(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
+	return s.profileService.ListWorkTypeFields(ctx, workTypeID)
+}

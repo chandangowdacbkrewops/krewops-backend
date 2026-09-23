@@ -105,7 +105,7 @@ type WorkerSearchFilters struct {
 	PageSize int
 }
 
-// WorkerSkillResult is one worker_profile_skills row joined with its work
+// WorkerSkillResult is one worker_work_types row joined with its work
 // type name.
 type WorkerSkillResult struct {
 	WorkTypeID      string

@@ -27,6 +27,15 @@ service UserService {
 
   rpc ListWorkTypes(ListWorkTypesRequest)
       returns (ListWorkTypesResponse);
+
+  rpc ListWorkCategories(ListWorkCategoriesRequest)
+      returns (ListWorkCategoriesResponse);
+
+  rpc ListWorkTypesByCategory(ListWorkTypesByCategoryRequest)
+      returns (ListWorkTypesResponse);
+
+  rpc ListWorkTypeFields(ListWorkTypeFieldsRequest)
+      returns (ListWorkTypeFieldsResponse);
 }
 
 enum WorkerType {
@@ -116,7 +125,7 @@ message CreateWorkerProfileRequest {
 
   optional string bio = 8;
 
-  repeated string work_type_ids = 9;
+  string work_category_id = 9;
   optional string availability_status = 10;
 }
 
@@ -140,13 +149,7 @@ message WorkerProfile {
 
   bool profile_completed = 12;
 
-  repeated WorkerSkill skills = 13;
-}
-
-message WorkerSkill {
-  string skill_id = 1;
-  string code = 2;
-  string name = 3;
+  WorkCategory work_category = 13;
 }
 
 message CreateWorkerProfileResponse {
@@ -161,6 +164,26 @@ message BusinessType {
 message WorkType {
   string id = 1;
   string name = 2;
+  string category_id = 3;
+  string code = 4;
+  optional string description = 5;
+  int32 display_order = 6;
+  bool is_active = 7;
+}
+
+message WorkCategory {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  optional string description = 4;
+  int32 display_order = 5;
+  bool is_active = 6;
+}
+
+message ListWorkCategoriesRequest {}
+
+message ListWorkCategoriesResponse {
+  repeated WorkCategory categories = 1;
 }
 
 message OwnerProfileDetails {
@@ -225,4 +248,43 @@ message ListWorkTypesRequest {}
 
 message ListWorkTypesResponse {
   repeated WorkType work_types = 1;
+}
+
+message ListWorkTypesByCategoryRequest {
+  string category_id = 1;
+}
+
+message WorkTypeFieldOption {
+  string id = 1;
+  string value = 2;
+  string label = 3;
+  int32 display_order = 4;
+  bool is_active = 5;
+}
+
+message WorkTypeField {
+  string id = 1;
+  string work_type_id = 2;
+  string field_key = 3;
+  string label = 4;
+  string field_type = 5;
+  optional string placeholder = 6;
+  optional string help_text = 7;
+  bool is_required = 8;
+  optional string unit = 9;
+  optional double min_value = 10;
+  optional double max_value = 11;
+  optional int32 min_length = 12;
+  optional int32 max_length = 13;
+  int32 display_order = 14;
+  bool is_active = 15;
+  repeated WorkTypeFieldOption options = 16;
+}
+
+message ListWorkTypeFieldsRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkTypeFieldsResponse {
+  repeated WorkTypeField fields = 1;
 }

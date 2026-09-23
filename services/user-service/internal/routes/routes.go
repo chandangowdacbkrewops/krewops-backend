@@ -23,6 +23,24 @@ func RegisterRoutes(
 			profileHandler.ListWorkTypes,
 		)
 
+		v1.GET(
+			"/work-categories",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkCategories,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/work-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypesByCategory,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/fields",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeFields,
+		)
+
 		users := v1.Group("/users")
 		users.Use(middleware.AuthMiddleware(jwtSecret))
 		{

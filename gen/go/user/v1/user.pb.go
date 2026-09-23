@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.12
 // 	protoc        v7.36.0
-// source: user.proto
+// source: user/user.proto
 
 package userv1
 
@@ -54,11 +54,11 @@ func (x WorkerType) String() string {
 }
 
 func (WorkerType) Descriptor() protoreflect.EnumDescriptor {
-	return file_user_proto_enumTypes[0].Descriptor()
+	return file_user_user_proto_enumTypes[0].Descriptor()
 }
 
 func (WorkerType) Type() protoreflect.EnumType {
-	return &file_user_proto_enumTypes[0]
+	return &file_user_user_proto_enumTypes[0]
 }
 
 func (x WorkerType) Number() protoreflect.EnumNumber {
@@ -67,7 +67,7 @@ func (x WorkerType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use WorkerType.Descriptor instead.
 func (WorkerType) EnumDescriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{0}
+	return file_user_user_proto_rawDescGZIP(), []int{0}
 }
 
 type RateType int32
@@ -106,11 +106,11 @@ func (x RateType) String() string {
 }
 
 func (RateType) Descriptor() protoreflect.EnumDescriptor {
-	return file_user_proto_enumTypes[1].Descriptor()
+	return file_user_user_proto_enumTypes[1].Descriptor()
 }
 
 func (RateType) Type() protoreflect.EnumType {
-	return &file_user_proto_enumTypes[1]
+	return &file_user_user_proto_enumTypes[1]
 }
 
 func (x RateType) Number() protoreflect.EnumNumber {
@@ -119,7 +119,7 @@ func (x RateType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RateType.Descriptor instead.
 func (RateType) EnumDescriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{1}
+	return file_user_user_proto_rawDescGZIP(), []int{1}
 }
 
 type GetProfileRequest struct {
@@ -131,7 +131,7 @@ type GetProfileRequest struct {
 
 func (x *GetProfileRequest) Reset() {
 	*x = GetProfileRequest{}
-	mi := &file_user_proto_msgTypes[0]
+	mi := &file_user_user_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -143,7 +143,7 @@ func (x *GetProfileRequest) String() string {
 func (*GetProfileRequest) ProtoMessage() {}
 
 func (x *GetProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[0]
+	mi := &file_user_user_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -156,7 +156,7 @@ func (x *GetProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProfileRequest.ProtoReflect.Descriptor instead.
 func (*GetProfileRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{0}
+	return file_user_user_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GetProfileRequest) GetUserId() string {
@@ -175,7 +175,7 @@ type GetProfileResponse struct {
 
 func (x *GetProfileResponse) Reset() {
 	*x = GetProfileResponse{}
-	mi := &file_user_proto_msgTypes[1]
+	mi := &file_user_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +187,7 @@ func (x *GetProfileResponse) String() string {
 func (*GetProfileResponse) ProtoMessage() {}
 
 func (x *GetProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[1]
+	mi := &file_user_user_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +200,7 @@ func (x *GetProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProfileResponse.ProtoReflect.Descriptor instead.
 func (*GetProfileResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{1}
+	return file_user_user_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetProfileResponse) GetProfile() *UserProfile {
@@ -226,7 +226,7 @@ type CreateProfileRequest struct {
 
 func (x *CreateProfileRequest) Reset() {
 	*x = CreateProfileRequest{}
-	mi := &file_user_proto_msgTypes[2]
+	mi := &file_user_user_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -238,7 +238,7 @@ func (x *CreateProfileRequest) String() string {
 func (*CreateProfileRequest) ProtoMessage() {}
 
 func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[2]
+	mi := &file_user_user_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -251,7 +251,7 @@ func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProfileRequest.ProtoReflect.Descriptor instead.
 func (*CreateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{2}
+	return file_user_user_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateProfileRequest) GetUserId() string {
@@ -319,7 +319,7 @@ type CreateProfileResponse struct {
 
 func (x *CreateProfileResponse) Reset() {
 	*x = CreateProfileResponse{}
-	mi := &file_user_proto_msgTypes[3]
+	mi := &file_user_user_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -331,7 +331,7 @@ func (x *CreateProfileResponse) String() string {
 func (*CreateProfileResponse) ProtoMessage() {}
 
 func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[3]
+	mi := &file_user_user_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +344,7 @@ func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProfileResponse.ProtoReflect.Descriptor instead.
 func (*CreateProfileResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{3}
+	return file_user_user_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateProfileResponse) GetProfile() *UserProfile {
@@ -370,7 +370,7 @@ type UpdateProfileRequest struct {
 
 func (x *UpdateProfileRequest) Reset() {
 	*x = UpdateProfileRequest{}
-	mi := &file_user_proto_msgTypes[4]
+	mi := &file_user_user_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -382,7 +382,7 @@ func (x *UpdateProfileRequest) String() string {
 func (*UpdateProfileRequest) ProtoMessage() {}
 
 func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[4]
+	mi := &file_user_user_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -395,7 +395,7 @@ func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{4}
+	return file_user_user_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateProfileRequest) GetUserId() string {
@@ -463,7 +463,7 @@ type UpdateProfileResponse struct {
 
 func (x *UpdateProfileResponse) Reset() {
 	*x = UpdateProfileResponse{}
-	mi := &file_user_proto_msgTypes[5]
+	mi := &file_user_user_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +475,7 @@ func (x *UpdateProfileResponse) String() string {
 func (*UpdateProfileResponse) ProtoMessage() {}
 
 func (x *UpdateProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[5]
+	mi := &file_user_user_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +488,7 @@ func (x *UpdateProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileResponse.ProtoReflect.Descriptor instead.
 func (*UpdateProfileResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{5}
+	return file_user_user_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateProfileResponse) GetProfile() *UserProfile {
@@ -520,7 +520,7 @@ type UserProfile struct {
 
 func (x *UserProfile) Reset() {
 	*x = UserProfile{}
-	mi := &file_user_proto_msgTypes[6]
+	mi := &file_user_user_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -532,7 +532,7 @@ func (x *UserProfile) String() string {
 func (*UserProfile) ProtoMessage() {}
 
 func (x *UserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[6]
+	mi := &file_user_user_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -545,7 +545,7 @@ func (x *UserProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserProfile.ProtoReflect.Descriptor instead.
 func (*UserProfile) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{6}
+	return file_user_user_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UserProfile) GetId() string {
@@ -656,7 +656,7 @@ type CreateWorkerProfileRequest struct {
 	ExpectedRate       *float64               `protobuf:"fixed64,6,opt,name=expected_rate,json=expectedRate,proto3,oneof" json:"expected_rate,omitempty"`
 	RateType           *string                `protobuf:"bytes,7,opt,name=rate_type,json=rateType,proto3,oneof" json:"rate_type,omitempty"`
 	Bio                *string                `protobuf:"bytes,8,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
-	WorkTypeIds        []string               `protobuf:"bytes,9,rep,name=work_type_ids,json=workTypeIds,proto3" json:"work_type_ids,omitempty"`
+	WorkCategoryId     string                 `protobuf:"bytes,9,opt,name=work_category_id,json=workCategoryId,proto3" json:"work_category_id,omitempty"`
 	AvailabilityStatus *string                `protobuf:"bytes,10,opt,name=availability_status,json=availabilityStatus,proto3,oneof" json:"availability_status,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
@@ -664,7 +664,7 @@ type CreateWorkerProfileRequest struct {
 
 func (x *CreateWorkerProfileRequest) Reset() {
 	*x = CreateWorkerProfileRequest{}
-	mi := &file_user_proto_msgTypes[7]
+	mi := &file_user_user_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -676,7 +676,7 @@ func (x *CreateWorkerProfileRequest) String() string {
 func (*CreateWorkerProfileRequest) ProtoMessage() {}
 
 func (x *CreateWorkerProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[7]
+	mi := &file_user_user_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -689,7 +689,7 @@ func (x *CreateWorkerProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkerProfileRequest.ProtoReflect.Descriptor instead.
 func (*CreateWorkerProfileRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{7}
+	return file_user_user_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateWorkerProfileRequest) GetUserId() string {
@@ -748,11 +748,11 @@ func (x *CreateWorkerProfileRequest) GetBio() string {
 	return ""
 }
 
-func (x *CreateWorkerProfileRequest) GetWorkTypeIds() []string {
+func (x *CreateWorkerProfileRequest) GetWorkCategoryId() string {
 	if x != nil {
-		return x.WorkTypeIds
+		return x.WorkCategoryId
 	}
-	return nil
+	return ""
 }
 
 func (x *CreateWorkerProfileRequest) GetAvailabilityStatus() string {
@@ -776,14 +776,14 @@ type WorkerProfile struct {
 	VerificationStatus string                 `protobuf:"bytes,10,opt,name=verification_status,json=verificationStatus,proto3" json:"verification_status,omitempty"`
 	Bio                *string                `protobuf:"bytes,11,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
 	ProfileCompleted   bool                   `protobuf:"varint,12,opt,name=profile_completed,json=profileCompleted,proto3" json:"profile_completed,omitempty"`
-	Skills             []*WorkerSkill         `protobuf:"bytes,13,rep,name=skills,proto3" json:"skills,omitempty"`
+	WorkCategory       *WorkCategory          `protobuf:"bytes,13,opt,name=work_category,json=workCategory,proto3" json:"work_category,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
 
 func (x *WorkerProfile) Reset() {
 	*x = WorkerProfile{}
-	mi := &file_user_proto_msgTypes[8]
+	mi := &file_user_user_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -795,7 +795,7 @@ func (x *WorkerProfile) String() string {
 func (*WorkerProfile) ProtoMessage() {}
 
 func (x *WorkerProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[8]
+	mi := &file_user_user_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +808,7 @@ func (x *WorkerProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkerProfile.ProtoReflect.Descriptor instead.
 func (*WorkerProfile) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{8}
+	return file_user_user_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *WorkerProfile) GetId() string {
@@ -895,71 +895,11 @@ func (x *WorkerProfile) GetProfileCompleted() bool {
 	return false
 }
 
-func (x *WorkerProfile) GetSkills() []*WorkerSkill {
+func (x *WorkerProfile) GetWorkCategory() *WorkCategory {
 	if x != nil {
-		return x.Skills
+		return x.WorkCategory
 	}
 	return nil
-}
-
-type WorkerSkill struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SkillId       string                 `protobuf:"bytes,1,opt,name=skill_id,json=skillId,proto3" json:"skill_id,omitempty"`
-	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *WorkerSkill) Reset() {
-	*x = WorkerSkill{}
-	mi := &file_user_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *WorkerSkill) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*WorkerSkill) ProtoMessage() {}
-
-func (x *WorkerSkill) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkerSkill.ProtoReflect.Descriptor instead.
-func (*WorkerSkill) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *WorkerSkill) GetSkillId() string {
-	if x != nil {
-		return x.SkillId
-	}
-	return ""
-}
-
-func (x *WorkerSkill) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
-}
-
-func (x *WorkerSkill) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
 }
 
 type CreateWorkerProfileResponse struct {
@@ -971,7 +911,7 @@ type CreateWorkerProfileResponse struct {
 
 func (x *CreateWorkerProfileResponse) Reset() {
 	*x = CreateWorkerProfileResponse{}
-	mi := &file_user_proto_msgTypes[10]
+	mi := &file_user_user_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -983,7 +923,7 @@ func (x *CreateWorkerProfileResponse) String() string {
 func (*CreateWorkerProfileResponse) ProtoMessage() {}
 
 func (x *CreateWorkerProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[10]
+	mi := &file_user_user_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -996,7 +936,7 @@ func (x *CreateWorkerProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkerProfileResponse.ProtoReflect.Descriptor instead.
 func (*CreateWorkerProfileResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{10}
+	return file_user_user_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateWorkerProfileResponse) GetProfile() *WorkerProfile {
@@ -1016,7 +956,7 @@ type BusinessType struct {
 
 func (x *BusinessType) Reset() {
 	*x = BusinessType{}
-	mi := &file_user_proto_msgTypes[11]
+	mi := &file_user_user_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1028,7 +968,7 @@ func (x *BusinessType) String() string {
 func (*BusinessType) ProtoMessage() {}
 
 func (x *BusinessType) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[11]
+	mi := &file_user_user_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1041,7 +981,7 @@ func (x *BusinessType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BusinessType.ProtoReflect.Descriptor instead.
 func (*BusinessType) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{11}
+	return file_user_user_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BusinessType) GetId() string {
@@ -1062,13 +1002,18 @@ type WorkType struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	CategoryId    string                 `protobuf:"bytes,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	Code          string                 `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
+	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	DisplayOrder  int32                  `protobuf:"varint,6,opt,name=display_order,json=displayOrder,proto3" json:"display_order,omitempty"`
+	IsActive      bool                   `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WorkType) Reset() {
 	*x = WorkType{}
-	mi := &file_user_proto_msgTypes[12]
+	mi := &file_user_user_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1080,7 +1025,7 @@ func (x *WorkType) String() string {
 func (*WorkType) ProtoMessage() {}
 
 func (x *WorkType) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[12]
+	mi := &file_user_user_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1093,7 +1038,7 @@ func (x *WorkType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkType.ProtoReflect.Descriptor instead.
 func (*WorkType) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{12}
+	return file_user_user_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *WorkType) GetId() string {
@@ -1110,6 +1055,205 @@ func (x *WorkType) GetName() string {
 	return ""
 }
 
+func (x *WorkType) GetCategoryId() string {
+	if x != nil {
+		return x.CategoryId
+	}
+	return ""
+}
+
+func (x *WorkType) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *WorkType) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *WorkType) GetDisplayOrder() int32 {
+	if x != nil {
+		return x.DisplayOrder
+	}
+	return 0
+}
+
+func (x *WorkType) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+type WorkCategory struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	DisplayOrder  int32                  `protobuf:"varint,5,opt,name=display_order,json=displayOrder,proto3" json:"display_order,omitempty"`
+	IsActive      bool                   `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkCategory) Reset() {
+	*x = WorkCategory{}
+	mi := &file_user_user_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkCategory) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkCategory) ProtoMessage() {}
+
+func (x *WorkCategory) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkCategory.ProtoReflect.Descriptor instead.
+func (*WorkCategory) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *WorkCategory) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkCategory) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *WorkCategory) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *WorkCategory) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *WorkCategory) GetDisplayOrder() int32 {
+	if x != nil {
+		return x.DisplayOrder
+	}
+	return 0
+}
+
+func (x *WorkCategory) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+type ListWorkCategoriesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkCategoriesRequest) Reset() {
+	*x = ListWorkCategoriesRequest{}
+	mi := &file_user_user_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkCategoriesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkCategoriesRequest) ProtoMessage() {}
+
+func (x *ListWorkCategoriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkCategoriesRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkCategoriesRequest) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{13}
+}
+
+type ListWorkCategoriesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Categories    []*WorkCategory        `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkCategoriesResponse) Reset() {
+	*x = ListWorkCategoriesResponse{}
+	mi := &file_user_user_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkCategoriesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkCategoriesResponse) ProtoMessage() {}
+
+func (x *ListWorkCategoriesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkCategoriesResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkCategoriesResponse) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ListWorkCategoriesResponse) GetCategories() []*WorkCategory {
+	if x != nil {
+		return x.Categories
+	}
+	return nil
+}
+
 type OwnerProfileDetails struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	RegistrationType      string                 `protobuf:"bytes,1,opt,name=registration_type,json=registrationType,proto3" json:"registration_type,omitempty"`
@@ -1124,7 +1268,7 @@ type OwnerProfileDetails struct {
 
 func (x *OwnerProfileDetails) Reset() {
 	*x = OwnerProfileDetails{}
-	mi := &file_user_proto_msgTypes[13]
+	mi := &file_user_user_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1136,7 +1280,7 @@ func (x *OwnerProfileDetails) String() string {
 func (*OwnerProfileDetails) ProtoMessage() {}
 
 func (x *OwnerProfileDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[13]
+	mi := &file_user_user_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1149,7 +1293,7 @@ func (x *OwnerProfileDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnerProfileDetails.ProtoReflect.Descriptor instead.
 func (*OwnerProfileDetails) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{13}
+	return file_user_user_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *OwnerProfileDetails) GetRegistrationType() string {
@@ -1214,7 +1358,7 @@ type OwnerProfile struct {
 
 func (x *OwnerProfile) Reset() {
 	*x = OwnerProfile{}
-	mi := &file_user_proto_msgTypes[14]
+	mi := &file_user_user_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1226,7 +1370,7 @@ func (x *OwnerProfile) String() string {
 func (*OwnerProfile) ProtoMessage() {}
 
 func (x *OwnerProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[14]
+	mi := &file_user_user_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1239,7 +1383,7 @@ func (x *OwnerProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnerProfile.ProtoReflect.Descriptor instead.
 func (*OwnerProfile) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{14}
+	return file_user_user_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *OwnerProfile) GetProfileCompleted() bool {
@@ -1350,7 +1494,7 @@ type CreateOwnerProfileRequest struct {
 
 func (x *CreateOwnerProfileRequest) Reset() {
 	*x = CreateOwnerProfileRequest{}
-	mi := &file_user_proto_msgTypes[15]
+	mi := &file_user_user_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1362,7 +1506,7 @@ func (x *CreateOwnerProfileRequest) String() string {
 func (*CreateOwnerProfileRequest) ProtoMessage() {}
 
 func (x *CreateOwnerProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[15]
+	mi := &file_user_user_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1375,7 +1519,7 @@ func (x *CreateOwnerProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOwnerProfileRequest.ProtoReflect.Descriptor instead.
 func (*CreateOwnerProfileRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{15}
+	return file_user_user_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateOwnerProfileRequest) GetUserId() string {
@@ -1499,7 +1643,7 @@ type CreateOwnerProfileResponse struct {
 
 func (x *CreateOwnerProfileResponse) Reset() {
 	*x = CreateOwnerProfileResponse{}
-	mi := &file_user_proto_msgTypes[16]
+	mi := &file_user_user_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1511,7 +1655,7 @@ func (x *CreateOwnerProfileResponse) String() string {
 func (*CreateOwnerProfileResponse) ProtoMessage() {}
 
 func (x *CreateOwnerProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[16]
+	mi := &file_user_user_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1524,7 +1668,7 @@ func (x *CreateOwnerProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOwnerProfileResponse.ProtoReflect.Descriptor instead.
 func (*CreateOwnerProfileResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{16}
+	return file_user_user_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateOwnerProfileResponse) GetProfile() *OwnerProfile {
@@ -1542,7 +1686,7 @@ type ListBusinessTypesRequest struct {
 
 func (x *ListBusinessTypesRequest) Reset() {
 	*x = ListBusinessTypesRequest{}
-	mi := &file_user_proto_msgTypes[17]
+	mi := &file_user_user_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1554,7 +1698,7 @@ func (x *ListBusinessTypesRequest) String() string {
 func (*ListBusinessTypesRequest) ProtoMessage() {}
 
 func (x *ListBusinessTypesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[17]
+	mi := &file_user_user_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1567,7 +1711,7 @@ func (x *ListBusinessTypesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBusinessTypesRequest.ProtoReflect.Descriptor instead.
 func (*ListBusinessTypesRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{17}
+	return file_user_user_proto_rawDescGZIP(), []int{19}
 }
 
 type ListBusinessTypesResponse struct {
@@ -1579,7 +1723,7 @@ type ListBusinessTypesResponse struct {
 
 func (x *ListBusinessTypesResponse) Reset() {
 	*x = ListBusinessTypesResponse{}
-	mi := &file_user_proto_msgTypes[18]
+	mi := &file_user_user_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1591,7 +1735,7 @@ func (x *ListBusinessTypesResponse) String() string {
 func (*ListBusinessTypesResponse) ProtoMessage() {}
 
 func (x *ListBusinessTypesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[18]
+	mi := &file_user_user_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1604,7 +1748,7 @@ func (x *ListBusinessTypesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBusinessTypesResponse.ProtoReflect.Descriptor instead.
 func (*ListBusinessTypesResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{18}
+	return file_user_user_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListBusinessTypesResponse) GetBusinessTypes() []*BusinessType {
@@ -1622,7 +1766,7 @@ type ListWorkTypesRequest struct {
 
 func (x *ListWorkTypesRequest) Reset() {
 	*x = ListWorkTypesRequest{}
-	mi := &file_user_proto_msgTypes[19]
+	mi := &file_user_user_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1634,7 +1778,7 @@ func (x *ListWorkTypesRequest) String() string {
 func (*ListWorkTypesRequest) ProtoMessage() {}
 
 func (x *ListWorkTypesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[19]
+	mi := &file_user_user_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1647,7 +1791,7 @@ func (x *ListWorkTypesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkTypesRequest.ProtoReflect.Descriptor instead.
 func (*ListWorkTypesRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{19}
+	return file_user_user_proto_rawDescGZIP(), []int{21}
 }
 
 type ListWorkTypesResponse struct {
@@ -1659,7 +1803,7 @@ type ListWorkTypesResponse struct {
 
 func (x *ListWorkTypesResponse) Reset() {
 	*x = ListWorkTypesResponse{}
-	mi := &file_user_proto_msgTypes[20]
+	mi := &file_user_user_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1671,7 +1815,7 @@ func (x *ListWorkTypesResponse) String() string {
 func (*ListWorkTypesResponse) ProtoMessage() {}
 
 func (x *ListWorkTypesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[20]
+	mi := &file_user_user_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1684,7 +1828,7 @@ func (x *ListWorkTypesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkTypesResponse.ProtoReflect.Descriptor instead.
 func (*ListWorkTypesResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{20}
+	return file_user_user_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListWorkTypesResponse) GetWorkTypes() []*WorkType {
@@ -1694,12 +1838,383 @@ func (x *ListWorkTypesResponse) GetWorkTypes() []*WorkType {
 	return nil
 }
 
-var File_user_proto protoreflect.FileDescriptor
+type ListWorkTypesByCategoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CategoryId    string                 `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_user_proto_rawDesc = "" +
+func (x *ListWorkTypesByCategoryRequest) Reset() {
+	*x = ListWorkTypesByCategoryRequest{}
+	mi := &file_user_user_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkTypesByCategoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkTypesByCategoryRequest) ProtoMessage() {}
+
+func (x *ListWorkTypesByCategoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkTypesByCategoryRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkTypesByCategoryRequest) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ListWorkTypesByCategoryRequest) GetCategoryId() string {
+	if x != nil {
+		return x.CategoryId
+	}
+	return ""
+}
+
+type WorkTypeFieldOption struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	DisplayOrder  int32                  `protobuf:"varint,4,opt,name=display_order,json=displayOrder,proto3" json:"display_order,omitempty"`
+	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkTypeFieldOption) Reset() {
+	*x = WorkTypeFieldOption{}
+	mi := &file_user_user_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkTypeFieldOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkTypeFieldOption) ProtoMessage() {}
+
+func (x *WorkTypeFieldOption) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkTypeFieldOption.ProtoReflect.Descriptor instead.
+func (*WorkTypeFieldOption) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *WorkTypeFieldOption) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkTypeFieldOption) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *WorkTypeFieldOption) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *WorkTypeFieldOption) GetDisplayOrder() int32 {
+	if x != nil {
+		return x.DisplayOrder
+	}
+	return 0
+}
+
+func (x *WorkTypeFieldOption) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+type WorkTypeField struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkTypeId    string                 `protobuf:"bytes,2,opt,name=work_type_id,json=workTypeId,proto3" json:"work_type_id,omitempty"`
+	FieldKey      string                 `protobuf:"bytes,3,opt,name=field_key,json=fieldKey,proto3" json:"field_key,omitempty"`
+	Label         string                 `protobuf:"bytes,4,opt,name=label,proto3" json:"label,omitempty"`
+	FieldType     string                 `protobuf:"bytes,5,opt,name=field_type,json=fieldType,proto3" json:"field_type,omitempty"`
+	Placeholder   *string                `protobuf:"bytes,6,opt,name=placeholder,proto3,oneof" json:"placeholder,omitempty"`
+	HelpText      *string                `protobuf:"bytes,7,opt,name=help_text,json=helpText,proto3,oneof" json:"help_text,omitempty"`
+	IsRequired    bool                   `protobuf:"varint,8,opt,name=is_required,json=isRequired,proto3" json:"is_required,omitempty"`
+	Unit          *string                `protobuf:"bytes,9,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	MinValue      *float64               `protobuf:"fixed64,10,opt,name=min_value,json=minValue,proto3,oneof" json:"min_value,omitempty"`
+	MaxValue      *float64               `protobuf:"fixed64,11,opt,name=max_value,json=maxValue,proto3,oneof" json:"max_value,omitempty"`
+	MinLength     *int32                 `protobuf:"varint,12,opt,name=min_length,json=minLength,proto3,oneof" json:"min_length,omitempty"`
+	MaxLength     *int32                 `protobuf:"varint,13,opt,name=max_length,json=maxLength,proto3,oneof" json:"max_length,omitempty"`
+	DisplayOrder  int32                  `protobuf:"varint,14,opt,name=display_order,json=displayOrder,proto3" json:"display_order,omitempty"`
+	IsActive      bool                   `protobuf:"varint,15,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	Options       []*WorkTypeFieldOption `protobuf:"bytes,16,rep,name=options,proto3" json:"options,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkTypeField) Reset() {
+	*x = WorkTypeField{}
+	mi := &file_user_user_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkTypeField) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkTypeField) ProtoMessage() {}
+
+func (x *WorkTypeField) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkTypeField.ProtoReflect.Descriptor instead.
+func (*WorkTypeField) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *WorkTypeField) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetWorkTypeId() string {
+	if x != nil {
+		return x.WorkTypeId
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetFieldKey() string {
+	if x != nil {
+		return x.FieldKey
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetFieldType() string {
+	if x != nil {
+		return x.FieldType
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetPlaceholder() string {
+	if x != nil && x.Placeholder != nil {
+		return *x.Placeholder
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetHelpText() string {
+	if x != nil && x.HelpText != nil {
+		return *x.HelpText
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetIsRequired() bool {
+	if x != nil {
+		return x.IsRequired
+	}
+	return false
+}
+
+func (x *WorkTypeField) GetUnit() string {
+	if x != nil && x.Unit != nil {
+		return *x.Unit
+	}
+	return ""
+}
+
+func (x *WorkTypeField) GetMinValue() float64 {
+	if x != nil && x.MinValue != nil {
+		return *x.MinValue
+	}
+	return 0
+}
+
+func (x *WorkTypeField) GetMaxValue() float64 {
+	if x != nil && x.MaxValue != nil {
+		return *x.MaxValue
+	}
+	return 0
+}
+
+func (x *WorkTypeField) GetMinLength() int32 {
+	if x != nil && x.MinLength != nil {
+		return *x.MinLength
+	}
+	return 0
+}
+
+func (x *WorkTypeField) GetMaxLength() int32 {
+	if x != nil && x.MaxLength != nil {
+		return *x.MaxLength
+	}
+	return 0
+}
+
+func (x *WorkTypeField) GetDisplayOrder() int32 {
+	if x != nil {
+		return x.DisplayOrder
+	}
+	return 0
+}
+
+func (x *WorkTypeField) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+func (x *WorkTypeField) GetOptions() []*WorkTypeFieldOption {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type ListWorkTypeFieldsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkTypeId    string                 `protobuf:"bytes,1,opt,name=work_type_id,json=workTypeId,proto3" json:"work_type_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkTypeFieldsRequest) Reset() {
+	*x = ListWorkTypeFieldsRequest{}
+	mi := &file_user_user_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkTypeFieldsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkTypeFieldsRequest) ProtoMessage() {}
+
+func (x *ListWorkTypeFieldsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkTypeFieldsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkTypeFieldsRequest) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListWorkTypeFieldsRequest) GetWorkTypeId() string {
+	if x != nil {
+		return x.WorkTypeId
+	}
+	return ""
+}
+
+type ListWorkTypeFieldsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Fields        []*WorkTypeField       `protobuf:"bytes,1,rep,name=fields,proto3" json:"fields,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkTypeFieldsResponse) Reset() {
+	*x = ListWorkTypeFieldsResponse{}
+	mi := &file_user_user_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkTypeFieldsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkTypeFieldsResponse) ProtoMessage() {}
+
+func (x *ListWorkTypeFieldsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkTypeFieldsResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkTypeFieldsResponse) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListWorkTypeFieldsResponse) GetFields() []*WorkTypeField {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+var File_user_user_proto protoreflect.FileDescriptor
+
+const file_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"user.proto\x12\auser.v1\",\n" +
+	"\x0fuser/user.proto\x12\auser.v1\",\n" +
 	"\x11GetProfileRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"D\n" +
 	"\x12GetProfileResponse\x12.\n" +
@@ -1747,7 +2262,7 @@ const file_user_proto_rawDesc = "" +
 	"\x04city\x18\f \x01(\tR\x04city\x12\x1f\n" +
 	"\vpostal_code\x18\r \x01(\tR\n" +
 	"postalCode\x12-\n" +
-	"\x12preferred_language\x18\x0e \x01(\tR\x11preferredLanguage\"\xe5\x03\n" +
+	"\x12preferred_language\x18\x0e \x01(\tR\x11preferredLanguage\"\xeb\x03\n" +
 	"\x1aCreateWorkerProfileRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1f\n" +
 	"\vworker_type\x18\x02 \x01(\tR\n" +
@@ -1757,8 +2272,8 @@ const file_user_proto_rawDesc = "" +
 	"\x10experience_years\x18\x05 \x01(\x01H\x01R\x0fexperienceYears\x88\x01\x01\x12(\n" +
 	"\rexpected_rate\x18\x06 \x01(\x01H\x02R\fexpectedRate\x88\x01\x01\x12 \n" +
 	"\trate_type\x18\a \x01(\tH\x03R\brateType\x88\x01\x01\x12\x15\n" +
-	"\x03bio\x18\b \x01(\tH\x04R\x03bio\x88\x01\x01\x12\"\n" +
-	"\rwork_type_ids\x18\t \x03(\tR\vworkTypeIds\x124\n" +
+	"\x03bio\x18\b \x01(\tH\x04R\x03bio\x88\x01\x01\x12(\n" +
+	"\x10work_category_id\x18\t \x01(\tR\x0eworkCategoryId\x124\n" +
 	"\x13availability_status\x18\n" +
 	" \x01(\tH\x05R\x12availabilityStatus\x88\x01\x01B\f\n" +
 	"\n" +
@@ -1768,7 +2283,7 @@ const file_user_proto_rawDesc = "" +
 	"\n" +
 	"_rate_typeB\x06\n" +
 	"\x04_bioB\x16\n" +
-	"\x14_availability_status\"\xc8\x04\n" +
+	"\x14_availability_status\"\xd6\x04\n" +
 	"\rWorkerProfile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x124\n" +
@@ -1783,25 +2298,41 @@ const file_user_proto_rawDesc = "" +
 	"\x13verification_status\x18\n" +
 	" \x01(\tR\x12verificationStatus\x12\x15\n" +
 	"\x03bio\x18\v \x01(\tH\x03R\x03bio\x88\x01\x01\x12+\n" +
-	"\x11profile_completed\x18\f \x01(\bR\x10profileCompleted\x12,\n" +
-	"\x06skills\x18\r \x03(\v2\x14.user.v1.WorkerSkillR\x06skillsB\f\n" +
+	"\x11profile_completed\x18\f \x01(\bR\x10profileCompleted\x12:\n" +
+	"\rwork_category\x18\r \x01(\v2\x15.user.v1.WorkCategoryR\fworkCategoryB\f\n" +
 	"\n" +
 	"_crew_nameB\x13\n" +
 	"\x11_experience_yearsB\x10\n" +
 	"\x0e_expected_rateB\x06\n" +
-	"\x04_bio\"P\n" +
-	"\vWorkerSkill\x12\x19\n" +
-	"\bskill_id\x18\x01 \x01(\tR\askillId\x12\x12\n" +
-	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"O\n" +
+	"\x04_bio\"O\n" +
 	"\x1bCreateWorkerProfileResponse\x120\n" +
 	"\aprofile\x18\x01 \x01(\v2\x16.user.v1.WorkerProfileR\aprofile\"2\n" +
 	"\fBusinessType\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\".\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xdc\x01\n" +
 	"\bWorkType\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\xa0\x03\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1f\n" +
+	"\vcategory_id\x18\x03 \x01(\tR\n" +
+	"categoryId\x12\x12\n" +
+	"\x04code\x18\x04 \x01(\tR\x04code\x12%\n" +
+	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12#\n" +
+	"\rdisplay_order\x18\x06 \x01(\x05R\fdisplayOrder\x12\x1b\n" +
+	"\tis_active\x18\a \x01(\bR\bisActiveB\x0e\n" +
+	"\f_description\"\xbf\x01\n" +
+	"\fWorkCategory\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12%\n" +
+	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12#\n" +
+	"\rdisplay_order\x18\x05 \x01(\x05R\fdisplayOrder\x12\x1b\n" +
+	"\tis_active\x18\x06 \x01(\bR\bisActiveB\x0e\n" +
+	"\f_description\"\x1b\n" +
+	"\x19ListWorkCategoriesRequest\"S\n" +
+	"\x1aListWorkCategoriesResponse\x125\n" +
+	"\n" +
+	"categories\x18\x01 \x03(\v2\x15.user.v1.WorkCategoryR\n" +
+	"categories\"\xa0\x03\n" +
 	"\x13OwnerProfileDetails\x12+\n" +
 	"\x11registration_type\x18\x01 \x01(\tR\x10registrationType\x12(\n" +
 	"\rbusiness_name\x18\x02 \x01(\tH\x00R\fbusinessName\x88\x01\x01\x12:\n" +
@@ -1867,7 +2398,54 @@ const file_user_proto_rawDesc = "" +
 	"\x14ListWorkTypesRequest\"I\n" +
 	"\x15ListWorkTypesResponse\x120\n" +
 	"\n" +
-	"work_types\x18\x01 \x03(\v2\x11.user.v1.WorkTypeR\tworkTypes*a\n" +
+	"work_types\x18\x01 \x03(\v2\x11.user.v1.WorkTypeR\tworkTypes\"A\n" +
+	"\x1eListWorkTypesByCategoryRequest\x12\x1f\n" +
+	"\vcategory_id\x18\x01 \x01(\tR\n" +
+	"categoryId\"\x93\x01\n" +
+	"\x13WorkTypeFieldOption\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\x12\x14\n" +
+	"\x05label\x18\x03 \x01(\tR\x05label\x12#\n" +
+	"\rdisplay_order\x18\x04 \x01(\x05R\fdisplayOrder\x12\x1b\n" +
+	"\tis_active\x18\x05 \x01(\bR\bisActive\"\xfd\x04\n" +
+	"\rWorkTypeField\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12 \n" +
+	"\fwork_type_id\x18\x02 \x01(\tR\n" +
+	"workTypeId\x12\x1b\n" +
+	"\tfield_key\x18\x03 \x01(\tR\bfieldKey\x12\x14\n" +
+	"\x05label\x18\x04 \x01(\tR\x05label\x12\x1d\n" +
+	"\n" +
+	"field_type\x18\x05 \x01(\tR\tfieldType\x12%\n" +
+	"\vplaceholder\x18\x06 \x01(\tH\x00R\vplaceholder\x88\x01\x01\x12 \n" +
+	"\thelp_text\x18\a \x01(\tH\x01R\bhelpText\x88\x01\x01\x12\x1f\n" +
+	"\vis_required\x18\b \x01(\bR\n" +
+	"isRequired\x12\x17\n" +
+	"\x04unit\x18\t \x01(\tH\x02R\x04unit\x88\x01\x01\x12 \n" +
+	"\tmin_value\x18\n" +
+	" \x01(\x01H\x03R\bminValue\x88\x01\x01\x12 \n" +
+	"\tmax_value\x18\v \x01(\x01H\x04R\bmaxValue\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"min_length\x18\f \x01(\x05H\x05R\tminLength\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"max_length\x18\r \x01(\x05H\x06R\tmaxLength\x88\x01\x01\x12#\n" +
+	"\rdisplay_order\x18\x0e \x01(\x05R\fdisplayOrder\x12\x1b\n" +
+	"\tis_active\x18\x0f \x01(\bR\bisActive\x126\n" +
+	"\aoptions\x18\x10 \x03(\v2\x1c.user.v1.WorkTypeFieldOptionR\aoptionsB\x0e\n" +
+	"\f_placeholderB\f\n" +
+	"\n" +
+	"_help_textB\a\n" +
+	"\x05_unitB\f\n" +
+	"\n" +
+	"_min_valueB\f\n" +
+	"\n" +
+	"_max_valueB\r\n" +
+	"\v_min_lengthB\r\n" +
+	"\v_max_length\"=\n" +
+	"\x19ListWorkTypeFieldsRequest\x12 \n" +
+	"\fwork_type_id\x18\x01 \x01(\tR\n" +
+	"workTypeId\"L\n" +
+	"\x1aListWorkTypeFieldsResponse\x12.\n" +
+	"\x06fields\x18\x01 \x03(\v2\x16.user.v1.WorkTypeFieldR\x06fields*a\n" +
 	"\n" +
 	"WorkerType\x12\x1b\n" +
 	"\x17WORKER_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
@@ -1877,7 +2455,7 @@ const file_user_proto_rawDesc = "" +
 	"\x15RATE_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10RATE_TYPE_HOURLY\x10\x01\x12\x13\n" +
 	"\x0fRATE_TYPE_DAILY\x10\x02\x12\x13\n" +
-	"\x0fRATE_TYPE_FIXED\x10\x032\xe1\x04\n" +
+	"\x0fRATE_TYPE_FIXED\x10\x032\x83\a\n" +
 	"\vUserService\x12E\n" +
 	"\n" +
 	"GetProfile\x12\x1a.user.v1.GetProfileRequest\x1a\x1b.user.v1.GetProfileResponse\x12N\n" +
@@ -1886,107 +2464,129 @@ const file_user_proto_rawDesc = "" +
 	"\x13CreateWorkerProfile\x12#.user.v1.CreateWorkerProfileRequest\x1a$.user.v1.CreateWorkerProfileResponse\x12]\n" +
 	"\x12CreateOwnerProfile\x12\".user.v1.CreateOwnerProfileRequest\x1a#.user.v1.CreateOwnerProfileResponse\x12Z\n" +
 	"\x11ListBusinessTypes\x12!.user.v1.ListBusinessTypesRequest\x1a\".user.v1.ListBusinessTypesResponse\x12N\n" +
-	"\rListWorkTypes\x12\x1d.user.v1.ListWorkTypesRequest\x1a\x1e.user.v1.ListWorkTypesResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1;userv1b\x06proto3"
+	"\rListWorkTypes\x12\x1d.user.v1.ListWorkTypesRequest\x1a\x1e.user.v1.ListWorkTypesResponse\x12]\n" +
+	"\x12ListWorkCategories\x12\".user.v1.ListWorkCategoriesRequest\x1a#.user.v1.ListWorkCategoriesResponse\x12b\n" +
+	"\x17ListWorkTypesByCategory\x12'.user.v1.ListWorkTypesByCategoryRequest\x1a\x1e.user.v1.ListWorkTypesResponse\x12]\n" +
+	"\x12ListWorkTypeFields\x12\".user.v1.ListWorkTypeFieldsRequest\x1a#.user.v1.ListWorkTypeFieldsResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1;userv1b\x06proto3"
 
 var (
-	file_user_proto_rawDescOnce sync.Once
-	file_user_proto_rawDescData []byte
+	file_user_user_proto_rawDescOnce sync.Once
+	file_user_user_proto_rawDescData []byte
 )
 
-func file_user_proto_rawDescGZIP() []byte {
-	file_user_proto_rawDescOnce.Do(func() {
-		file_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_user_proto_rawDesc), len(file_user_proto_rawDesc)))
+func file_user_user_proto_rawDescGZIP() []byte {
+	file_user_user_proto_rawDescOnce.Do(func() {
+		file_user_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_user_user_proto_rawDesc), len(file_user_user_proto_rawDesc)))
 	})
-	return file_user_proto_rawDescData
+	return file_user_user_proto_rawDescData
 }
 
-var file_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
-var file_user_proto_goTypes = []any{
-	(WorkerType)(0),                     // 0: user.v1.WorkerType
-	(RateType)(0),                       // 1: user.v1.RateType
-	(*GetProfileRequest)(nil),           // 2: user.v1.GetProfileRequest
-	(*GetProfileResponse)(nil),          // 3: user.v1.GetProfileResponse
-	(*CreateProfileRequest)(nil),        // 4: user.v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil),       // 5: user.v1.CreateProfileResponse
-	(*UpdateProfileRequest)(nil),        // 6: user.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),       // 7: user.v1.UpdateProfileResponse
-	(*UserProfile)(nil),                 // 8: user.v1.UserProfile
-	(*CreateWorkerProfileRequest)(nil),  // 9: user.v1.CreateWorkerProfileRequest
-	(*WorkerProfile)(nil),               // 10: user.v1.WorkerProfile
-	(*WorkerSkill)(nil),                 // 11: user.v1.WorkerSkill
-	(*CreateWorkerProfileResponse)(nil), // 12: user.v1.CreateWorkerProfileResponse
-	(*BusinessType)(nil),                // 13: user.v1.BusinessType
-	(*WorkType)(nil),                    // 14: user.v1.WorkType
-	(*OwnerProfileDetails)(nil),         // 15: user.v1.OwnerProfileDetails
-	(*OwnerProfile)(nil),                // 16: user.v1.OwnerProfile
-	(*CreateOwnerProfileRequest)(nil),   // 17: user.v1.CreateOwnerProfileRequest
-	(*CreateOwnerProfileResponse)(nil),  // 18: user.v1.CreateOwnerProfileResponse
-	(*ListBusinessTypesRequest)(nil),    // 19: user.v1.ListBusinessTypesRequest
-	(*ListBusinessTypesResponse)(nil),   // 20: user.v1.ListBusinessTypesResponse
-	(*ListWorkTypesRequest)(nil),        // 21: user.v1.ListWorkTypesRequest
-	(*ListWorkTypesResponse)(nil),       // 22: user.v1.ListWorkTypesResponse
+var file_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_user_user_proto_goTypes = []any{
+	(WorkerType)(0),                        // 0: user.v1.WorkerType
+	(RateType)(0),                          // 1: user.v1.RateType
+	(*GetProfileRequest)(nil),              // 2: user.v1.GetProfileRequest
+	(*GetProfileResponse)(nil),             // 3: user.v1.GetProfileResponse
+	(*CreateProfileRequest)(nil),           // 4: user.v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),          // 5: user.v1.CreateProfileResponse
+	(*UpdateProfileRequest)(nil),           // 6: user.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),          // 7: user.v1.UpdateProfileResponse
+	(*UserProfile)(nil),                    // 8: user.v1.UserProfile
+	(*CreateWorkerProfileRequest)(nil),     // 9: user.v1.CreateWorkerProfileRequest
+	(*WorkerProfile)(nil),                  // 10: user.v1.WorkerProfile
+	(*CreateWorkerProfileResponse)(nil),    // 11: user.v1.CreateWorkerProfileResponse
+	(*BusinessType)(nil),                   // 12: user.v1.BusinessType
+	(*WorkType)(nil),                       // 13: user.v1.WorkType
+	(*WorkCategory)(nil),                   // 14: user.v1.WorkCategory
+	(*ListWorkCategoriesRequest)(nil),      // 15: user.v1.ListWorkCategoriesRequest
+	(*ListWorkCategoriesResponse)(nil),     // 16: user.v1.ListWorkCategoriesResponse
+	(*OwnerProfileDetails)(nil),            // 17: user.v1.OwnerProfileDetails
+	(*OwnerProfile)(nil),                   // 18: user.v1.OwnerProfile
+	(*CreateOwnerProfileRequest)(nil),      // 19: user.v1.CreateOwnerProfileRequest
+	(*CreateOwnerProfileResponse)(nil),     // 20: user.v1.CreateOwnerProfileResponse
+	(*ListBusinessTypesRequest)(nil),       // 21: user.v1.ListBusinessTypesRequest
+	(*ListBusinessTypesResponse)(nil),      // 22: user.v1.ListBusinessTypesResponse
+	(*ListWorkTypesRequest)(nil),           // 23: user.v1.ListWorkTypesRequest
+	(*ListWorkTypesResponse)(nil),          // 24: user.v1.ListWorkTypesResponse
+	(*ListWorkTypesByCategoryRequest)(nil), // 25: user.v1.ListWorkTypesByCategoryRequest
+	(*WorkTypeFieldOption)(nil),            // 26: user.v1.WorkTypeFieldOption
+	(*WorkTypeField)(nil),                  // 27: user.v1.WorkTypeField
+	(*ListWorkTypeFieldsRequest)(nil),      // 28: user.v1.ListWorkTypeFieldsRequest
+	(*ListWorkTypeFieldsResponse)(nil),     // 29: user.v1.ListWorkTypeFieldsResponse
 }
-var file_user_proto_depIdxs = []int32{
+var file_user_user_proto_depIdxs = []int32{
 	8,  // 0: user.v1.GetProfileResponse.profile:type_name -> user.v1.UserProfile
 	8,  // 1: user.v1.CreateProfileResponse.profile:type_name -> user.v1.UserProfile
 	8,  // 2: user.v1.UpdateProfileResponse.profile:type_name -> user.v1.UserProfile
 	0,  // 3: user.v1.WorkerProfile.worker_type:type_name -> user.v1.WorkerType
 	1,  // 4: user.v1.WorkerProfile.rate_type:type_name -> user.v1.RateType
-	11, // 5: user.v1.WorkerProfile.skills:type_name -> user.v1.WorkerSkill
+	14, // 5: user.v1.WorkerProfile.work_category:type_name -> user.v1.WorkCategory
 	10, // 6: user.v1.CreateWorkerProfileResponse.profile:type_name -> user.v1.WorkerProfile
-	13, // 7: user.v1.OwnerProfileDetails.business_type:type_name -> user.v1.BusinessType
-	15, // 8: user.v1.OwnerProfile.owner_profile:type_name -> user.v1.OwnerProfileDetails
-	16, // 9: user.v1.CreateOwnerProfileResponse.profile:type_name -> user.v1.OwnerProfile
-	13, // 10: user.v1.ListBusinessTypesResponse.business_types:type_name -> user.v1.BusinessType
-	14, // 11: user.v1.ListWorkTypesResponse.work_types:type_name -> user.v1.WorkType
-	2,  // 12: user.v1.UserService.GetProfile:input_type -> user.v1.GetProfileRequest
-	4,  // 13: user.v1.UserService.CreateProfile:input_type -> user.v1.CreateProfileRequest
-	6,  // 14: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	9,  // 15: user.v1.UserService.CreateWorkerProfile:input_type -> user.v1.CreateWorkerProfileRequest
-	17, // 16: user.v1.UserService.CreateOwnerProfile:input_type -> user.v1.CreateOwnerProfileRequest
-	19, // 17: user.v1.UserService.ListBusinessTypes:input_type -> user.v1.ListBusinessTypesRequest
-	21, // 18: user.v1.UserService.ListWorkTypes:input_type -> user.v1.ListWorkTypesRequest
-	3,  // 19: user.v1.UserService.GetProfile:output_type -> user.v1.GetProfileResponse
-	5,  // 20: user.v1.UserService.CreateProfile:output_type -> user.v1.CreateProfileResponse
-	7,  // 21: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
-	12, // 22: user.v1.UserService.CreateWorkerProfile:output_type -> user.v1.CreateWorkerProfileResponse
-	18, // 23: user.v1.UserService.CreateOwnerProfile:output_type -> user.v1.CreateOwnerProfileResponse
-	20, // 24: user.v1.UserService.ListBusinessTypes:output_type -> user.v1.ListBusinessTypesResponse
-	22, // 25: user.v1.UserService.ListWorkTypes:output_type -> user.v1.ListWorkTypesResponse
-	19, // [19:26] is the sub-list for method output_type
-	12, // [12:19] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 7: user.v1.ListWorkCategoriesResponse.categories:type_name -> user.v1.WorkCategory
+	12, // 8: user.v1.OwnerProfileDetails.business_type:type_name -> user.v1.BusinessType
+	17, // 9: user.v1.OwnerProfile.owner_profile:type_name -> user.v1.OwnerProfileDetails
+	18, // 10: user.v1.CreateOwnerProfileResponse.profile:type_name -> user.v1.OwnerProfile
+	12, // 11: user.v1.ListBusinessTypesResponse.business_types:type_name -> user.v1.BusinessType
+	13, // 12: user.v1.ListWorkTypesResponse.work_types:type_name -> user.v1.WorkType
+	26, // 13: user.v1.WorkTypeField.options:type_name -> user.v1.WorkTypeFieldOption
+	27, // 14: user.v1.ListWorkTypeFieldsResponse.fields:type_name -> user.v1.WorkTypeField
+	2,  // 15: user.v1.UserService.GetProfile:input_type -> user.v1.GetProfileRequest
+	4,  // 16: user.v1.UserService.CreateProfile:input_type -> user.v1.CreateProfileRequest
+	6,  // 17: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
+	9,  // 18: user.v1.UserService.CreateWorkerProfile:input_type -> user.v1.CreateWorkerProfileRequest
+	19, // 19: user.v1.UserService.CreateOwnerProfile:input_type -> user.v1.CreateOwnerProfileRequest
+	21, // 20: user.v1.UserService.ListBusinessTypes:input_type -> user.v1.ListBusinessTypesRequest
+	23, // 21: user.v1.UserService.ListWorkTypes:input_type -> user.v1.ListWorkTypesRequest
+	15, // 22: user.v1.UserService.ListWorkCategories:input_type -> user.v1.ListWorkCategoriesRequest
+	25, // 23: user.v1.UserService.ListWorkTypesByCategory:input_type -> user.v1.ListWorkTypesByCategoryRequest
+	28, // 24: user.v1.UserService.ListWorkTypeFields:input_type -> user.v1.ListWorkTypeFieldsRequest
+	3,  // 25: user.v1.UserService.GetProfile:output_type -> user.v1.GetProfileResponse
+	5,  // 26: user.v1.UserService.CreateProfile:output_type -> user.v1.CreateProfileResponse
+	7,  // 27: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
+	11, // 28: user.v1.UserService.CreateWorkerProfile:output_type -> user.v1.CreateWorkerProfileResponse
+	20, // 29: user.v1.UserService.CreateOwnerProfile:output_type -> user.v1.CreateOwnerProfileResponse
+	22, // 30: user.v1.UserService.ListBusinessTypes:output_type -> user.v1.ListBusinessTypesResponse
+	24, // 31: user.v1.UserService.ListWorkTypes:output_type -> user.v1.ListWorkTypesResponse
+	16, // 32: user.v1.UserService.ListWorkCategories:output_type -> user.v1.ListWorkCategoriesResponse
+	24, // 33: user.v1.UserService.ListWorkTypesByCategory:output_type -> user.v1.ListWorkTypesResponse
+	29, // 34: user.v1.UserService.ListWorkTypeFields:output_type -> user.v1.ListWorkTypeFieldsResponse
+	25, // [25:35] is the sub-list for method output_type
+	15, // [15:25] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
-func init() { file_user_proto_init() }
-func file_user_proto_init() {
-	if File_user_proto != nil {
+func init() { file_user_user_proto_init() }
+func file_user_user_proto_init() {
+	if File_user_user_proto != nil {
 		return
 	}
-	file_user_proto_msgTypes[7].OneofWrappers = []any{}
-	file_user_proto_msgTypes[8].OneofWrappers = []any{}
-	file_user_proto_msgTypes[13].OneofWrappers = []any{}
-	file_user_proto_msgTypes[14].OneofWrappers = []any{}
-	file_user_proto_msgTypes[15].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[7].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[8].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[11].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[12].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[15].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[16].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[17].OneofWrappers = []any{}
+	file_user_user_proto_msgTypes[25].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_proto_rawDesc), len(file_user_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_user_proto_rawDesc), len(file_user_user_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   21,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_user_proto_goTypes,
-		DependencyIndexes: file_user_proto_depIdxs,
-		EnumInfos:         file_user_proto_enumTypes,
-		MessageInfos:      file_user_proto_msgTypes,
+		GoTypes:           file_user_user_proto_goTypes,
+		DependencyIndexes: file_user_user_proto_depIdxs,
+		EnumInfos:         file_user_user_proto_enumTypes,
+		MessageInfos:      file_user_user_proto_msgTypes,
 	}.Build()
-	File_user_proto = out.File
-	file_user_proto_goTypes = nil
-	file_user_proto_depIdxs = nil
+	File_user_user_proto = out.File
+	file_user_user_proto_goTypes = nil
+	file_user_user_proto_depIdxs = nil
 }

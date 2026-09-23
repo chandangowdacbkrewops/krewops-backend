@@ -82,6 +82,12 @@ func main() {
 	workTypeRepository :=
 		repository.NewWorkTypeRepository(db)
 
+	workCategoryRepository :=
+		repository.NewWorkCategoryRepository(db)
+
+	workTypeFieldRepository :=
+		repository.NewWorkTypeFieldRepository(db)
+
 	// -------------------------
 	// Services
 	// -------------------------
@@ -97,6 +103,8 @@ func main() {
 			profileRepository,
 			ownerService,
 			workTypeRepository,
+			workCategoryRepository,
+			workTypeFieldRepository,
 		)
 
 	userService :=

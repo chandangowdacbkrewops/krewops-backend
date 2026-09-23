@@ -65,33 +65,38 @@ type CreateWorkerProfileRequest struct {
 	RateType           *string  `json:"rate_type"`
 	AvailabilityStatus *string  `json:"availability_status"`
 	Bio                *string  `json:"bio"`
-	WorkTypeIDs        []string `json:"work_type_ids" binding:"required,min=1"`
+	WorkCategoryID     string   `json:"work_category_id" binding:"required"`
 }
 
-type WorkerProfileSkill struct {
+// WorkerProfileCategory mirrors a row in the worker_work_categories table
+// linking a worker profile to its single work category, joined with the
+// category's code/name for display purposes.
+type WorkerProfileCategory struct {
 	ID              string    `json:"id"`
 	WorkerProfileID string    `json:"worker_profile_id"`
-	WorkTypeID      string    `json:"work_type_id"`
-	ExperienceYears *float64  `json:"experience_years,omitempty"`
+	WorkCategoryID  string    `json:"work_category_id"`
+	Code            string    `json:"code"`
+	Name            string    `json:"name"`
+	IsActive        bool      `json:"is_active"`
 	CreatedAt       time.Time `json:"created_at"`
 }
 
 type WorkerProfile struct {
-	ID                 string               `json:"id"`
-	UserID             string               `json:"user_id"`
-	WorkerType         string               `json:"worker_type"`
-	CrewName           *string              `json:"crew_name,omitempty"`
-	CrewSize           int32                `json:"crew_size"`
-	ExperienceYears    *float64             `json:"experience_years,omitempty"`
-	ExpectedRate       *float64             `json:"expected_rate,omitempty"`
-	RateType           *string              `json:"rate_type,omitempty"`
-	AvailabilityStatus string               `json:"availability_status"`
-	VerificationStatus string               `json:"verification_status"`
-	Bio                *string              `json:"bio,omitempty"`
-	ProfileCompleted   bool                 `json:"profile_completed"`
-	Skills             []WorkerProfileSkill `json:"skills"`
-	CreatedAt          time.Time            `json:"created_at"`
-	UpdatedAt          time.Time            `json:"updated_at"`
+	ID                 string                 `json:"id"`
+	UserID             string                 `json:"user_id"`
+	WorkerType         string                 `json:"worker_type"`
+	CrewName           *string                `json:"crew_name,omitempty"`
+	CrewSize           int32                  `json:"crew_size"`
+	ExperienceYears    *float64               `json:"experience_years,omitempty"`
+	ExpectedRate       *float64               `json:"expected_rate,omitempty"`
+	RateType           *string                `json:"rate_type,omitempty"`
+	AvailabilityStatus string                 `json:"availability_status"`
+	VerificationStatus string                 `json:"verification_status"`
+	Bio                *string                `json:"bio,omitempty"`
+	ProfileCompleted   bool                   `json:"profile_completed"`
+	WorkCategory       *WorkerProfileCategory `json:"work_category,omitempty"`
+	CreatedAt          time.Time              `json:"created_at"`
+	UpdatedAt          time.Time              `json:"updated_at"`
 }
 
 type ProfileResponse struct {

@@ -242,16 +242,14 @@ func (r *ProfileRepository) CreateWorkerProfile(
 		return nil, err
 	}
 
-	if _, err = tx.Exec(ctx, `DELETE FROM worker_profile_skills WHERE worker_profile_id = $1`, workerProfileID); err != nil {
+	if _, err = tx.Exec(ctx, `DELETE FROM worker_work_categories WHERE worker_profile_id = $1`, workerProfileID); err != nil {
 		return nil, err
 	}
-	for _, workTypeID := range req.WorkTypeIDs {
-		if _, err = tx.Exec(ctx, `
-			INSERT INTO worker_profile_skills (worker_profile_id, work_type_id, experience_years)
-			VALUES ($1, $2, $3)
-		`, workerProfileID, workTypeID, req.ExperienceYears); err != nil {
-			return nil, err
-		}
+	if _, err = tx.Exec(ctx, `
+		INSERT INTO worker_work_categories (worker_profile_id, work_category_id)
+		VALUES ($1, $2)
+	`, workerProfileID, req.WorkCategoryID); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(ctx); err != nil {
@@ -279,24 +277,30 @@ func (r *ProfileRepository) FindWorkerProfileByUserID(ctx context.Context, userI
 		return nil, err
 	}
 
-	rows, err := r.db.Query(ctx, `
-		SELECT id, worker_profile_id, work_type_id, experience_years, created_at
-		FROM worker_profile_skills
-		WHERE worker_profile_id = $1
-		ORDER BY created_at, id
-	`, profile.ID)
+	var category model.WorkerProfileCategory
+	err = r.db.QueryRow(ctx, `
+		SELECT wwc.id, wwc.worker_profile_id, wwc.work_category_id, wc.code, wc.name, wwc.is_active, wwc.created_at
+		FROM worker_work_categories wwc
+		JOIN work_categories wc ON wc.id = wwc.work_category_id
+		WHERE wwc.worker_profile_id = $1 AND wwc.is_active = TRUE
+		ORDER BY wwc.created_at DESC
+		LIMIT 1
+	`, profile.ID).Scan(
+		&category.ID,
+		&category.WorkerProfileID,
+		&category.WorkCategoryID,
+		&category.Code,
+		&category.Name,
+		&category.IsActive,
+		&category.CreatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return profile, nil
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	profile.Skills = []model.WorkerProfileSkill{}
-	for rows.Next() {
-		var skill model.WorkerProfileSkill
-		if err := rows.Scan(&skill.ID, &skill.WorkerProfileID, &skill.WorkTypeID, &skill.ExperienceYears, &skill.CreatedAt); err != nil {
-			return nil, err
-		}
-		profile.Skills = append(profile.Skills, skill)
-	}
-	return profile, rows.Err()
+	profile.WorkCategory = &category
+	return profile, nil
 }

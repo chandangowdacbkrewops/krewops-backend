@@ -113,6 +113,24 @@ func main() {
 		userHandler.ListWorkTypes,
 	)
 
+	api.GET(
+		"/work-categories",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkCategories,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/work-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypesByCategory,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/fields",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeFields,
+	)
+
 	authRoutes :=
 		api.Group("/auth")
 

@@ -47,7 +47,7 @@ type CreateWorkerProfileRequest struct {
 	RateType           *string  `json:"rate_type"`
 	AvailabilityStatus *string  `json:"availability_status"`
 	Bio                *string  `json:"bio"`
-	WorkTypeIDs        []string `json:"work_type_ids" binding:"required,min=1"`
+	WorkCategoryID     string   `json:"work_category_id" binding:"required"`
 }
 
 func NewUserHandler(
@@ -73,6 +73,58 @@ func (h *UserHandler) ListWorkTypes(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusOK, workTypesResp)
+}
+
+func (h *UserHandler) ListWorkCategories(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	workCategoriesResp, err := h.userClient.ListWorkCategories(
+		ctx,
+		&userv1.ListWorkCategoriesRequest{},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch work categories", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, workCategoriesResp)
+}
+
+func (h *UserHandler) ListWorkTypesByCategory(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	categoryID := c.Param("categoryId")
+
+	workTypesResp, err := h.userClient.ListWorkTypesByCategory(
+		ctx,
+		&userv1.ListWorkTypesByCategoryRequest{CategoryId: categoryID},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch work types", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, workTypesResp)
+}
+
+func (h *UserHandler) ListWorkTypeFields(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	workTypeID := c.Param("workTypeId")
+
+	fieldsResp, err := h.userClient.ListWorkTypeFields(
+		ctx,
+		&userv1.ListWorkTypeFieldsRequest{WorkTypeId: workTypeID},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch work type fields", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, fieldsResp)
 }
 
 func (h *UserHandler) GetProfile(c *gin.Context) {
@@ -257,7 +309,7 @@ func (h *UserHandler) CreateWorkerProfile(c *gin.Context) {
 			RateType:           request.RateType,
 			AvailabilityStatus: request.AvailabilityStatus,
 			Bio:                request.Bio,
-			WorkTypeIds:        request.WorkTypeIDs,
+			WorkCategoryId:     request.WorkCategoryID,
 		},
 	)
 	if err != nil {
