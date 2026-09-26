@@ -20,6 +20,15 @@ func RegisterRoutes(
 		work.Use(middleware.AuthMiddleware(jwtSecret))
 		{
 			work.POST("", workHandler.CreateWork)
+			work.GET("", workHandler.ListMyWorks)
+			work.GET("/applications", workHandler.ListMyApplications)
+			work.POST("/:workId/applications", workHandler.ApplyToWork)
+			work.GET("/:workId/applications", workHandler.ListWorkApplications)
+			work.POST("/:workId/applications/:applicationId/shortlist", workHandler.ShortlistWorkApplication)
+			work.POST("/:workId/applications/:applicationId/accept", workHandler.AcceptWorkApplication)
+			work.POST("/:workId/applications/:applicationId/reject", workHandler.RejectWorkApplication)
+			work.POST("/:workId/applications/:applicationId/withdraw", workHandler.WithdrawWorkApplication)
+			work.POST("/:workId/applications/:applicationId/cancel", workHandler.CancelWorkApplication)
 		}
 	}
 }

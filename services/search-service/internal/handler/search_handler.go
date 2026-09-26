@@ -23,6 +23,7 @@ func (h *SearchHandler) SearchWork(c *gin.Context) {
 	filters := model.WorkSearchFilters{
 		Keyword:         optionalQuery(c, "keyword"),
 		WorkTypeID:      optionalQuery(c, "work_type_id"),
+		WorkCategoryID:  optionalQuery(c, "work_category_id"),
 		City:            optionalQuery(c, "city"),
 		State:           optionalQuery(c, "state"),
 		ExperienceLevel: optionalQuery(c, "experience_level"),

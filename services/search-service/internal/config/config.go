@@ -13,6 +13,8 @@ type Config struct {
 	GRPCPort string
 
 	DatabaseURL string
+	MongoURI    string
+	MongoDB     string
 
 	JWTSecret string
 }
@@ -26,6 +28,8 @@ func Load() (*Config, error) {
 		GRPCPort: os.Getenv("GRPC_PORT"),
 
 		DatabaseURL: os.Getenv("DATABASE_URL"),
+		MongoURI:    os.Getenv("MONGO_URI"),
+		MongoDB:     os.Getenv("MONGO_DB"),
 
 		JWTSecret: os.Getenv("JWT_SECRET"),
 	}
@@ -38,8 +42,16 @@ func Load() (*Config, error) {
 		cfg.GRPCPort = "50055"
 	}
 
+	if cfg.MongoDB == "" {
+		cfg.MongoDB = "krewops"
+	}
+
 	if cfg.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
+	}
+
+	if cfg.MongoURI == "" {
+		return nil, fmt.Errorf("MONGO_URI is required")
 	}
 
 	if cfg.JWTSecret == "" {

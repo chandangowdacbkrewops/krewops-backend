@@ -9,6 +9,33 @@ service WorkService {
 
   rpc CreateWork(CreateWorkRequest)
       returns (CreateWorkResponse);
+
+  rpc ListMyWorks(ListMyWorksRequest)
+      returns (ListMyWorksResponse);
+
+  rpc ApplyToWork(ApplyToWorkRequest)
+      returns (ApplyToWorkResponse);
+
+  rpc ListMyApplications(ListMyApplicationsRequest)
+      returns (ListMyApplicationsResponse);
+
+  rpc ListWorkApplications(ListWorkApplicationsRequest)
+      returns (ListWorkApplicationsResponse);
+
+  rpc ShortlistWorkApplication(UpdateWorkApplicationRequest)
+      returns (UpdateWorkApplicationResponse);
+
+  rpc AcceptWorkApplication(UpdateWorkApplicationRequest)
+      returns (UpdateWorkApplicationResponse);
+
+  rpc RejectWorkApplication(UpdateWorkApplicationRequest)
+      returns (UpdateWorkApplicationResponse);
+
+  rpc WithdrawWorkApplication(UpdateWorkApplicationRequest)
+      returns (UpdateWorkApplicationResponse);
+
+  rpc CancelWorkApplication(UpdateWorkApplicationRequest)
+      returns (UpdateWorkApplicationResponse);
 }
 
 message CreateWorkRequest {
@@ -17,6 +44,7 @@ message CreateWorkRequest {
   optional string status = 2;
   optional string title = 3;
   optional string work_type_id = 4;
+  optional string work_category_id = 26;
   optional string description = 5;
   optional string address = 6;
   optional string city = 7;
@@ -37,6 +65,7 @@ message CreateWorkRequest {
   optional string payment_notes = 22;
   optional bool accommodation_provided = 23;
   optional bool meals_provided = 24;
+  map<string, string> attributes = 25;
 }
 
 message CreateWorkResponse {
@@ -50,6 +79,9 @@ message WorkPosting {
 
   optional string title = 4;
   optional string work_type_id = 5;
+  optional string work_type_name = 29;
+  optional string work_category_id = 31;
+  optional string work_category_name = 32;
   optional string description = 6;
 
   optional string address = 7;
@@ -78,4 +110,76 @@ message WorkPosting {
   optional string published_at = 26;
   string created_at = 27;
   string updated_at = 28;
+  map<string, string> attributes = 30;
+}
+
+message Quotation {
+  double amount = 1;
+  string currency = 2;
+  string price_type = 3;
+  optional double estimated_duration_hours = 4;
+  optional string message = 5;
+}
+
+message WorkApplication {
+  string id = 1;
+  string work_id = 2;
+  string worker_id = 3;
+  string status = 4;
+  Quotation quotation = 5;
+  string applied_at = 6;
+  string updated_at = 7;
+}
+
+message ApplyToWorkRequest {
+  string user_id = 1;
+  string work_id = 2;
+  Quotation quotation = 3;
+}
+
+message ApplyToWorkResponse {
+  WorkApplication application = 1;
+}
+
+message ListWorkApplicationsRequest {
+  string user_id = 1;
+  string work_id = 2;
+  optional string status = 3;
+}
+
+message ListWorkApplicationsResponse {
+  repeated WorkApplication applications = 1;
+}
+
+message UpdateWorkApplicationRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string application_id = 3;
+}
+
+message UpdateWorkApplicationResponse {
+  WorkApplication application = 1;
+}
+
+message ListMyWorksRequest {
+  string user_id = 1;
+  optional string status = 2;
+}
+
+message ListMyWorksResponse {
+  repeated WorkPosting works = 1;
+}
+
+message MyWorkApplication {
+  WorkApplication application = 1;
+  WorkPosting work = 2;
+}
+
+message ListMyApplicationsRequest {
+  string user_id = 1;
+  optional string status = 2;
+}
+
+message ListMyApplicationsResponse {
+  repeated MyWorkApplication applications = 1;
 }

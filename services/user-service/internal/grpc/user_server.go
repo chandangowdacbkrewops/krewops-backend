@@ -362,9 +362,48 @@ func toWorkTypeFieldProto(f model.WorkTypeField) *userv1.WorkTypeField {
 			Label:        opt.Label,
 			DisplayOrder: opt.DisplayOrder,
 			IsActive:     opt.IsActive,
+			FieldKey:     opt.FieldKey,
 		})
 	}
 	return pbField
+}
+
+func (s *UserServer) ListWorkTypePaymentTypes(
+	ctx context.Context,
+	req *userv1.ListWorkTypePaymentTypesRequest,
+) (*userv1.ListPaymentTypesResponse, error) {
+	paymentTypes, err := s.userService.ListWorkTypePaymentTypes(ctx, req.WorkTypeId)
+	if err != nil {
+		return nil, err
+	}
+	return toPaymentTypesResponse(paymentTypes), nil
+}
+
+func (s *UserServer) ListWorkCategoryPaymentTypes(
+	ctx context.Context,
+	req *userv1.ListWorkCategoryPaymentTypesRequest,
+) (*userv1.ListPaymentTypesResponse, error) {
+	paymentTypes, err := s.userService.ListWorkCategoryPaymentTypes(ctx, req.CategoryId)
+	if err != nil {
+		return nil, err
+	}
+	return toPaymentTypesResponse(paymentTypes), nil
+}
+
+func toPaymentTypesResponse(paymentTypes []model.PaymentType) *userv1.ListPaymentTypesResponse {
+	resp := &userv1.ListPaymentTypesResponse{
+		PaymentTypes: make([]*userv1.PaymentType, 0, len(paymentTypes)),
+	}
+	for _, paymentType := range paymentTypes {
+		resp.PaymentTypes = append(resp.PaymentTypes, &userv1.PaymentType{
+			Id:        paymentType.ID,
+			Code:      paymentType.Code,
+			Name:      paymentType.Name,
+			IsActive:  paymentType.IsActive,
+			CreatedAt: paymentType.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		})
+	}
+	return resp
 }
 
 func (s *UserServer) ListWorkCategories(

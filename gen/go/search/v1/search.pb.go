@@ -25,6 +25,7 @@ type SearchWorkRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Keyword         *string                `protobuf:"bytes,1,opt,name=keyword,proto3,oneof" json:"keyword,omitempty"`
 	WorkTypeId      *string                `protobuf:"bytes,2,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
+	WorkCategoryId  *string                `protobuf:"bytes,11,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
 	City            *string                `protobuf:"bytes,3,opt,name=city,proto3,oneof" json:"city,omitempty"`
 	State           *string                `protobuf:"bytes,4,opt,name=state,proto3,oneof" json:"state,omitempty"`
 	ExperienceLevel *string                `protobuf:"bytes,5,opt,name=experience_level,json=experienceLevel,proto3,oneof" json:"experience_level,omitempty"`
@@ -77,6 +78,13 @@ func (x *SearchWorkRequest) GetKeyword() string {
 func (x *SearchWorkRequest) GetWorkTypeId() string {
 	if x != nil && x.WorkTypeId != nil {
 		return *x.WorkTypeId
+	}
+	return ""
+}
+
+func (x *SearchWorkRequest) GetWorkCategoryId() string {
+	if x != nil && x.WorkCategoryId != nil {
+		return *x.WorkCategoryId
 	}
 	return ""
 }
@@ -138,32 +146,34 @@ func (x *SearchWorkRequest) GetPageSize() int32 {
 }
 
 type WorkSummary struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId          string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Status          string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	Title           *string                `protobuf:"bytes,4,opt,name=title,proto3,oneof" json:"title,omitempty"`
-	WorkTypeId      *string                `protobuf:"bytes,5,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
-	WorkTypeName    *string                `protobuf:"bytes,6,opt,name=work_type_name,json=workTypeName,proto3,oneof" json:"work_type_name,omitempty"`
-	Description     *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Address         *string                `protobuf:"bytes,8,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	City            *string                `protobuf:"bytes,9,opt,name=city,proto3,oneof" json:"city,omitempty"`
-	State           *string                `protobuf:"bytes,10,opt,name=state,proto3,oneof" json:"state,omitempty"`
-	Latitude        *float64               `protobuf:"fixed64,11,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
-	Longitude       *float64               `protobuf:"fixed64,12,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
-	WorkersNeeded   *int32                 `protobuf:"varint,13,opt,name=workers_needed,json=workersNeeded,proto3,oneof" json:"workers_needed,omitempty"`
-	ExperienceLevel *string                `protobuf:"bytes,14,opt,name=experience_level,json=experienceLevel,proto3,oneof" json:"experience_level,omitempty"`
-	Skills          []string               `protobuf:"bytes,15,rep,name=skills,proto3" json:"skills,omitempty"`
-	StartDate       *string                `protobuf:"bytes,16,opt,name=start_date,json=startDate,proto3,oneof" json:"start_date,omitempty"`
-	DurationValue   *int32                 `protobuf:"varint,17,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
-	DurationUnit    *string                `protobuf:"bytes,18,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
-	ShiftTiming     *string                `protobuf:"bytes,19,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
-	PaymentType     *string                `protobuf:"bytes,20,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
-	BudgetRate      *float64               `protobuf:"fixed64,21,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
-	PublishedAt     *string                `protobuf:"bytes,22,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
-	CreatedAt       string                 `protobuf:"bytes,23,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId           string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status           string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Title            *string                `protobuf:"bytes,4,opt,name=title,proto3,oneof" json:"title,omitempty"`
+	WorkTypeId       *string                `protobuf:"bytes,5,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
+	WorkTypeName     *string                `protobuf:"bytes,6,opt,name=work_type_name,json=workTypeName,proto3,oneof" json:"work_type_name,omitempty"`
+	WorkCategoryId   *string                `protobuf:"bytes,24,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
+	WorkCategoryName *string                `protobuf:"bytes,25,opt,name=work_category_name,json=workCategoryName,proto3,oneof" json:"work_category_name,omitempty"`
+	Description      *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Address          *string                `protobuf:"bytes,8,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	City             *string                `protobuf:"bytes,9,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	State            *string                `protobuf:"bytes,10,opt,name=state,proto3,oneof" json:"state,omitempty"`
+	Latitude         *float64               `protobuf:"fixed64,11,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude        *float64               `protobuf:"fixed64,12,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	WorkersNeeded    *int32                 `protobuf:"varint,13,opt,name=workers_needed,json=workersNeeded,proto3,oneof" json:"workers_needed,omitempty"`
+	ExperienceLevel  *string                `protobuf:"bytes,14,opt,name=experience_level,json=experienceLevel,proto3,oneof" json:"experience_level,omitempty"`
+	Skills           []string               `protobuf:"bytes,15,rep,name=skills,proto3" json:"skills,omitempty"`
+	StartDate        *string                `protobuf:"bytes,16,opt,name=start_date,json=startDate,proto3,oneof" json:"start_date,omitempty"`
+	DurationValue    *int32                 `protobuf:"varint,17,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
+	DurationUnit     *string                `protobuf:"bytes,18,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
+	ShiftTiming      *string                `protobuf:"bytes,19,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
+	PaymentType      *string                `protobuf:"bytes,20,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
+	BudgetRate       *float64               `protobuf:"fixed64,21,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
+	PublishedAt      *string                `protobuf:"bytes,22,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	CreatedAt        string                 `protobuf:"bytes,23,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *WorkSummary) Reset() {
@@ -234,6 +244,20 @@ func (x *WorkSummary) GetWorkTypeId() string {
 func (x *WorkSummary) GetWorkTypeName() string {
 	if x != nil && x.WorkTypeName != nil {
 		return *x.WorkTypeName
+	}
+	return ""
+}
+
+func (x *WorkSummary) GetWorkCategoryId() string {
+	if x != nil && x.WorkCategoryId != nil {
+		return *x.WorkCategoryId
+	}
+	return ""
+}
+
+func (x *WorkSummary) GetWorkCategoryName() string {
+	if x != nil && x.WorkCategoryName != nil {
+		return *x.WorkCategoryName
 	}
 	return ""
 }
@@ -829,23 +853,26 @@ var File_search_search_proto protoreflect.FileDescriptor
 
 const file_search_search_proto_rawDesc = "" +
 	"\n" +
-	"\x13search/search.proto\x12\tsearch.v1\"\x8f\x04\n" +
+	"\x13search/search.proto\x12\tsearch.v1\"\xd3\x04\n" +
 	"\x11SearchWorkRequest\x12\x1d\n" +
 	"\akeyword\x18\x01 \x01(\tH\x00R\akeyword\x88\x01\x01\x12%\n" +
 	"\fwork_type_id\x18\x02 \x01(\tH\x01R\n" +
-	"workTypeId\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\x03 \x01(\tH\x02R\x04city\x88\x01\x01\x12\x19\n" +
-	"\x05state\x18\x04 \x01(\tH\x03R\x05state\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\x05 \x01(\tH\x04R\x0fexperienceLevel\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x06 \x01(\tH\x05R\vpaymentType\x88\x01\x01\x12+\n" +
-	"\x0fmin_budget_rate\x18\a \x01(\x01H\x06R\rminBudgetRate\x88\x01\x01\x12+\n" +
-	"\x0fmax_budget_rate\x18\b \x01(\x01H\aR\rmaxBudgetRate\x88\x01\x01\x12\x17\n" +
-	"\x04page\x18\t \x01(\x05H\bR\x04page\x88\x01\x01\x12 \n" +
+	"workTypeId\x88\x01\x01\x12-\n" +
+	"\x10work_category_id\x18\v \x01(\tH\x02R\x0eworkCategoryId\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\x03 \x01(\tH\x03R\x04city\x88\x01\x01\x12\x19\n" +
+	"\x05state\x18\x04 \x01(\tH\x04R\x05state\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\x05 \x01(\tH\x05R\x0fexperienceLevel\x88\x01\x01\x12&\n" +
+	"\fpayment_type\x18\x06 \x01(\tH\x06R\vpaymentType\x88\x01\x01\x12+\n" +
+	"\x0fmin_budget_rate\x18\a \x01(\x01H\aR\rminBudgetRate\x88\x01\x01\x12+\n" +
+	"\x0fmax_budget_rate\x18\b \x01(\x01H\bR\rmaxBudgetRate\x88\x01\x01\x12\x17\n" +
+	"\x04page\x18\t \x01(\x05H\tR\x04page\x88\x01\x01\x12 \n" +
 	"\tpage_size\x18\n" +
-	" \x01(\x05H\tR\bpageSize\x88\x01\x01B\n" +
+	" \x01(\x05H\n" +
+	"R\bpageSize\x88\x01\x01B\n" +
 	"\n" +
 	"\b_keywordB\x0f\n" +
-	"\r_work_type_idB\a\n" +
+	"\r_work_type_idB\x13\n" +
+	"\x11_work_category_idB\a\n" +
 	"\x05_cityB\b\n" +
 	"\x06_stateB\x13\n" +
 	"\x11_experience_levelB\x0f\n" +
@@ -854,7 +881,7 @@ const file_search_search_proto_rawDesc = "" +
 	"\x10_max_budget_rateB\a\n" +
 	"\x05_pageB\f\n" +
 	"\n" +
-	"_page_size\"\xbb\b\n" +
+	"_page_size\"\xc9\t\n" +
 	"\vWorkSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
@@ -862,32 +889,36 @@ const file_search_search_proto_rawDesc = "" +
 	"\x05title\x18\x04 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
 	"\fwork_type_id\x18\x05 \x01(\tH\x01R\n" +
 	"workTypeId\x88\x01\x01\x12)\n" +
-	"\x0ework_type_name\x18\x06 \x01(\tH\x02R\fworkTypeName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\a \x01(\tH\x03R\vdescription\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\b \x01(\tH\x04R\aaddress\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\t \x01(\tH\x05R\x04city\x88\x01\x01\x12\x19\n" +
+	"\x0ework_type_name\x18\x06 \x01(\tH\x02R\fworkTypeName\x88\x01\x01\x12-\n" +
+	"\x10work_category_id\x18\x18 \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x121\n" +
+	"\x12work_category_name\x18\x19 \x01(\tH\x04R\x10workCategoryName\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\a \x01(\tH\x05R\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\b \x01(\tH\x06R\aaddress\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\t \x01(\tH\aR\x04city\x88\x01\x01\x12\x19\n" +
 	"\x05state\x18\n" +
-	" \x01(\tH\x06R\x05state\x88\x01\x01\x12\x1f\n" +
-	"\blatitude\x18\v \x01(\x01H\aR\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\f \x01(\x01H\bR\tlongitude\x88\x01\x01\x12*\n" +
-	"\x0eworkers_needed\x18\r \x01(\x05H\tR\rworkersNeeded\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\x0e \x01(\tH\n" +
-	"R\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
+	" \x01(\tH\bR\x05state\x88\x01\x01\x12\x1f\n" +
+	"\blatitude\x18\v \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\f \x01(\x01H\n" +
+	"R\tlongitude\x88\x01\x01\x12*\n" +
+	"\x0eworkers_needed\x18\r \x01(\x05H\vR\rworkersNeeded\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\x0e \x01(\tH\fR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
 	"\x06skills\x18\x0f \x03(\tR\x06skills\x12\"\n" +
 	"\n" +
-	"start_date\x18\x10 \x01(\tH\vR\tstartDate\x88\x01\x01\x12*\n" +
-	"\x0eduration_value\x18\x11 \x01(\x05H\fR\rdurationValue\x88\x01\x01\x12(\n" +
-	"\rduration_unit\x18\x12 \x01(\tH\rR\fdurationUnit\x88\x01\x01\x12&\n" +
-	"\fshift_timing\x18\x13 \x01(\tH\x0eR\vshiftTiming\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x14 \x01(\tH\x0fR\vpaymentType\x88\x01\x01\x12$\n" +
-	"\vbudget_rate\x18\x15 \x01(\x01H\x10R\n" +
+	"start_date\x18\x10 \x01(\tH\rR\tstartDate\x88\x01\x01\x12*\n" +
+	"\x0eduration_value\x18\x11 \x01(\x05H\x0eR\rdurationValue\x88\x01\x01\x12(\n" +
+	"\rduration_unit\x18\x12 \x01(\tH\x0fR\fdurationUnit\x88\x01\x01\x12&\n" +
+	"\fshift_timing\x18\x13 \x01(\tH\x10R\vshiftTiming\x88\x01\x01\x12&\n" +
+	"\fpayment_type\x18\x14 \x01(\tH\x11R\vpaymentType\x88\x01\x01\x12$\n" +
+	"\vbudget_rate\x18\x15 \x01(\x01H\x12R\n" +
 	"budgetRate\x88\x01\x01\x12&\n" +
-	"\fpublished_at\x18\x16 \x01(\tH\x11R\vpublishedAt\x88\x01\x01\x12\x1d\n" +
+	"\fpublished_at\x18\x16 \x01(\tH\x13R\vpublishedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x17 \x01(\tR\tcreatedAtB\b\n" +
 	"\x06_titleB\x0f\n" +
 	"\r_work_type_idB\x11\n" +
-	"\x0f_work_type_nameB\x0e\n" +
+	"\x0f_work_type_nameB\x13\n" +
+	"\x11_work_category_idB\x15\n" +
+	"\x13_work_category_nameB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_addressB\a\n" +

@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName              = "/user.v1.UserService/GetProfile"
-	UserService_CreateProfile_FullMethodName           = "/user.v1.UserService/CreateProfile"
-	UserService_UpdateProfile_FullMethodName           = "/user.v1.UserService/UpdateProfile"
-	UserService_CreateWorkerProfile_FullMethodName     = "/user.v1.UserService/CreateWorkerProfile"
-	UserService_CreateOwnerProfile_FullMethodName      = "/user.v1.UserService/CreateOwnerProfile"
-	UserService_ListBusinessTypes_FullMethodName       = "/user.v1.UserService/ListBusinessTypes"
-	UserService_ListWorkTypes_FullMethodName           = "/user.v1.UserService/ListWorkTypes"
-	UserService_ListWorkCategories_FullMethodName      = "/user.v1.UserService/ListWorkCategories"
-	UserService_ListWorkTypesByCategory_FullMethodName = "/user.v1.UserService/ListWorkTypesByCategory"
-	UserService_ListWorkTypeFields_FullMethodName      = "/user.v1.UserService/ListWorkTypeFields"
+	UserService_GetProfile_FullMethodName                   = "/user.v1.UserService/GetProfile"
+	UserService_CreateProfile_FullMethodName                = "/user.v1.UserService/CreateProfile"
+	UserService_UpdateProfile_FullMethodName                = "/user.v1.UserService/UpdateProfile"
+	UserService_CreateWorkerProfile_FullMethodName          = "/user.v1.UserService/CreateWorkerProfile"
+	UserService_CreateOwnerProfile_FullMethodName           = "/user.v1.UserService/CreateOwnerProfile"
+	UserService_ListBusinessTypes_FullMethodName            = "/user.v1.UserService/ListBusinessTypes"
+	UserService_ListWorkTypes_FullMethodName                = "/user.v1.UserService/ListWorkTypes"
+	UserService_ListWorkCategories_FullMethodName           = "/user.v1.UserService/ListWorkCategories"
+	UserService_ListWorkTypesByCategory_FullMethodName      = "/user.v1.UserService/ListWorkTypesByCategory"
+	UserService_ListWorkTypeFields_FullMethodName           = "/user.v1.UserService/ListWorkTypeFields"
+	UserService_ListWorkTypePaymentTypes_FullMethodName     = "/user.v1.UserService/ListWorkTypePaymentTypes"
+	UserService_ListWorkCategoryPaymentTypes_FullMethodName = "/user.v1.UserService/ListWorkCategoryPaymentTypes"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -45,6 +47,8 @@ type UserServiceClient interface {
 	ListWorkCategories(ctx context.Context, in *ListWorkCategoriesRequest, opts ...grpc.CallOption) (*ListWorkCategoriesResponse, error)
 	ListWorkTypesByCategory(ctx context.Context, in *ListWorkTypesByCategoryRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error)
 	ListWorkTypeFields(ctx context.Context, in *ListWorkTypeFieldsRequest, opts ...grpc.CallOption) (*ListWorkTypeFieldsResponse, error)
+	ListWorkTypePaymentTypes(ctx context.Context, in *ListWorkTypePaymentTypesRequest, opts ...grpc.CallOption) (*ListPaymentTypesResponse, error)
+	ListWorkCategoryPaymentTypes(ctx context.Context, in *ListWorkCategoryPaymentTypesRequest, opts ...grpc.CallOption) (*ListPaymentTypesResponse, error)
 }
 
 type userServiceClient struct {
@@ -155,6 +159,26 @@ func (c *userServiceClient) ListWorkTypeFields(ctx context.Context, in *ListWork
 	return out, nil
 }
 
+func (c *userServiceClient) ListWorkTypePaymentTypes(ctx context.Context, in *ListWorkTypePaymentTypesRequest, opts ...grpc.CallOption) (*ListPaymentTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPaymentTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypePaymentTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkCategoryPaymentTypes(ctx context.Context, in *ListWorkCategoryPaymentTypesRequest, opts ...grpc.CallOption) (*ListPaymentTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPaymentTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkCategoryPaymentTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -169,6 +193,8 @@ type UserServiceServer interface {
 	ListWorkCategories(context.Context, *ListWorkCategoriesRequest) (*ListWorkCategoriesResponse, error)
 	ListWorkTypesByCategory(context.Context, *ListWorkTypesByCategoryRequest) (*ListWorkTypesResponse, error)
 	ListWorkTypeFields(context.Context, *ListWorkTypeFieldsRequest) (*ListWorkTypeFieldsResponse, error)
+	ListWorkTypePaymentTypes(context.Context, *ListWorkTypePaymentTypesRequest) (*ListPaymentTypesResponse, error)
+	ListWorkCategoryPaymentTypes(context.Context, *ListWorkCategoryPaymentTypesRequest) (*ListPaymentTypesResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -208,6 +234,12 @@ func (UnimplementedUserServiceServer) ListWorkTypesByCategory(context.Context, *
 }
 func (UnimplementedUserServiceServer) ListWorkTypeFields(context.Context, *ListWorkTypeFieldsRequest) (*ListWorkTypeFieldsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypeFields not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypePaymentTypes(context.Context, *ListWorkTypePaymentTypesRequest) (*ListPaymentTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypePaymentTypes not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkCategoryPaymentTypes(context.Context, *ListWorkCategoryPaymentTypesRequest) (*ListPaymentTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkCategoryPaymentTypes not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -410,6 +442,42 @@ func _UserService_ListWorkTypeFields_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ListWorkTypePaymentTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypePaymentTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypePaymentTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypePaymentTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypePaymentTypes(ctx, req.(*ListWorkTypePaymentTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkCategoryPaymentTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkCategoryPaymentTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkCategoryPaymentTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkCategoryPaymentTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkCategoryPaymentTypes(ctx, req.(*ListWorkCategoryPaymentTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -456,6 +524,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWorkTypeFields",
 			Handler:    _UserService_ListWorkTypeFields_Handler,
+		},
+		{
+			MethodName: "ListWorkTypePaymentTypes",
+			Handler:    _UserService_ListWorkTypePaymentTypes_Handler,
+		},
+		{
+			MethodName: "ListWorkCategoryPaymentTypes",
+			Handler:    _UserService_ListWorkCategoryPaymentTypes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

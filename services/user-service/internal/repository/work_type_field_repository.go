@@ -101,6 +101,7 @@ func (r *WorkTypeFieldRepository) ListByWorkTypeID(ctx context.Context, workType
 			return nil, err
 		}
 		if field, ok := byID[opt.FieldID]; ok {
+			opt.FieldKey = field.FieldKey
 			field.Options = append(field.Options, opt)
 		}
 	}

@@ -88,6 +88,9 @@ func main() {
 	workTypeFieldRepository :=
 		repository.NewWorkTypeFieldRepository(db)
 
+	paymentTypeRepository :=
+		repository.NewPaymentTypeRepository(db)
+
 	// -------------------------
 	// Services
 	// -------------------------
@@ -105,6 +108,7 @@ func main() {
 			workTypeRepository,
 			workCategoryRepository,
 			workTypeFieldRepository,
+			paymentTypeRepository,
 		)
 
 	userService :=

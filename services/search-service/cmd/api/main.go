@@ -27,9 +27,9 @@ func main() {
 		log.Fatal("failed to load configuration: ", err)
 	}
 
-	// search-service owns no tables, so it does not run any migrations. It
-	// connects to the same shared database that work-service and
-	// user-service manage the schema for, and only issues read queries.
+	// search-service owns no tables. Worker search reads PostgreSQL tables
+	// owned by user-service; work search reads the Mongo work_postings
+	// collection owned by work-service.
 	db, err := database.NewPostgresPool(
 		ctx,
 		cfg.DatabaseURL,
@@ -40,11 +40,25 @@ func main() {
 
 	defer db.Close()
 
+	mongoClient, mongoDB, err := database.NewMongoDatabase(
+		ctx,
+		cfg.MongoURI,
+		cfg.MongoDB,
+	)
+	if err != nil {
+		log.Fatal("failed to connect mongo: ", err)
+	}
+	defer func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			log.Printf("failed to disconnect mongo: %v", err)
+		}
+	}()
+
 	// -------------------------
 	// Repositories
 	// -------------------------
 
-	workSearchRepository := repository.NewWorkSearchRepository(db)
+	workSearchRepository := repository.NewWorkSearchRepository(mongoDB)
 	workerSearchRepository := repository.NewWorkerSearchRepository(db)
 
 	// -------------------------

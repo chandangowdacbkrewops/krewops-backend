@@ -78,6 +78,14 @@ func (s userServiceClientStub) ListWorkTypeFields(ctx context.Context, req *user
 	return nil, errors.New("not implemented")
 }
 
+func (s userServiceClientStub) ListWorkTypePaymentTypes(context.Context, *userv1.ListWorkTypePaymentTypesRequest, ...grpc.CallOption) (*userv1.ListPaymentTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkCategoryPaymentTypes(context.Context, *userv1.ListWorkCategoryPaymentTypesRequest, ...grpc.CallOption) (*userv1.ListPaymentTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
 func TestUserHandlerListWorkTypes(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	handler := NewUserHandler(userServiceClientStub{

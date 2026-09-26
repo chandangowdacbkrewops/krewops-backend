@@ -41,6 +41,18 @@ func RegisterRoutes(
 			profileHandler.ListWorkTypeFields,
 		)
 
+		v1.GET(
+			"/work-types/:workTypeId/payment-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypePaymentTypes,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/payment-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkCategoryPaymentTypes,
+		)
+
 		users := v1.Group("/users")
 		users.Use(middleware.AuthMiddleware(jwtSecret))
 		{

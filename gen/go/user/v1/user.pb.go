@@ -1889,6 +1889,7 @@ type WorkTypeFieldOption struct {
 	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
 	DisplayOrder  int32                  `protobuf:"varint,4,opt,name=display_order,json=displayOrder,proto3" json:"display_order,omitempty"`
 	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	FieldKey      string                 `protobuf:"bytes,6,opt,name=field_key,json=fieldKey,proto3" json:"field_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1956,6 +1957,13 @@ func (x *WorkTypeFieldOption) GetIsActive() bool {
 		return x.IsActive
 	}
 	return false
+}
+
+func (x *WorkTypeFieldOption) GetFieldKey() string {
+	if x != nil {
+		return x.FieldKey
+	}
+	return ""
 }
 
 type WorkTypeField struct {
@@ -2210,6 +2218,214 @@ func (x *ListWorkTypeFieldsResponse) GetFields() []*WorkTypeField {
 	return nil
 }
 
+type PaymentType struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	IsActive      bool                   `protobuf:"varint,4,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PaymentType) Reset() {
+	*x = PaymentType{}
+	mi := &file_user_user_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PaymentType) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PaymentType) ProtoMessage() {}
+
+func (x *PaymentType) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PaymentType.ProtoReflect.Descriptor instead.
+func (*PaymentType) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *PaymentType) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PaymentType) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *PaymentType) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *PaymentType) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+func (x *PaymentType) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type ListWorkTypePaymentTypesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkTypeId    string                 `protobuf:"bytes,1,opt,name=work_type_id,json=workTypeId,proto3" json:"work_type_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkTypePaymentTypesRequest) Reset() {
+	*x = ListWorkTypePaymentTypesRequest{}
+	mi := &file_user_user_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkTypePaymentTypesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkTypePaymentTypesRequest) ProtoMessage() {}
+
+func (x *ListWorkTypePaymentTypesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkTypePaymentTypesRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkTypePaymentTypesRequest) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ListWorkTypePaymentTypesRequest) GetWorkTypeId() string {
+	if x != nil {
+		return x.WorkTypeId
+	}
+	return ""
+}
+
+type ListWorkCategoryPaymentTypesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CategoryId    string                 `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkCategoryPaymentTypesRequest) Reset() {
+	*x = ListWorkCategoryPaymentTypesRequest{}
+	mi := &file_user_user_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkCategoryPaymentTypesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkCategoryPaymentTypesRequest) ProtoMessage() {}
+
+func (x *ListWorkCategoryPaymentTypesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkCategoryPaymentTypesRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkCategoryPaymentTypesRequest) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *ListWorkCategoryPaymentTypesRequest) GetCategoryId() string {
+	if x != nil {
+		return x.CategoryId
+	}
+	return ""
+}
+
+type ListPaymentTypesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PaymentTypes  []*PaymentType         `protobuf:"bytes,1,rep,name=payment_types,json=paymentTypes,proto3" json:"payment_types,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPaymentTypesResponse) Reset() {
+	*x = ListPaymentTypesResponse{}
+	mi := &file_user_user_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPaymentTypesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPaymentTypesResponse) ProtoMessage() {}
+
+func (x *ListPaymentTypesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPaymentTypesResponse.ProtoReflect.Descriptor instead.
+func (*ListPaymentTypesResponse) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ListPaymentTypesResponse) GetPaymentTypes() []*PaymentType {
+	if x != nil {
+		return x.PaymentTypes
+	}
+	return nil
+}
+
 var File_user_user_proto protoreflect.FileDescriptor
 
 const file_user_user_proto_rawDesc = "" +
@@ -2401,13 +2617,14 @@ const file_user_user_proto_rawDesc = "" +
 	"work_types\x18\x01 \x03(\v2\x11.user.v1.WorkTypeR\tworkTypes\"A\n" +
 	"\x1eListWorkTypesByCategoryRequest\x12\x1f\n" +
 	"\vcategory_id\x18\x01 \x01(\tR\n" +
-	"categoryId\"\x93\x01\n" +
+	"categoryId\"\xb0\x01\n" +
 	"\x13WorkTypeFieldOption\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12#\n" +
 	"\rdisplay_order\x18\x04 \x01(\x05R\fdisplayOrder\x12\x1b\n" +
-	"\tis_active\x18\x05 \x01(\bR\bisActive\"\xfd\x04\n" +
+	"\tis_active\x18\x05 \x01(\bR\bisActive\x12\x1b\n" +
+	"\tfield_key\x18\x06 \x01(\tR\bfieldKey\"\xfd\x04\n" +
 	"\rWorkTypeField\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12 \n" +
 	"\fwork_type_id\x18\x02 \x01(\tR\n" +
@@ -2445,7 +2662,22 @@ const file_user_user_proto_rawDesc = "" +
 	"\fwork_type_id\x18\x01 \x01(\tR\n" +
 	"workTypeId\"L\n" +
 	"\x1aListWorkTypeFieldsResponse\x12.\n" +
-	"\x06fields\x18\x01 \x03(\v2\x16.user.v1.WorkTypeFieldR\x06fields*a\n" +
+	"\x06fields\x18\x01 \x03(\v2\x16.user.v1.WorkTypeFieldR\x06fields\"\x81\x01\n" +
+	"\vPaymentType\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
+	"\tis_active\x18\x04 \x01(\bR\bisActive\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\"C\n" +
+	"\x1fListWorkTypePaymentTypesRequest\x12 \n" +
+	"\fwork_type_id\x18\x01 \x01(\tR\n" +
+	"workTypeId\"F\n" +
+	"#ListWorkCategoryPaymentTypesRequest\x12\x1f\n" +
+	"\vcategory_id\x18\x01 \x01(\tR\n" +
+	"categoryId\"U\n" +
+	"\x18ListPaymentTypesResponse\x129\n" +
+	"\rpayment_types\x18\x01 \x03(\v2\x14.user.v1.PaymentTypeR\fpaymentTypes*a\n" +
 	"\n" +
 	"WorkerType\x12\x1b\n" +
 	"\x17WORKER_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
@@ -2455,7 +2687,7 @@ const file_user_user_proto_rawDesc = "" +
 	"\x15RATE_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10RATE_TYPE_HOURLY\x10\x01\x12\x13\n" +
 	"\x0fRATE_TYPE_DAILY\x10\x02\x12\x13\n" +
-	"\x0fRATE_TYPE_FIXED\x10\x032\x83\a\n" +
+	"\x0fRATE_TYPE_FIXED\x10\x032\xdd\b\n" +
 	"\vUserService\x12E\n" +
 	"\n" +
 	"GetProfile\x12\x1a.user.v1.GetProfileRequest\x1a\x1b.user.v1.GetProfileResponse\x12N\n" +
@@ -2467,7 +2699,9 @@ const file_user_user_proto_rawDesc = "" +
 	"\rListWorkTypes\x12\x1d.user.v1.ListWorkTypesRequest\x1a\x1e.user.v1.ListWorkTypesResponse\x12]\n" +
 	"\x12ListWorkCategories\x12\".user.v1.ListWorkCategoriesRequest\x1a#.user.v1.ListWorkCategoriesResponse\x12b\n" +
 	"\x17ListWorkTypesByCategory\x12'.user.v1.ListWorkTypesByCategoryRequest\x1a\x1e.user.v1.ListWorkTypesResponse\x12]\n" +
-	"\x12ListWorkTypeFields\x12\".user.v1.ListWorkTypeFieldsRequest\x1a#.user.v1.ListWorkTypeFieldsResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1;userv1b\x06proto3"
+	"\x12ListWorkTypeFields\x12\".user.v1.ListWorkTypeFieldsRequest\x1a#.user.v1.ListWorkTypeFieldsResponse\x12g\n" +
+	"\x18ListWorkTypePaymentTypes\x12(.user.v1.ListWorkTypePaymentTypesRequest\x1a!.user.v1.ListPaymentTypesResponse\x12o\n" +
+	"\x1cListWorkCategoryPaymentTypes\x12,.user.v1.ListWorkCategoryPaymentTypesRequest\x1a!.user.v1.ListPaymentTypesResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1;userv1b\x06proto3"
 
 var (
 	file_user_user_proto_rawDescOnce sync.Once
@@ -2482,38 +2716,42 @@ func file_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_user_user_proto_goTypes = []any{
-	(WorkerType)(0),                        // 0: user.v1.WorkerType
-	(RateType)(0),                          // 1: user.v1.RateType
-	(*GetProfileRequest)(nil),              // 2: user.v1.GetProfileRequest
-	(*GetProfileResponse)(nil),             // 3: user.v1.GetProfileResponse
-	(*CreateProfileRequest)(nil),           // 4: user.v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil),          // 5: user.v1.CreateProfileResponse
-	(*UpdateProfileRequest)(nil),           // 6: user.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),          // 7: user.v1.UpdateProfileResponse
-	(*UserProfile)(nil),                    // 8: user.v1.UserProfile
-	(*CreateWorkerProfileRequest)(nil),     // 9: user.v1.CreateWorkerProfileRequest
-	(*WorkerProfile)(nil),                  // 10: user.v1.WorkerProfile
-	(*CreateWorkerProfileResponse)(nil),    // 11: user.v1.CreateWorkerProfileResponse
-	(*BusinessType)(nil),                   // 12: user.v1.BusinessType
-	(*WorkType)(nil),                       // 13: user.v1.WorkType
-	(*WorkCategory)(nil),                   // 14: user.v1.WorkCategory
-	(*ListWorkCategoriesRequest)(nil),      // 15: user.v1.ListWorkCategoriesRequest
-	(*ListWorkCategoriesResponse)(nil),     // 16: user.v1.ListWorkCategoriesResponse
-	(*OwnerProfileDetails)(nil),            // 17: user.v1.OwnerProfileDetails
-	(*OwnerProfile)(nil),                   // 18: user.v1.OwnerProfile
-	(*CreateOwnerProfileRequest)(nil),      // 19: user.v1.CreateOwnerProfileRequest
-	(*CreateOwnerProfileResponse)(nil),     // 20: user.v1.CreateOwnerProfileResponse
-	(*ListBusinessTypesRequest)(nil),       // 21: user.v1.ListBusinessTypesRequest
-	(*ListBusinessTypesResponse)(nil),      // 22: user.v1.ListBusinessTypesResponse
-	(*ListWorkTypesRequest)(nil),           // 23: user.v1.ListWorkTypesRequest
-	(*ListWorkTypesResponse)(nil),          // 24: user.v1.ListWorkTypesResponse
-	(*ListWorkTypesByCategoryRequest)(nil), // 25: user.v1.ListWorkTypesByCategoryRequest
-	(*WorkTypeFieldOption)(nil),            // 26: user.v1.WorkTypeFieldOption
-	(*WorkTypeField)(nil),                  // 27: user.v1.WorkTypeField
-	(*ListWorkTypeFieldsRequest)(nil),      // 28: user.v1.ListWorkTypeFieldsRequest
-	(*ListWorkTypeFieldsResponse)(nil),     // 29: user.v1.ListWorkTypeFieldsResponse
+	(WorkerType)(0),                             // 0: user.v1.WorkerType
+	(RateType)(0),                               // 1: user.v1.RateType
+	(*GetProfileRequest)(nil),                   // 2: user.v1.GetProfileRequest
+	(*GetProfileResponse)(nil),                  // 3: user.v1.GetProfileResponse
+	(*CreateProfileRequest)(nil),                // 4: user.v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),               // 5: user.v1.CreateProfileResponse
+	(*UpdateProfileRequest)(nil),                // 6: user.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),               // 7: user.v1.UpdateProfileResponse
+	(*UserProfile)(nil),                         // 8: user.v1.UserProfile
+	(*CreateWorkerProfileRequest)(nil),          // 9: user.v1.CreateWorkerProfileRequest
+	(*WorkerProfile)(nil),                       // 10: user.v1.WorkerProfile
+	(*CreateWorkerProfileResponse)(nil),         // 11: user.v1.CreateWorkerProfileResponse
+	(*BusinessType)(nil),                        // 12: user.v1.BusinessType
+	(*WorkType)(nil),                            // 13: user.v1.WorkType
+	(*WorkCategory)(nil),                        // 14: user.v1.WorkCategory
+	(*ListWorkCategoriesRequest)(nil),           // 15: user.v1.ListWorkCategoriesRequest
+	(*ListWorkCategoriesResponse)(nil),          // 16: user.v1.ListWorkCategoriesResponse
+	(*OwnerProfileDetails)(nil),                 // 17: user.v1.OwnerProfileDetails
+	(*OwnerProfile)(nil),                        // 18: user.v1.OwnerProfile
+	(*CreateOwnerProfileRequest)(nil),           // 19: user.v1.CreateOwnerProfileRequest
+	(*CreateOwnerProfileResponse)(nil),          // 20: user.v1.CreateOwnerProfileResponse
+	(*ListBusinessTypesRequest)(nil),            // 21: user.v1.ListBusinessTypesRequest
+	(*ListBusinessTypesResponse)(nil),           // 22: user.v1.ListBusinessTypesResponse
+	(*ListWorkTypesRequest)(nil),                // 23: user.v1.ListWorkTypesRequest
+	(*ListWorkTypesResponse)(nil),               // 24: user.v1.ListWorkTypesResponse
+	(*ListWorkTypesByCategoryRequest)(nil),      // 25: user.v1.ListWorkTypesByCategoryRequest
+	(*WorkTypeFieldOption)(nil),                 // 26: user.v1.WorkTypeFieldOption
+	(*WorkTypeField)(nil),                       // 27: user.v1.WorkTypeField
+	(*ListWorkTypeFieldsRequest)(nil),           // 28: user.v1.ListWorkTypeFieldsRequest
+	(*ListWorkTypeFieldsResponse)(nil),          // 29: user.v1.ListWorkTypeFieldsResponse
+	(*PaymentType)(nil),                         // 30: user.v1.PaymentType
+	(*ListWorkTypePaymentTypesRequest)(nil),     // 31: user.v1.ListWorkTypePaymentTypesRequest
+	(*ListWorkCategoryPaymentTypesRequest)(nil), // 32: user.v1.ListWorkCategoryPaymentTypesRequest
+	(*ListPaymentTypesResponse)(nil),            // 33: user.v1.ListPaymentTypesResponse
 }
 var file_user_user_proto_depIdxs = []int32{
 	8,  // 0: user.v1.GetProfileResponse.profile:type_name -> user.v1.UserProfile
@@ -2531,31 +2769,36 @@ var file_user_user_proto_depIdxs = []int32{
 	13, // 12: user.v1.ListWorkTypesResponse.work_types:type_name -> user.v1.WorkType
 	26, // 13: user.v1.WorkTypeField.options:type_name -> user.v1.WorkTypeFieldOption
 	27, // 14: user.v1.ListWorkTypeFieldsResponse.fields:type_name -> user.v1.WorkTypeField
-	2,  // 15: user.v1.UserService.GetProfile:input_type -> user.v1.GetProfileRequest
-	4,  // 16: user.v1.UserService.CreateProfile:input_type -> user.v1.CreateProfileRequest
-	6,  // 17: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	9,  // 18: user.v1.UserService.CreateWorkerProfile:input_type -> user.v1.CreateWorkerProfileRequest
-	19, // 19: user.v1.UserService.CreateOwnerProfile:input_type -> user.v1.CreateOwnerProfileRequest
-	21, // 20: user.v1.UserService.ListBusinessTypes:input_type -> user.v1.ListBusinessTypesRequest
-	23, // 21: user.v1.UserService.ListWorkTypes:input_type -> user.v1.ListWorkTypesRequest
-	15, // 22: user.v1.UserService.ListWorkCategories:input_type -> user.v1.ListWorkCategoriesRequest
-	25, // 23: user.v1.UserService.ListWorkTypesByCategory:input_type -> user.v1.ListWorkTypesByCategoryRequest
-	28, // 24: user.v1.UserService.ListWorkTypeFields:input_type -> user.v1.ListWorkTypeFieldsRequest
-	3,  // 25: user.v1.UserService.GetProfile:output_type -> user.v1.GetProfileResponse
-	5,  // 26: user.v1.UserService.CreateProfile:output_type -> user.v1.CreateProfileResponse
-	7,  // 27: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
-	11, // 28: user.v1.UserService.CreateWorkerProfile:output_type -> user.v1.CreateWorkerProfileResponse
-	20, // 29: user.v1.UserService.CreateOwnerProfile:output_type -> user.v1.CreateOwnerProfileResponse
-	22, // 30: user.v1.UserService.ListBusinessTypes:output_type -> user.v1.ListBusinessTypesResponse
-	24, // 31: user.v1.UserService.ListWorkTypes:output_type -> user.v1.ListWorkTypesResponse
-	16, // 32: user.v1.UserService.ListWorkCategories:output_type -> user.v1.ListWorkCategoriesResponse
-	24, // 33: user.v1.UserService.ListWorkTypesByCategory:output_type -> user.v1.ListWorkTypesResponse
-	29, // 34: user.v1.UserService.ListWorkTypeFields:output_type -> user.v1.ListWorkTypeFieldsResponse
-	25, // [25:35] is the sub-list for method output_type
-	15, // [15:25] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	30, // 15: user.v1.ListPaymentTypesResponse.payment_types:type_name -> user.v1.PaymentType
+	2,  // 16: user.v1.UserService.GetProfile:input_type -> user.v1.GetProfileRequest
+	4,  // 17: user.v1.UserService.CreateProfile:input_type -> user.v1.CreateProfileRequest
+	6,  // 18: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
+	9,  // 19: user.v1.UserService.CreateWorkerProfile:input_type -> user.v1.CreateWorkerProfileRequest
+	19, // 20: user.v1.UserService.CreateOwnerProfile:input_type -> user.v1.CreateOwnerProfileRequest
+	21, // 21: user.v1.UserService.ListBusinessTypes:input_type -> user.v1.ListBusinessTypesRequest
+	23, // 22: user.v1.UserService.ListWorkTypes:input_type -> user.v1.ListWorkTypesRequest
+	15, // 23: user.v1.UserService.ListWorkCategories:input_type -> user.v1.ListWorkCategoriesRequest
+	25, // 24: user.v1.UserService.ListWorkTypesByCategory:input_type -> user.v1.ListWorkTypesByCategoryRequest
+	28, // 25: user.v1.UserService.ListWorkTypeFields:input_type -> user.v1.ListWorkTypeFieldsRequest
+	31, // 26: user.v1.UserService.ListWorkTypePaymentTypes:input_type -> user.v1.ListWorkTypePaymentTypesRequest
+	32, // 27: user.v1.UserService.ListWorkCategoryPaymentTypes:input_type -> user.v1.ListWorkCategoryPaymentTypesRequest
+	3,  // 28: user.v1.UserService.GetProfile:output_type -> user.v1.GetProfileResponse
+	5,  // 29: user.v1.UserService.CreateProfile:output_type -> user.v1.CreateProfileResponse
+	7,  // 30: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
+	11, // 31: user.v1.UserService.CreateWorkerProfile:output_type -> user.v1.CreateWorkerProfileResponse
+	20, // 32: user.v1.UserService.CreateOwnerProfile:output_type -> user.v1.CreateOwnerProfileResponse
+	22, // 33: user.v1.UserService.ListBusinessTypes:output_type -> user.v1.ListBusinessTypesResponse
+	24, // 34: user.v1.UserService.ListWorkTypes:output_type -> user.v1.ListWorkTypesResponse
+	16, // 35: user.v1.UserService.ListWorkCategories:output_type -> user.v1.ListWorkCategoriesResponse
+	24, // 36: user.v1.UserService.ListWorkTypesByCategory:output_type -> user.v1.ListWorkTypesResponse
+	29, // 37: user.v1.UserService.ListWorkTypeFields:output_type -> user.v1.ListWorkTypeFieldsResponse
+	33, // 38: user.v1.UserService.ListWorkTypePaymentTypes:output_type -> user.v1.ListPaymentTypesResponse
+	33, // 39: user.v1.UserService.ListWorkCategoryPaymentTypes:output_type -> user.v1.ListPaymentTypesResponse
+	28, // [28:40] is the sub-list for method output_type
+	16, // [16:28] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_user_user_proto_init() }
@@ -2577,7 +2820,7 @@ func file_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_user_proto_rawDesc), len(file_user_user_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   28,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

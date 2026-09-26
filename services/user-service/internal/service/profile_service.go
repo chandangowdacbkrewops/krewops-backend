@@ -15,6 +15,7 @@ type ProfileService struct {
 	workTypeRepository      *repository.WorkTypeRepository
 	workCategoryRepository  *repository.WorkCategoryRepository
 	workTypeFieldRepository *repository.WorkTypeFieldRepository
+	paymentTypeRepository   *repository.PaymentTypeRepository
 }
 
 var ErrInvalidProfile = errors.New("first_name, last_name, country, state, city, and postal_code are required")
@@ -25,6 +26,7 @@ func NewProfileService(
 	workTypeRepository *repository.WorkTypeRepository,
 	workCategoryRepository *repository.WorkCategoryRepository,
 	workTypeFieldRepository *repository.WorkTypeFieldRepository,
+	paymentTypeRepository *repository.PaymentTypeRepository,
 ) *ProfileService {
 	return &ProfileService{
 		profileRepository:       profileRepository,
@@ -32,6 +34,7 @@ func NewProfileService(
 		workTypeRepository:      workTypeRepository,
 		workCategoryRepository:  workCategoryRepository,
 		workTypeFieldRepository: workTypeFieldRepository,
+		paymentTypeRepository:   paymentTypeRepository,
 	}
 }
 
@@ -207,4 +210,12 @@ func (s *ProfileService) ListWorkTypesByCategory(ctx context.Context, categoryID
 
 func (s *ProfileService) ListWorkTypeFields(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
 	return s.workTypeFieldRepository.ListByWorkTypeID(ctx, workTypeID)
+}
+
+func (s *ProfileService) ListWorkTypePaymentTypes(ctx context.Context, workTypeID string) ([]model.PaymentType, error) {
+	return s.paymentTypeRepository.ListByWorkTypeID(ctx, workTypeID)
+}
+
+func (s *ProfileService) ListWorkCategoryPaymentTypes(ctx context.Context, categoryID string) ([]model.PaymentType, error) {
+	return s.paymentTypeRepository.ListByCategoryID(ctx, categoryID)
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/response"
 	workv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -22,9 +23,10 @@ type WorkHandler struct {
 type CreateWorkRequest struct {
 	Status *string `json:"status"`
 
-	Title       *string `json:"title"`
-	WorkTypeID  *string `json:"work_type_id"`
-	Description *string `json:"description"`
+	Title          *string `json:"title"`
+	WorkTypeID     *string `json:"work_type_id"`
+	WorkCategoryID *string `json:"work_category_id"`
+	Description    *string `json:"description"`
 
 	Address   *string  `json:"address"`
 	City      *string  `json:"city"`
@@ -48,6 +50,8 @@ type CreateWorkRequest struct {
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
+
+	Attributes map[string]string `json:"attributes"`
 }
 
 func NewWorkHandler(
@@ -95,6 +99,7 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			Status:                request.Status,
 			Title:                 request.Title,
 			WorkTypeId:            request.WorkTypeID,
+			WorkCategoryId:        request.WorkCategoryID,
 			Description:           request.Description,
 			Address:               request.Address,
 			City:                  request.City,
@@ -115,6 +120,7 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			PaymentNotes:          request.PaymentNotes,
 			AccommodationProvided: request.AccommodationProvided,
 			MealsProvided:         request.MealsProvided,
+			Attributes:            request.Attributes,
 		},
 	)
 
@@ -139,9 +145,220 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 	)
 }
 
+func (h *WorkHandler) ListMyWorks(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	var workStatus *string
+	if raw := c.Query("status"); raw != "" {
+		workStatus = &raw
+	}
+
+	listResp, err := h.workClient.ListMyWorks(ctx, &workv1.ListMyWorksRequest{
+		UserId: userID,
+		Status: workStatus,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list work postings")
+		return
+	}
+
+	response.Success(c, http.StatusOK, listResp)
+}
+
 func stringValue(value *string) string {
 	if value == nil {
 		return ""
 	}
 	return *value
+}
+
+type ApplyToWorkRequest struct {
+	Quotation Quotation `json:"quotation"`
+}
+
+type Quotation struct {
+	Amount                 float64  `json:"amount"`
+	Currency               string   `json:"currency"`
+	PriceType              string   `json:"price_type"`
+	EstimatedDurationHours *float64 `json:"estimated_duration_hours"`
+	Message                *string  `json:"message"`
+}
+
+func (h *WorkHandler) ApplyToWork(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	var request ApplyToWorkRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	applyResp, err := h.workClient.ApplyToWork(ctx, &workv1.ApplyToWorkRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+		Quotation: &workv1.Quotation{
+			Amount:                 request.Quotation.Amount,
+			Currency:               request.Quotation.Currency,
+			PriceType:              request.Quotation.PriceType,
+			EstimatedDurationHours: request.Quotation.EstimatedDurationHours,
+			Message:                request.Quotation.Message,
+		},
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to apply to work")
+		return
+	}
+
+	response.Success(c, http.StatusCreated, applyResp)
+}
+
+func (h *WorkHandler) ListWorkApplications(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	var status *string
+	if raw := c.Query("status"); raw != "" {
+		status = &raw
+	}
+
+	listResp, err := h.workClient.ListWorkApplications(ctx, &workv1.ListWorkApplicationsRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+		Status: status,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list work applications")
+		return
+	}
+
+	response.Success(c, http.StatusOK, listResp)
+}
+
+func (h *WorkHandler) ListMyApplications(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	var applicationStatus *string
+	if raw := c.Query("status"); raw != "" {
+		applicationStatus = &raw
+	}
+
+	listResp, err := h.workClient.ListMyApplications(ctx, &workv1.ListMyApplicationsRequest{
+		UserId: userID,
+		Status: applicationStatus,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list applications")
+		return
+	}
+
+	response.Success(c, http.StatusOK, listResp)
+}
+
+func (h *WorkHandler) ShortlistWorkApplication(c *gin.Context) {
+	h.updateApplication(c, h.workClient.ShortlistWorkApplication, "failed to shortlist application")
+}
+
+func (h *WorkHandler) AcceptWorkApplication(c *gin.Context) {
+	h.updateApplication(c, h.workClient.AcceptWorkApplication, "failed to accept application")
+}
+
+func (h *WorkHandler) RejectWorkApplication(c *gin.Context) {
+	h.updateApplication(c, h.workClient.RejectWorkApplication, "failed to reject application")
+}
+
+func (h *WorkHandler) WithdrawWorkApplication(c *gin.Context) {
+	h.updateApplication(c, h.workClient.WithdrawWorkApplication, "failed to withdraw application")
+}
+
+func (h *WorkHandler) CancelWorkApplication(c *gin.Context) {
+	h.updateApplication(c, h.workClient.CancelWorkApplication, "failed to cancel application")
+}
+
+func (h *WorkHandler) updateApplication(
+	c *gin.Context,
+	fn func(ctx context.Context, in *workv1.UpdateWorkApplicationRequest, opts ...grpc.CallOption) (*workv1.UpdateWorkApplicationResponse, error),
+	fallback string,
+) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	updateResp, err := fn(ctx, &workv1.UpdateWorkApplicationRequest{
+		UserId:        userID,
+		WorkId:        c.Param("workId"),
+		ApplicationId: c.Param("applicationId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, fallback)
+		return
+	}
+
+	response.Success(c, http.StatusOK, updateResp)
+}
+
+func gatewayUserID(c *gin.Context) (string, bool) {
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+	if !exists || !valid || userIDString == "" {
+		return "", false
+	}
+	return userIDString, true
+}
+
+func writeApplicationGRPCError(c *gin.Context, err error, fallback string) {
+	message := status.Convert(err).Message()
+	switch status.Code(err) {
+	case codes.PermissionDenied:
+		response.Forbidden(c, message, nil)
+	case codes.NotFound:
+		response.NotFound(c, message, nil)
+	case codes.AlreadyExists:
+		response.Conflict(c, message, nil)
+	case codes.InvalidArgument, codes.FailedPrecondition:
+		response.BadRequest(c, message, nil)
+	default:
+		response.Internal(c, fallback, nil)
+	}
 }

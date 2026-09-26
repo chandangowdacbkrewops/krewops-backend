@@ -35,6 +35,7 @@ type WorkType struct {
 type WorkTypeFieldOption struct {
 	ID           string    `json:"id"`
 	FieldID      string    `json:"field_id"`
+	FieldKey     string    `json:"field_key"`
 	Value        string    `json:"value"`
 	Label        string    `json:"label"`
 	DisplayOrder int32     `json:"display_order"`
@@ -65,4 +66,12 @@ type WorkTypeField struct {
 	CreatedAt    time.Time             `json:"created_at"`
 	UpdatedAt    time.Time             `json:"updated_at"`
 	Options      []WorkTypeFieldOption `json:"options,omitempty"`
+}
+
+type PaymentType struct {
+	ID        string    `json:"id"`
+	Code      string    `json:"code"`
+	Name      string    `json:"name"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
 }

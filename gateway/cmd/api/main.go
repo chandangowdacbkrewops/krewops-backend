@@ -131,6 +131,18 @@ func main() {
 		userHandler.ListWorkTypeFields,
 	)
 
+	api.GET(
+		"/work-types/:workTypeId/payment-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypePaymentTypes,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/payment-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkCategoryPaymentTypes,
+	)
+
 	authRoutes :=
 		api.Group("/auth")
 
@@ -181,6 +193,51 @@ func main() {
 	workRoutes.POST(
 		"",
 		workHandler.CreateWork,
+	)
+
+	workRoutes.GET(
+		"",
+		workHandler.ListMyWorks,
+	)
+
+	workRoutes.GET(
+		"/applications",
+		workHandler.ListMyApplications,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications",
+		workHandler.ApplyToWork,
+	)
+
+	workRoutes.GET(
+		"/:workId/applications",
+		workHandler.ListWorkApplications,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/shortlist",
+		workHandler.ShortlistWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/accept",
+		workHandler.AcceptWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/reject",
+		workHandler.RejectWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/withdraw",
+		workHandler.WithdrawWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/cancel",
+		workHandler.CancelWorkApplication,
 	)
 
 	searchRoutes :=

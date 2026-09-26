@@ -93,3 +93,11 @@ func (s *UserService) ListWorkTypesByCategory(ctx context.Context, categoryID st
 func (s *UserService) ListWorkTypeFields(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
 	return s.profileService.ListWorkTypeFields(ctx, workTypeID)
 }
+
+func (s *UserService) ListWorkTypePaymentTypes(ctx context.Context, workTypeID string) ([]model.PaymentType, error) {
+	return s.profileService.ListWorkTypePaymentTypes(ctx, workTypeID)
+}
+
+func (s *UserService) ListWorkCategoryPaymentTypes(ctx context.Context, categoryID string) ([]model.PaymentType, error) {
+	return s.profileService.ListWorkCategoryPaymentTypes(ctx, categoryID)
+}

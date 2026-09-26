@@ -36,6 +36,12 @@ service UserService {
 
   rpc ListWorkTypeFields(ListWorkTypeFieldsRequest)
       returns (ListWorkTypeFieldsResponse);
+
+  rpc ListWorkTypePaymentTypes(ListWorkTypePaymentTypesRequest)
+      returns (ListPaymentTypesResponse);
+
+  rpc ListWorkCategoryPaymentTypes(ListWorkCategoryPaymentTypesRequest)
+      returns (ListPaymentTypesResponse);
 }
 
 enum WorkerType {
@@ -260,6 +266,7 @@ message WorkTypeFieldOption {
   string label = 3;
   int32 display_order = 4;
   bool is_active = 5;
+  string field_key = 6;
 }
 
 message WorkTypeField {
@@ -287,4 +294,24 @@ message ListWorkTypeFieldsRequest {
 
 message ListWorkTypeFieldsResponse {
   repeated WorkTypeField fields = 1;
+}
+
+message PaymentType {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  bool is_active = 4;
+  string created_at = 5;
+}
+
+message ListWorkTypePaymentTypesRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkCategoryPaymentTypesRequest {
+  string category_id = 1;
+}
+
+message ListPaymentTypesResponse {
+  repeated PaymentType payment_types = 1;
 }

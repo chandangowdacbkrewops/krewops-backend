@@ -127,6 +127,42 @@ func (h *UserHandler) ListWorkTypeFields(c *gin.Context) {
 	response.Success(c, http.StatusOK, fieldsResp)
 }
 
+func (h *UserHandler) ListWorkTypePaymentTypes(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	workTypeID := c.Param("workTypeId")
+
+	paymentTypesResp, err := h.userClient.ListWorkTypePaymentTypes(
+		ctx,
+		&userv1.ListWorkTypePaymentTypesRequest{WorkTypeId: workTypeID},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch payment types", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, paymentTypesResp)
+}
+
+func (h *UserHandler) ListWorkCategoryPaymentTypes(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	categoryID := c.Param("categoryId")
+
+	paymentTypesResp, err := h.userClient.ListWorkCategoryPaymentTypes(
+		ctx,
+		&userv1.ListWorkCategoryPaymentTypesRequest{CategoryId: categoryID},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch payment types", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, paymentTypesResp)
+}
+
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	userIDString, valid := userID.(string)

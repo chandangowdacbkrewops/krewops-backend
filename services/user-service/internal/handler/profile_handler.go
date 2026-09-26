@@ -160,6 +160,30 @@ func (h *ProfileHandler) ListWorkTypeFields(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": fields})
 }
 
+func (h *ProfileHandler) ListWorkTypePaymentTypes(c *gin.Context) {
+	workTypeID := c.Param("workTypeId")
+
+	paymentTypes, err := h.profileService.ListWorkTypePaymentTypes(c.Request.Context(), workTypeID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch payment types"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": paymentTypes})
+}
+
+func (h *ProfileHandler) ListWorkCategoryPaymentTypes(c *gin.Context) {
+	categoryID := c.Param("categoryId")
+
+	paymentTypes, err := h.profileService.ListWorkCategoryPaymentTypes(c.Request.Context(), categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch payment types"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": paymentTypes})
+}
+
 func (h *ProfileHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"service": "user-service",

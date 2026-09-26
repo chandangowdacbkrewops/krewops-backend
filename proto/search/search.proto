@@ -7,10 +7,8 @@ option go_package =
 
 // SearchService is the single entry point for the mobile app's "Search"
 // domain. It fronts two independently queryable capabilities - work
-// postings and worker profiles - backed today by direct PostgreSQL queries
-// against the shared database owned by work-service and user-service. The
-// backend can later move to Elasticsearch/OpenSearch without changing this
-// contract.
+// postings (MongoDB) and worker profiles (PostgreSQL). The backend can
+// later move to Elasticsearch/OpenSearch without changing this contract.
 service SearchService {
 
   rpc SearchWork(SearchWorkRequest)
@@ -23,6 +21,7 @@ service SearchService {
 message SearchWorkRequest {
   optional string keyword = 1;
   optional string work_type_id = 2;
+  optional string work_category_id = 11;
   optional string city = 3;
   optional string state = 4;
   optional string experience_level = 5;
@@ -42,6 +41,8 @@ message WorkSummary {
   optional string title = 4;
   optional string work_type_id = 5;
   optional string work_type_name = 6;
+  optional string work_category_id = 24;
+  optional string work_category_name = 25;
   optional string description = 7;
 
   optional string address = 8;

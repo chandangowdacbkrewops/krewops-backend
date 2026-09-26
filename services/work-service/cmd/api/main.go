@@ -45,13 +45,39 @@ func main() {
 
 	defer db.Close()
 
+	mongoClient, mongoDB, err := database.NewMongoDatabase(
+		ctx,
+		cfg.MongoURI,
+		cfg.MongoDB,
+	)
+	if err != nil {
+		log.Fatal("failed to connect mongo: ", err)
+	}
+	defer func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			log.Printf("failed to disconnect mongo: %v", err)
+		}
+	}()
+
 	// -------------------------
 	// Repositories
 	// -------------------------
 
-	workRepository := repository.NewWorkRepository(db)
+	workRepository := repository.NewWorkRepository(mongoDB)
+	if err := workRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work posting indexes: ", err)
+	}
+
+	applicationRepository := repository.NewApplicationRepository(mongoDB)
+	if err := applicationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work application indexes: ", err)
+	}
+
 	workOwnerRepository := repository.NewWorkOwnerRepository(db)
 	workTypeRepository := repository.NewWorkTypeRepository(db)
+	workCategoryRepository := repository.NewWorkCategoryRepository(db)
+	workTypeFieldRepository := repository.NewWorkTypeFieldRepository(db)
+	paymentTypeRepository := repository.NewPaymentTypeRepository(db)
 
 	// -------------------------
 	// Services
@@ -59,8 +85,12 @@ func main() {
 
 	workService := service.NewWorkService(
 		workRepository,
+		applicationRepository,
 		workOwnerRepository,
 		workTypeRepository,
+		workCategoryRepository,
+		workTypeFieldRepository,
+		paymentTypeRepository,
 	)
 
 	// -------------------------

@@ -40,3 +40,26 @@ func (r *WorkOwnerRepository) HasCompletedOnboarding(
 
 	return true, nil
 }
+
+func (r *WorkOwnerRepository) HasCompletedWorkerProfile(
+	ctx context.Context,
+	userID string,
+) (bool, error) {
+	var exists int
+
+	err := r.db.QueryRow(ctx, `
+		SELECT 1
+		FROM worker_profiles
+		WHERE user_id = $1
+			AND profile_completed = TRUE
+	`, userID).Scan(&exists)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

@@ -32,6 +32,7 @@ func NormalizePagination(page, pageSize int) (int, int) {
 type WorkSearchFilters struct {
 	Keyword         *string
 	WorkTypeID      *string
+	WorkCategoryID  *string
 	City            *string
 	State           *string
 	ExperienceLevel *string
@@ -43,18 +44,19 @@ type WorkSearchFilters struct {
 	PageSize int
 }
 
-// WorkSearchResult is a single work_postings row joined with its work type
-// name, projected for the search results list (not the full CreateWork
-// response shape).
+// WorkSearchResult is a single work_postings Mongo document projected
+// for the search results list (not the full CreateWork response shape).
 type WorkSearchResult struct {
 	ID     string
 	UserID string
 	Status string
 
-	Title        *string
-	WorkTypeID   *string
-	WorkTypeName *string
-	Description  *string
+	Title            *string
+	WorkTypeID       *string
+	WorkTypeName     *string
+	WorkCategoryID   *string
+	WorkCategoryName *string
+	Description      *string
 
 	Address   *string
 	City      *string

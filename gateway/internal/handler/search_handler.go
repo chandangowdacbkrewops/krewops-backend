@@ -41,6 +41,7 @@ func (h *SearchHandler) SearchWork(c *gin.Context) {
 		&searchv1.SearchWorkRequest{
 			Keyword:         optionalQueryParam(c, "keyword"),
 			WorkTypeId:      optionalQueryParam(c, "work_type_id"),
+			WorkCategoryId:  optionalQueryParam(c, "work_category_id"),
 			City:            optionalQueryParam(c, "city"),
 			State:           optionalQueryParam(c, "state"),
 			ExperienceLevel: optionalQueryParam(c, "experience_level"),

@@ -4,6 +4,13 @@ import "time"
 
 // WorkType mirrors user-service's lookup row for the shared work_types table.
 type WorkType struct {
+	ID         string `json:"id"`
+	CategoryID string `json:"category_id"`
+	Name       string `json:"name"`
+}
+
+// WorkCategory mirrors a row in the shared work_categories table.
+type WorkCategory struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
@@ -16,21 +23,6 @@ const (
 func ValidStatus(status string) bool {
 	switch status {
 	case StatusDraft, StatusPublished:
-		return true
-	default:
-		return false
-	}
-}
-
-const (
-	PaymentTypePerDay = "per_day"
-	PaymentTypeHourly = "hourly"
-	PaymentTypeFixed  = "fixed"
-)
-
-func ValidPaymentType(paymentType string) bool {
-	switch paymentType {
-	case PaymentTypePerDay, PaymentTypeHourly, PaymentTypeFixed:
 		return true
 	default:
 		return false
@@ -59,9 +51,10 @@ func ValidDurationUnit(unit string) bool {
 type CreateWorkRequest struct {
 	Status *string `json:"status"`
 
-	Title       *string `json:"title"`
-	WorkTypeID  *string `json:"work_type_id"`
-	Description *string `json:"description"`
+	Title          *string `json:"title"`
+	WorkTypeID     *string `json:"work_type_id"`
+	WorkCategoryID *string `json:"work_category_id"`
+	Description    *string `json:"description"`
 
 	Address   *string  `json:"address"`
 	City      *string  `json:"city"`
@@ -85,6 +78,8 @@ type CreateWorkRequest struct {
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
+
+	Attributes map[string]string `json:"attributes"`
 }
 
 // WorkRecord is the internal representation of a row in work_postings.
@@ -92,9 +87,14 @@ type WorkRecord struct {
 	ID     string
 	UserID string
 
-	Title       *string
-	WorkTypeID  *string
-	Description *string
+	Title            *string
+	WorkTypeID       *string
+	WorkTypeName     *string
+	WorkCategoryID   *string
+	WorkCategoryName *string
+	Description      *string
+
+	Attributes map[string]string
 
 	Address   *string
 	City      *string
@@ -131,9 +131,12 @@ type WorkResponse struct {
 	UserID string `json:"user_id"`
 	Status string `json:"status"`
 
-	Title       *string `json:"title,omitempty"`
-	WorkTypeID  *string `json:"work_type_id,omitempty"`
-	Description *string `json:"description,omitempty"`
+	Title            *string `json:"title,omitempty"`
+	WorkTypeID       *string `json:"work_type_id,omitempty"`
+	WorkTypeName     *string `json:"work_type_name,omitempty"`
+	WorkCategoryID   *string `json:"work_category_id,omitempty"`
+	WorkCategoryName *string `json:"work_category_name,omitempty"`
+	Description      *string `json:"description,omitempty"`
 
 	Address   *string  `json:"address,omitempty"`
 	City      *string  `json:"city,omitempty"`
@@ -161,6 +164,8 @@ type WorkResponse struct {
 	PublishedAt *string   `json:"published_at,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+
+	Attributes map[string]string `json:"attributes"`
 }
 
 func BuildWorkResponse(record *WorkRecord) *WorkResponse {
@@ -169,9 +174,12 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 		UserID: record.UserID,
 		Status: record.Status,
 
-		Title:       record.Title,
-		WorkTypeID:  record.WorkTypeID,
-		Description: record.Description,
+		Title:            record.Title,
+		WorkTypeID:       record.WorkTypeID,
+		WorkTypeName:     record.WorkTypeName,
+		WorkCategoryID:   record.WorkCategoryID,
+		WorkCategoryName: record.WorkCategoryName,
+		Description:      record.Description,
 
 		Address:   record.Address,
 		City:      record.City,
@@ -197,10 +205,16 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 
 		CreatedAt: record.CreatedAt,
 		UpdatedAt: record.UpdatedAt,
+
+		Attributes: record.Attributes,
 	}
 
 	if record.Skills == nil {
 		resp.Skills = []string{}
+	}
+
+	if record.Attributes == nil {
+		resp.Attributes = map[string]string{}
 	}
 
 	if record.StartDate != nil {
@@ -214,4 +228,11 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 	}
 
 	return resp
+}
+
+// WorkTypeField is the subset of user-service field definitions needed
+// to validate dynamic attributes on create.
+type WorkTypeField struct {
+	FieldKey   string
+	IsRequired bool
 }
