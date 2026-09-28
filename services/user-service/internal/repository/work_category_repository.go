@@ -2,7 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/chandangowdacbkrewops/krewops-backend/services/user-service/internal/model"
@@ -47,4 +49,29 @@ func (r *WorkCategoryRepository) ListAll(ctx context.Context) ([]model.WorkCateg
 	}
 
 	return categories, rows.Err()
+}
+
+func (r *WorkCategoryRepository) FindByID(ctx context.Context, id string) (*model.WorkCategory, error) {
+	var wc model.WorkCategory
+	err := r.db.QueryRow(ctx, `
+		SELECT id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM work_categories
+		WHERE id = $1
+	`, id).Scan(
+		&wc.ID,
+		&wc.Code,
+		&wc.Name,
+		&wc.Description,
+		&wc.DisplayOrder,
+		&wc.IsActive,
+		&wc.CreatedAt,
+		&wc.UpdatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &wc, nil
 }

@@ -66,6 +66,14 @@ func (s *UserService) CreateWorkerProfile(
 	return s.profileService.CreateWorkerProfile(ctx, authUserID, req)
 }
 
+func (s *UserService) UpdateWorkerProfile(
+	ctx context.Context,
+	authUserID string,
+	req model.UpdateWorkerProfileRequest,
+) (*model.WorkerProfile, error) {
+	return s.profileService.UpdateWorkerProfile(ctx, authUserID, req)
+}
+
 func (s *UserService) CreateOwnerProfile(
 	ctx context.Context,
 	authUserID string,
@@ -100,4 +108,8 @@ func (s *UserService) ListWorkTypePaymentTypes(ctx context.Context, workTypeID s
 
 func (s *UserService) ListWorkCategoryPaymentTypes(ctx context.Context, categoryID string) ([]model.PaymentType, error) {
 	return s.profileService.ListWorkCategoryPaymentTypes(ctx, categoryID)
+}
+
+func (s *UserService) ListWorkTypeSkills(ctx context.Context, workTypeID string) ([]model.Skill, error) {
+	return s.profileService.ListWorkTypeSkills(ctx, workTypeID)
 }

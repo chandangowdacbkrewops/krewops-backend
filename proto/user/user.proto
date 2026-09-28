@@ -19,6 +19,9 @@ service UserService {
   rpc CreateWorkerProfile(CreateWorkerProfileRequest)
       returns (CreateWorkerProfileResponse);
 
+  rpc UpdateWorkerProfile(UpdateWorkerProfileRequest)
+      returns (UpdateWorkerProfileResponse);
+
   rpc CreateOwnerProfile(CreateOwnerProfileRequest)
       returns (CreateOwnerProfileResponse);
 
@@ -42,6 +45,9 @@ service UserService {
 
   rpc ListWorkCategoryPaymentTypes(ListWorkCategoryPaymentTypesRequest)
       returns (ListPaymentTypesResponse);
+
+  rpc ListWorkTypeSkills(ListWorkTypeSkillsRequest)
+      returns (ListWorkTypeSkillsResponse);
 }
 
 enum WorkerType {
@@ -116,6 +122,9 @@ message UserProfile {
   string city = 12;
   string postal_code = 13;
   string preferred_language = 14;
+
+  WorkCategory work_category = 15;
+  repeated WorkerWorkCategory work_categories = 16;
 }
 
 message CreateWorkerProfileRequest {
@@ -133,6 +142,7 @@ message CreateWorkerProfileRequest {
 
   string work_category_id = 9;
   optional string availability_status = 10;
+  repeated WorkerCategorySelection selections = 11;
 }
 
 message WorkerProfile {
@@ -156,9 +166,51 @@ message WorkerProfile {
   bool profile_completed = 12;
 
   WorkCategory work_category = 13;
+  repeated WorkerWorkCategory work_categories = 14;
+}
+
+message WorkerCategorySelection {
+  string work_category_id = 1;
+  repeated WorkerTypeSelection work_types = 2;
+}
+
+message WorkerTypeSelection {
+  string work_type_id = 1;
+  repeated string skill_ids = 2;
+}
+
+message WorkerSkill {
+  string id = 1;
+  string work_type_id = 2;
+  string code = 3;
+  string name = 4;
+}
+
+message WorkerWorkType {
+  string work_type_id = 1;
+  string name = 2;
+  string category_id = 3;
+  bool is_primary = 4;
+  repeated WorkerSkill skills = 5;
+}
+
+message WorkerWorkCategory {
+  string work_category_id = 1;
+  string code = 2;
+  string name = 3;
+  repeated WorkerWorkType work_types = 4;
 }
 
 message CreateWorkerProfileResponse {
+  WorkerProfile profile = 1;
+}
+
+message UpdateWorkerProfileRequest {
+  string user_id = 1;
+  repeated WorkerCategorySelection selections = 2;
+}
+
+message UpdateWorkerProfileResponse {
   WorkerProfile profile = 1;
 }
 
@@ -314,4 +366,22 @@ message ListWorkCategoryPaymentTypesRequest {
 
 message ListPaymentTypesResponse {
   repeated PaymentType payment_types = 1;
+}
+
+message Skill {
+  string id = 1;
+  string work_type_id = 2;
+  string code = 3;
+  string name = 4;
+  bool is_active = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message ListWorkTypeSkillsRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkTypeSkillsResponse {
+  repeated Skill skills = 1;
 }

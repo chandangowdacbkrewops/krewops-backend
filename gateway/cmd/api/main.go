@@ -138,6 +138,12 @@ func main() {
 	)
 
 	api.GET(
+		"/work-types/:workTypeId/skills",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeSkills,
+	)
+
+	api.GET(
 		"/work-categories/:categoryId/payment-types",
 		middleware.AuthMiddleware(jwtSecret),
 		userHandler.ListWorkCategoryPaymentTypes,
@@ -181,6 +187,11 @@ func main() {
 	userRoutes.POST(
 		"/worker-profile",
 		userHandler.CreateWorkerProfile,
+	)
+
+	userRoutes.PUT(
+		"/worker-profile",
+		userHandler.UpdateWorkerProfile,
 	)
 
 	workRoutes :=

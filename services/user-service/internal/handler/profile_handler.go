@@ -109,11 +109,44 @@ func (h *ProfileHandler) CreateWorkerProfile(c *gin.Context) {
 
 	profile, err := h.profileService.CreateWorkerProfile(c.Request.Context(), authUserID, req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "unable to save worker profile"})
+		if errors.Is(err, service.ErrInvalidWorkerSelections) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to save worker profile"})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"data": profile})
+}
+
+func (h *ProfileHandler) UpdateWorkerProfile(c *gin.Context) {
+	authUserID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	var req model.UpdateWorkerProfileRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	profile, err := h.profileService.UpdateWorkerProfile(c.Request.Context(), authUserID, req)
+	if err != nil {
+		switch {
+		case errors.Is(err, repository.ErrWorkerProfileNotFound):
+			c.JSON(http.StatusNotFound, gin.H{"error": "worker profile not found"})
+		case errors.Is(err, service.ErrInvalidWorkerSelections):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update worker profile"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": profile})
 }
 
 func (h *ProfileHandler) ListWorkTypes(c *gin.Context) {
@@ -182,6 +215,18 @@ func (h *ProfileHandler) ListWorkCategoryPaymentTypes(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": paymentTypes})
+}
+
+func (h *ProfileHandler) ListWorkTypeSkills(c *gin.Context) {
+	workTypeID := c.Param("workTypeId")
+
+	skills, err := h.profileService.ListWorkTypeSkills(c.Request.Context(), workTypeID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch skills"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": skills})
 }
 
 func (h *ProfileHandler) Health(c *gin.Context) {

@@ -90,6 +90,38 @@ func TestWorkCategoryPaymentTypesRouteRequiresAuthentication(t *testing.T) {
 	}
 }
 
+func TestWorkTypeSkillsRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/skills", nil),
+	)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestUpdateWorkerProfileRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodPut, "/api/v1/users/worker-profile", nil),
+	)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
 func TestWorkTypeFieldsRouteRequiresAuthentication(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()

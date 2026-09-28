@@ -48,6 +48,12 @@ func RegisterRoutes(
 		)
 
 		v1.GET(
+			"/work-types/:workTypeId/skills",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeSkills,
+		)
+
+		v1.GET(
 			"/work-categories/:categoryId/payment-types",
 			middleware.AuthMiddleware(jwtSecret),
 			profileHandler.ListWorkCategoryPaymentTypes,
@@ -60,6 +66,7 @@ func RegisterRoutes(
 			users.POST("/profile", profileHandler.CreateProfile)
 			users.PUT("/profile", profileHandler.UpdateProfile)
 			users.POST("/worker-profile", profileHandler.CreateWorkerProfile)
+			users.PUT("/worker-profile", profileHandler.UpdateWorkerProfile)
 		}
 	}
 }

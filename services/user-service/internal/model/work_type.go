@@ -75,3 +75,13 @@ type PaymentType struct {
 	IsActive  bool      `json:"is_active"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type Skill struct {
+	ID         string    `json:"id"`
+	WorkTypeID string    `json:"work_type_id"`
+	Code       string    `json:"code"`
+	Name       string    `json:"name"`
+	IsActive   bool      `json:"is_active"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}

@@ -71,3 +71,29 @@ func scanWorkTypes(rows pgx.Rows) ([]model.WorkType, error) {
 
 	return types, rows.Err()
 }
+
+func (r *WorkTypeRepository) FindByIDs(ctx context.Context, ids []string) (map[string]model.WorkType, error) {
+	results := make(map[string]model.WorkType, len(ids))
+	if len(ids) == 0 {
+		return results, nil
+	}
+
+	rows, err := r.db.Query(ctx, `
+		SELECT id, category_id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM work_types
+		WHERE id = ANY($1)
+	`, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	types, err := scanWorkTypes(rows)
+	if err != nil {
+		return nil, err
+	}
+	for _, wt := range types {
+		results[wt.ID] = wt
+	}
+	return results, nil
+}

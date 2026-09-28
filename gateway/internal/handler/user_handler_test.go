@@ -45,6 +45,10 @@ func (s userServiceClientStub) CreateWorkerProfile(context.Context, *userv1.Crea
 	return nil, errors.New("not implemented")
 }
 
+func (s userServiceClientStub) UpdateWorkerProfile(context.Context, *userv1.UpdateWorkerProfileRequest, ...grpc.CallOption) (*userv1.UpdateWorkerProfileResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s userServiceClientStub) CreateOwnerProfile(context.Context, *userv1.CreateOwnerProfileRequest, ...grpc.CallOption) (*userv1.CreateOwnerProfileResponse, error) {
 	return nil, errors.New("not implemented")
 }
@@ -83,6 +87,10 @@ func (s userServiceClientStub) ListWorkTypePaymentTypes(context.Context, *userv1
 }
 
 func (s userServiceClientStub) ListWorkCategoryPaymentTypes(context.Context, *userv1.ListWorkCategoryPaymentTypesRequest, ...grpc.CallOption) (*userv1.ListPaymentTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeSkills(context.Context, *userv1.ListWorkTypeSkillsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeSkillsResponse, error) {
 	return nil, errors.New("not implemented")
 }
 

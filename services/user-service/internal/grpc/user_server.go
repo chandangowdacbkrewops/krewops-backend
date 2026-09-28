@@ -130,6 +130,7 @@ func (s *UserServer) CreateWorkerProfile(
 			AvailabilityStatus: req.AvailabilityStatus,
 			Bio:                req.Bio,
 			WorkCategoryID:     req.WorkCategoryId,
+			Selections:         workerSelectionsFromProto(req.Selections),
 		},
 	)
 	if err != nil {
@@ -137,15 +138,51 @@ func (s *UserServer) CreateWorkerProfile(
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			case "22P02", "23503":
-				return nil, status.Error(codes.InvalidArgument, "invalid work category id")
+				return nil, status.Error(codes.InvalidArgument, "invalid work category, work type, or skill id")
 			case "23505":
 				return nil, status.Error(codes.AlreadyExists, "worker profile already exists")
 			}
 		}
-		return nil, err
+		if errors.Is(err, service.ErrInvalidWorkerSelections) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		return nil, status.Error(codes.Internal, "unable to save worker profile")
 	}
 
 	return &userv1.CreateWorkerProfileResponse{
+		Profile: toWorkerProfile(profile),
+	}, nil
+}
+
+func (s *UserServer) UpdateWorkerProfile(
+	ctx context.Context,
+	req *userv1.UpdateWorkerProfileRequest,
+) (*userv1.UpdateWorkerProfileResponse, error) {
+	profile, err := s.userService.UpdateWorkerProfile(
+		ctx,
+		req.UserId,
+		model.UpdateWorkerProfileRequest{
+			Selections: workerSelectionsFromProto(req.Selections),
+		},
+	)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case "22P02", "23503":
+				return nil, status.Error(codes.InvalidArgument, "invalid work category, work type, or skill id")
+			}
+		}
+		if errors.Is(err, repository.ErrWorkerProfileNotFound) {
+			return nil, status.Error(codes.NotFound, "worker profile not found")
+		}
+		if errors.Is(err, service.ErrInvalidWorkerSelections) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		return nil, status.Error(codes.Internal, "unable to update worker profile")
+	}
+
+	return &userv1.UpdateWorkerProfileResponse{
 		Profile: toWorkerProfile(profile),
 	}, nil
 }
@@ -175,6 +212,63 @@ func toWorkerProfile(profile *model.WorkerProfile) *userv1.WorkerProfile {
 			Code: profile.WorkCategory.Code,
 			Name: profile.WorkCategory.Name,
 		}
+	}
+	result.WorkCategories = workerCategoriesToProto(profile.WorkCategories)
+	return result
+}
+
+func workerSelectionsFromProto(selections []*userv1.WorkerCategorySelection) []model.WorkerCategorySelection {
+	result := make([]model.WorkerCategorySelection, 0, len(selections))
+	for _, selection := range selections {
+		if selection == nil {
+			continue
+		}
+		workTypes := make([]model.WorkerTypeSelection, 0, len(selection.WorkTypes))
+		for _, workType := range selection.WorkTypes {
+			if workType == nil {
+				continue
+			}
+			workTypes = append(workTypes, model.WorkerTypeSelection{
+				WorkTypeID: workType.WorkTypeId,
+				SkillIDs:   workType.SkillIds,
+			})
+		}
+		result = append(result, model.WorkerCategorySelection{
+			WorkCategoryID: selection.WorkCategoryId,
+			WorkTypes:      workTypes,
+		})
+	}
+	return result
+}
+
+func workerCategoriesToProto(categories []model.WorkerWorkCategorySummary) []*userv1.WorkerWorkCategory {
+	result := make([]*userv1.WorkerWorkCategory, 0, len(categories))
+	for _, category := range categories {
+		workTypes := make([]*userv1.WorkerWorkType, 0, len(category.WorkTypes))
+		for _, workType := range category.WorkTypes {
+			skills := make([]*userv1.WorkerSkill, 0, len(workType.Skills))
+			for _, skill := range workType.Skills {
+				skills = append(skills, &userv1.WorkerSkill{
+					Id:         skill.ID,
+					WorkTypeId: skill.WorkTypeID,
+					Code:       skill.Code,
+					Name:       skill.Name,
+				})
+			}
+			workTypes = append(workTypes, &userv1.WorkerWorkType{
+				WorkTypeId: workType.WorkTypeID,
+				Name:       workType.Name,
+				CategoryId: workType.CategoryID,
+				IsPrimary:  workType.IsPrimary,
+				Skills:     skills,
+			})
+		}
+		result = append(result, &userv1.WorkerWorkCategory{
+			WorkCategoryId: category.WorkCategoryID,
+			Code:           category.Code,
+			Name:           category.Name,
+			WorkTypes:      workTypes,
+		})
 	}
 	return result
 }
@@ -406,6 +500,32 @@ func toPaymentTypesResponse(paymentTypes []model.PaymentType) *userv1.ListPaymen
 	return resp
 }
 
+func (s *UserServer) ListWorkTypeSkills(
+	ctx context.Context,
+	req *userv1.ListWorkTypeSkillsRequest,
+) (*userv1.ListWorkTypeSkillsResponse, error) {
+	skills, err := s.userService.ListWorkTypeSkills(ctx, req.WorkTypeId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkTypeSkillsResponse{
+		Skills: make([]*userv1.Skill, 0, len(skills)),
+	}
+	for _, skill := range skills {
+		resp.Skills = append(resp.Skills, &userv1.Skill{
+			Id:         skill.ID,
+			WorkTypeId: skill.WorkTypeID,
+			Code:       skill.Code,
+			Name:       skill.Name,
+			IsActive:   skill.IsActive,
+			CreatedAt:  skill.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt:  skill.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		})
+	}
+	return resp, nil
+}
+
 func (s *UserServer) ListWorkCategories(
 	ctx context.Context,
 	_ *userv1.ListWorkCategoriesRequest,
@@ -470,7 +590,11 @@ func toOwnerProfile(profile *model.OwnerProfileResponse) *userv1.OwnerProfile {
 }
 
 func toUserProfile(profile *model.ProfileResponse) *userv1.UserProfile {
-	return &userv1.UserProfile{
+	if profile == nil {
+		return nil
+	}
+
+	result := &userv1.UserProfile{
 		Id:                  profile.ID,
 		UserId:              profile.AuthUserID,
 		FirstName:           stringValue(profile.FirstName),
@@ -485,7 +609,16 @@ func toUserProfile(profile *model.ProfileResponse) *userv1.UserProfile {
 		City:                stringValue(profile.City),
 		PostalCode:          stringValue(profile.PostalCode),
 		PreferredLanguage:   stringValue(profile.PreferredLanguage),
+		WorkCategories:      workerCategoriesToProto(profile.WorkCategories),
 	}
+	if profile.WorkCategory != nil {
+		result.WorkCategory = &userv1.WorkCategory{
+			Id:   profile.WorkCategory.WorkCategoryID,
+			Code: profile.WorkCategory.Code,
+			Name: profile.WorkCategory.Name,
+		}
+	}
+	return result
 }
 
 func stringValue(value *string) string {

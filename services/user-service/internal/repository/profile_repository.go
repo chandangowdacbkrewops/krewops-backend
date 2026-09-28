@@ -15,8 +15,9 @@ type ProfileRepository struct {
 }
 
 var (
-	ErrProfileAlreadyExists = errors.New("profile already exists")
-	ErrProfileNotFound      = errors.New("profile not found")
+	ErrProfileAlreadyExists   = errors.New("profile already exists")
+	ErrProfileNotFound        = errors.New("profile not found")
+	ErrWorkerProfileNotFound  = errors.New("worker profile not found")
 )
 
 func NewProfileRepository(db *pgxpool.Pool) *ProfileRepository {
@@ -242,14 +243,99 @@ func (r *ProfileRepository) CreateWorkerProfile(
 		return nil, err
 	}
 
+	if _, err = tx.Exec(ctx, `DELETE FROM worker_skills WHERE worker_profile_id = $1`, workerProfileID); err != nil {
+		return nil, err
+	}
+	if _, err = tx.Exec(ctx, `DELETE FROM worker_work_types WHERE worker_profile_id = $1`, workerProfileID); err != nil {
+		return nil, err
+	}
 	if _, err = tx.Exec(ctx, `DELETE FROM worker_work_categories WHERE worker_profile_id = $1`, workerProfileID); err != nil {
 		return nil, err
 	}
-	if _, err = tx.Exec(ctx, `
-		INSERT INTO worker_work_categories (worker_profile_id, work_category_id)
-		VALUES ($1, $2)
-	`, workerProfileID, req.WorkCategoryID); err != nil {
+
+	primarySet := false
+	for _, selection := range req.Selections {
+		if _, err = tx.Exec(ctx, `
+			INSERT INTO worker_work_categories (worker_profile_id, work_category_id)
+			VALUES ($1, $2)
+		`, workerProfileID, selection.WorkCategoryID); err != nil {
+			return nil, err
+		}
+
+		for _, workType := range selection.WorkTypes {
+			isPrimary := !primarySet
+			if isPrimary {
+				primarySet = true
+			}
+			if _, err = tx.Exec(ctx, `
+				INSERT INTO worker_work_types (worker_profile_id, work_type_id, is_primary)
+				VALUES ($1, $2, $3)
+			`, workerProfileID, workType.WorkTypeID, isPrimary); err != nil {
+				return nil, err
+			}
+			for _, skillID := range workType.SkillIDs {
+				if _, err = tx.Exec(ctx, `
+					INSERT INTO worker_skills (worker_profile_id, skill_id)
+					VALUES ($1, $2)
+				`, workerProfileID, skillID); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(ctx); err != nil {
 		return nil, err
+	}
+
+	return r.FindWorkerProfileByUserID(ctx, authUserID)
+}
+
+func (r *ProfileRepository) UpdateWorkerSelections(
+	ctx context.Context,
+	authUserID string,
+	selections []model.WorkerCategorySelection,
+) (*model.WorkerProfile, error) {
+	profile, err := r.FindWorkerProfileByUserID(ctx, authUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback(ctx)
+
+	if _, err = tx.Exec(ctx, `DELETE FROM worker_skills WHERE worker_profile_id = $1`, profile.ID); err != nil {
+		return nil, err
+	}
+	if _, err = tx.Exec(ctx, `DELETE FROM worker_work_types WHERE worker_profile_id = $1`, profile.ID); err != nil {
+		return nil, err
+	}
+
+	primarySet := false
+	for _, selection := range selections {
+		for _, workType := range selection.WorkTypes {
+			isPrimary := !primarySet
+			if isPrimary {
+				primarySet = true
+			}
+			if _, err = tx.Exec(ctx, `
+				INSERT INTO worker_work_types (worker_profile_id, work_type_id, is_primary)
+				VALUES ($1, $2, $3)
+			`, profile.ID, workType.WorkTypeID, isPrimary); err != nil {
+				return nil, err
+			}
+			for _, skillID := range workType.SkillIDs {
+				if _, err = tx.Exec(ctx, `
+					INSERT INTO worker_skills (worker_profile_id, skill_id)
+					VALUES ($1, $2)
+				`, profile.ID, skillID); err != nil {
+					return nil, err
+				}
+			}
+		}
 	}
 
 	if err := tx.Commit(ctx); err != nil {
@@ -273,34 +359,123 @@ func (r *ProfileRepository) FindWorkerProfileByUserID(ctx context.Context, userI
 		&profile.RateType, &profile.AvailabilityStatus, &profile.VerificationStatus,
 		&profile.Bio, &profile.ProfileCompleted, &profile.CreatedAt, &profile.UpdatedAt,
 	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, ErrWorkerProfileNotFound
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	var category model.WorkerProfileCategory
-	err = r.db.QueryRow(ctx, `
-		SELECT wwc.id, wwc.worker_profile_id, wwc.work_category_id, wc.code, wc.name, wwc.is_active, wwc.created_at
+	categories, err := r.loadWorkerSelections(ctx, profile.ID)
+	if err != nil {
+		return nil, err
+	}
+	profile.WorkCategories = categories
+	if len(categories) > 0 {
+		profile.WorkCategory = &model.WorkerProfileCategory{
+			WorkerProfileID: profile.ID,
+			WorkCategoryID:  categories[0].WorkCategoryID,
+			Code:            categories[0].Code,
+			Name:            categories[0].Name,
+			IsActive:        true,
+		}
+	}
+	return profile, nil
+}
+
+func (r *ProfileRepository) loadWorkerSelections(
+	ctx context.Context,
+	workerProfileID string,
+) ([]model.WorkerWorkCategorySummary, error) {
+	categoryRows, err := r.db.Query(ctx, `
+		SELECT wwc.work_category_id, wc.code, wc.name
 		FROM worker_work_categories wwc
 		JOIN work_categories wc ON wc.id = wwc.work_category_id
 		WHERE wwc.worker_profile_id = $1 AND wwc.is_active = TRUE
-		ORDER BY wwc.created_at DESC
-		LIMIT 1
-	`, profile.ID).Scan(
-		&category.ID,
-		&category.WorkerProfileID,
-		&category.WorkCategoryID,
-		&category.Code,
-		&category.Name,
-		&category.IsActive,
-		&category.CreatedAt,
-	)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return profile, nil
-	}
+		ORDER BY wwc.created_at ASC
+	`, workerProfileID)
 	if err != nil {
 		return nil, err
 	}
+	defer categoryRows.Close()
 
-	profile.WorkCategory = &category
-	return profile, nil
+	categoryOrder := []string{}
+	categoriesByID := map[string]model.WorkerWorkCategorySummary{}
+	for categoryRows.Next() {
+		var item model.WorkerWorkCategorySummary
+		if err := categoryRows.Scan(&item.WorkCategoryID, &item.Code, &item.Name); err != nil {
+			return nil, err
+		}
+		item.WorkTypes = []model.WorkerWorkTypeSummary{}
+		categoryOrder = append(categoryOrder, item.WorkCategoryID)
+		categoriesByID[item.WorkCategoryID] = item
+	}
+	if err := categoryRows.Err(); err != nil {
+		return nil, err
+	}
+
+	typeRows, err := r.db.Query(ctx, `
+		SELECT wwt.work_type_id, wt.name, wt.category_id, wwt.is_primary
+		FROM worker_work_types wwt
+		JOIN work_types wt ON wt.id = wwt.work_type_id
+		WHERE wwt.worker_profile_id = $1 AND wwt.is_active = TRUE
+		ORDER BY wwt.is_primary DESC, wwt.created_at ASC
+	`, workerProfileID)
+	if err != nil {
+		return nil, err
+	}
+	defer typeRows.Close()
+
+	workTypeOrder := map[string][]string{}
+	workTypesByID := map[string]model.WorkerWorkTypeSummary{}
+	for typeRows.Next() {
+		var item model.WorkerWorkTypeSummary
+		if err := typeRows.Scan(&item.WorkTypeID, &item.Name, &item.CategoryID, &item.IsPrimary); err != nil {
+			return nil, err
+		}
+		item.Skills = []model.WorkerSkillSummary{}
+		workTypesByID[item.WorkTypeID] = item
+		workTypeOrder[item.CategoryID] = append(workTypeOrder[item.CategoryID], item.WorkTypeID)
+	}
+	if err := typeRows.Err(); err != nil {
+		return nil, err
+	}
+
+	skillRows, err := r.db.Query(ctx, `
+		SELECT s.id, s.work_type_id, s.code, s.name
+		FROM worker_skills ws
+		JOIN skills s ON s.id = ws.skill_id
+		WHERE ws.worker_profile_id = $1 AND ws.is_active = TRUE
+		ORDER BY s.name ASC
+	`, workerProfileID)
+	if err != nil {
+		return nil, err
+	}
+	defer skillRows.Close()
+
+	for skillRows.Next() {
+		var skill model.WorkerSkillSummary
+		if err := skillRows.Scan(&skill.ID, &skill.WorkTypeID, &skill.Code, &skill.Name); err != nil {
+			return nil, err
+		}
+		workType, ok := workTypesByID[skill.WorkTypeID]
+		if !ok {
+			continue
+		}
+		workType.Skills = append(workType.Skills, skill)
+		workTypesByID[skill.WorkTypeID] = workType
+	}
+	if err := skillRows.Err(); err != nil {
+		return nil, err
+	}
+
+	categories := make([]model.WorkerWorkCategorySummary, 0, len(categoryOrder))
+	for _, categoryID := range categoryOrder {
+		category := categoriesByID[categoryID]
+		for _, workTypeID := range workTypeOrder[categoryID] {
+			category.WorkTypes = append(category.WorkTypes, workTypesByID[workTypeID])
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
 }

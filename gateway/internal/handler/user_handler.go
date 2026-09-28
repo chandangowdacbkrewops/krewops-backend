@@ -38,16 +38,31 @@ type UpdateProfileRequest struct {
 	UserType   string `json:"user_type" binding:"required"`
 }
 
+type WorkerTypeSelection struct {
+	WorkTypeID string   `json:"work_type_id"`
+	SkillIDs   []string `json:"skill_ids"`
+}
+
+type WorkerCategorySelection struct {
+	WorkCategoryID string                `json:"work_category_id"`
+	WorkTypes      []WorkerTypeSelection `json:"work_types"`
+}
+
 type CreateWorkerProfileRequest struct {
-	WorkerType         string   `json:"worker_type" binding:"required"`
-	CrewName           *string  `json:"crew_name"`
-	CrewSize           int32    `json:"crew_size"`
-	ExperienceYears    *float64 `json:"experience_years"`
-	ExpectedRate       *float64 `json:"expected_rate"`
-	RateType           *string  `json:"rate_type"`
-	AvailabilityStatus *string  `json:"availability_status"`
-	Bio                *string  `json:"bio"`
-	WorkCategoryID     string   `json:"work_category_id" binding:"required"`
+	WorkerType         string                    `json:"worker_type" binding:"required"`
+	CrewName           *string                   `json:"crew_name"`
+	CrewSize           int32                     `json:"crew_size"`
+	ExperienceYears    *float64                  `json:"experience_years"`
+	ExpectedRate       *float64                  `json:"expected_rate"`
+	RateType           *string                   `json:"rate_type"`
+	AvailabilityStatus *string                   `json:"availability_status"`
+	Bio                *string                   `json:"bio"`
+	WorkCategoryID     string                    `json:"work_category_id"`
+	Selections         []WorkerCategorySelection `json:"selections"`
+}
+
+type UpdateWorkerProfileRequest struct {
+	Selections []WorkerCategorySelection `json:"selections"`
 }
 
 func NewUserHandler(
@@ -143,6 +158,24 @@ func (h *UserHandler) ListWorkTypePaymentTypes(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusOK, paymentTypesResp)
+}
+
+func (h *UserHandler) ListWorkTypeSkills(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	workTypeID := c.Param("workTypeId")
+
+	skillsResp, err := h.userClient.ListWorkTypeSkills(
+		ctx,
+		&userv1.ListWorkTypeSkillsRequest{WorkTypeId: workTypeID},
+	)
+	if err != nil {
+		response.Internal(c, "failed to fetch skills", nil)
+		return
+	}
+
+	response.Success(c, http.StatusOK, skillsResp)
 }
 
 func (h *UserHandler) ListWorkCategoryPaymentTypes(c *gin.Context) {
@@ -346,12 +379,13 @@ func (h *UserHandler) CreateWorkerProfile(c *gin.Context) {
 			AvailabilityStatus: request.AvailabilityStatus,
 			Bio:                request.Bio,
 			WorkCategoryId:     request.WorkCategoryID,
+			Selections:         workerSelectionsToProto(request.Selections),
 		},
 	)
 	if err != nil {
 		switch status.Code(err) {
 		case codes.InvalidArgument:
-			response.BadRequest(c, "invalid worker profile data", nil)
+			response.BadRequest(c, status.Convert(err).Message(), nil)
 		case codes.AlreadyExists:
 			response.Conflict(c, "worker profile already exists", nil)
 		default:
@@ -361,4 +395,61 @@ func (h *UserHandler) CreateWorkerProfile(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusCreated, createResp)
+}
+
+func (h *UserHandler) UpdateWorkerProfile(c *gin.Context) {
+	var request UpdateWorkerProfileRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.BadRequest(c, "invalid worker profile data", nil)
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	userIDString, valid := userID.(string)
+	if !exists || !valid || userIDString == "" {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	updateResp, err := h.userClient.UpdateWorkerProfile(
+		ctx,
+		&userv1.UpdateWorkerProfileRequest{
+			UserId:     userIDString,
+			Selections: workerSelectionsToProto(request.Selections),
+		},
+	)
+	if err != nil {
+		switch status.Code(err) {
+		case codes.NotFound:
+			response.NotFound(c, "worker profile not found", nil)
+		case codes.InvalidArgument:
+			response.BadRequest(c, status.Convert(err).Message(), nil)
+		default:
+			response.Internal(c, "failed to update worker profile", nil)
+		}
+		return
+	}
+
+	response.Success(c, http.StatusOK, updateResp)
+}
+
+func workerSelectionsToProto(selections []WorkerCategorySelection) []*userv1.WorkerCategorySelection {
+	result := make([]*userv1.WorkerCategorySelection, 0, len(selections))
+	for _, selection := range selections {
+		workTypes := make([]*userv1.WorkerTypeSelection, 0, len(selection.WorkTypes))
+		for _, workType := range selection.WorkTypes {
+			workTypes = append(workTypes, &userv1.WorkerTypeSelection{
+				WorkTypeId: workType.WorkTypeID,
+				SkillIds:   workType.SkillIDs,
+			})
+		}
+		result = append(result, &userv1.WorkerCategorySelection{
+			WorkCategoryId: selection.WorkCategoryID,
+			WorkTypes:      workTypes,
+		})
+	}
+	return result
 }
