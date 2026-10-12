@@ -20,8 +20,9 @@ type WorkService struct {
 	workOwnerRepository     *repository.WorkOwnerRepository
 	workTypeRepository      *repository.WorkTypeRepository
 	workCategoryRepository  *repository.WorkCategoryRepository
+	workSegmentRepository   *repository.WorkSegmentRepository
 	workTypeFieldRepository *repository.WorkTypeFieldRepository
-	paymentTypeRepository   *repository.PaymentTypeRepository
+	rateTypeRepository      *repository.RateTypeRepository
 }
 
 func NewWorkService(
@@ -30,8 +31,9 @@ func NewWorkService(
 	workOwnerRepository *repository.WorkOwnerRepository,
 	workTypeRepository *repository.WorkTypeRepository,
 	workCategoryRepository *repository.WorkCategoryRepository,
+	workSegmentRepository *repository.WorkSegmentRepository,
 	workTypeFieldRepository *repository.WorkTypeFieldRepository,
-	paymentTypeRepository *repository.PaymentTypeRepository,
+	rateTypeRepository *repository.RateTypeRepository,
 ) *WorkService {
 	return &WorkService{
 		workRepository:          workRepository,
@@ -39,8 +41,9 @@ func NewWorkService(
 		workOwnerRepository:     workOwnerRepository,
 		workTypeRepository:      workTypeRepository,
 		workCategoryRepository:  workCategoryRepository,
+		workSegmentRepository:   workSegmentRepository,
 		workTypeFieldRepository: workTypeFieldRepository,
-		paymentTypeRepository:   paymentTypeRepository,
+		rateTypeRepository:      rateTypeRepository,
 	}
 }
 
@@ -66,7 +69,7 @@ func (s *WorkService) CreateWork(
 	if req.Status != nil && strings.TrimSpace(*req.Status) != "" {
 		status = strings.ToLower(strings.TrimSpace(*req.Status))
 	}
-	if !model.ValidStatus(status) {
+	if !model.ValidCreateStatus(status) {
 		log.Printf("create work rejected: user_id=%s stage=status_validation status=%s", userID, status)
 		return nil, fmt.Errorf("status must be draft or published")
 	}
@@ -99,6 +102,7 @@ func (s *WorkService) CreateWork(
 
 	var workTypeName *string
 	var workTypeCategoryID string
+	var workTypeSegmentID string
 	fields := []model.WorkTypeField{}
 	if req.WorkTypeID != nil && strings.TrimSpace(*req.WorkTypeID) != "" {
 		log.Printf("create work work type lookup: user_id=%s work_type_id=%s", userID, strings.TrimSpace(*req.WorkTypeID))
@@ -113,6 +117,7 @@ func (s *WorkService) CreateWork(
 		}
 		workTypeName = &workType.Name
 		workTypeCategoryID = workType.CategoryID
+		workTypeSegmentID = workType.SegmentID
 
 		fields, err = s.workTypeFieldRepository.ListActiveByWorkTypeID(ctx, strings.TrimSpace(*req.WorkTypeID))
 		if err != nil {
@@ -141,13 +146,38 @@ func (s *WorkService) CreateWork(
 		workCategoryName = &category.Name
 	}
 
-	if err := s.validatePaymentType(
+	var workSegmentName *string
+	if req.WorkSegmentID != nil && strings.TrimSpace(*req.WorkSegmentID) != "" {
+		segmentID := strings.TrimSpace(*req.WorkSegmentID)
+		log.Printf("create work work segment lookup: user_id=%s work_segment_id=%s", userID, segmentID)
+		segment, err := s.workSegmentRepository.FindByID(ctx, segmentID)
+		if err != nil {
+			log.Printf("create work failed: user_id=%s stage=work_segment_lookup error=%v", userID, err)
+			return nil, err
+		}
+		if segment == nil {
+			log.Printf("create work rejected: user_id=%s reason=invalid_work_segment work_segment_id=%s", userID, segmentID)
+			return nil, fmt.Errorf("work_segment_id is invalid")
+		}
+		if workTypeSegmentID != "" && workTypeSegmentID != segment.ID {
+			return nil, fmt.Errorf("work_type_id does not belong to work_segment_id")
+		}
+		if req.WorkCategoryID != nil && strings.TrimSpace(*req.WorkCategoryID) != "" &&
+			segment.CategoryID != strings.TrimSpace(*req.WorkCategoryID) {
+			return nil, fmt.Errorf("work_segment_id does not belong to work_category_id")
+		}
+		workSegmentName = &segment.Name
+	}
+
+	if err := s.validateRateOption(
 		ctx,
-		req.PaymentType,
+		req.RateBasis,
+		req.RateUnit,
 		stringValue(trimmedOrNil(req.WorkTypeID)),
+		firstNonEmpty(stringValue(trimmedOrNil(req.WorkSegmentID)), workTypeSegmentID),
 		firstNonEmpty(stringValue(trimmedOrNil(req.WorkCategoryID)), workTypeCategoryID),
 	); err != nil {
-		log.Printf("create work rejected: user_id=%s stage=payment_type_validation error=%v", userID, err)
+		log.Printf("create work rejected: user_id=%s stage=rate_option_validation error=%v", userID, err)
 		return nil, err
 	}
 
@@ -170,6 +200,8 @@ func (s *WorkService) CreateWork(
 		WorkTypeName:     workTypeName,
 		WorkCategoryID:   trimmedOrNil(req.WorkCategoryID),
 		WorkCategoryName: workCategoryName,
+		WorkSegmentID:    trimmedOrNil(req.WorkSegmentID),
+		WorkSegmentName:  workSegmentName,
 		Description:      trimmedOrNil(req.Description),
 		Attributes:       attributes,
 
@@ -190,7 +222,8 @@ func (s *WorkService) CreateWork(
 		DurationUnit:  lowerOrNil(req.DurationUnit),
 		ShiftTiming:   trimmedOrNil(req.ShiftTiming),
 
-		PaymentType:           lowerOrNil(req.PaymentType),
+		RateBasis:             lowerOrNil(req.RateBasis),
+		RateUnit:              lowerOrNil(req.RateUnit),
 		BudgetRate:            req.BudgetRate,
 		PaymentNotes:          trimmedOrNil(req.PaymentNotes),
 		AccommodationProvided: req.AccommodationProvided,
@@ -219,9 +252,9 @@ func (s *WorkService) ListMyWorks(
 
 	var statusFilter *string
 	if status != nil && strings.TrimSpace(*status) != "" {
-		normalized := strings.ToLower(strings.TrimSpace(*status))
+		normalized := model.NormalizeWorkStatus(*status)
 		if !model.ValidStatus(normalized) {
-			return nil, fmt.Errorf("status must be draft or published")
+			return nil, fmt.Errorf("status must be draft, published, assigned, in_progress, work_completed, closed, or cancelled")
 		}
 		statusFilter = &normalized
 	}
@@ -253,6 +286,9 @@ func validateForPublish(req model.CreateWorkRequest, startDate *time.Time) error
 	if isBlank(req.WorkCategoryID) {
 		return fmt.Errorf("work_category_id is required")
 	}
+	if isBlank(req.WorkSegmentID) {
+		return fmt.Errorf("work_segment_id is required")
+	}
 	if isBlank(req.Address) {
 		return fmt.Errorf("address is required")
 	}
@@ -283,8 +319,11 @@ func validateForPublish(req model.CreateWorkRequest, startDate *time.Time) error
 	if isBlank(req.DurationUnit) || !model.ValidDurationUnit(strings.ToLower(strings.TrimSpace(*req.DurationUnit))) {
 		return fmt.Errorf("duration_unit must be one of days, weeks, months")
 	}
-	if isBlank(req.PaymentType) {
-		return fmt.Errorf("payment_type is required")
+	if isBlank(req.RateBasis) {
+		return fmt.Errorf("rate_basis is required")
+	}
+	if strings.ToLower(strings.TrimSpace(*req.RateBasis)) != "negotiable" && isBlank(req.RateUnit) {
+		return fmt.Errorf("rate_unit is required")
 	}
 	if req.BudgetRate == nil || *req.BudgetRate <= 0 {
 		return fmt.Errorf("budget_rate must be greater than 0")
@@ -356,34 +395,53 @@ func lowerOrNil(value *string) *string {
 	return &lowered
 }
 
-func (s *WorkService) validatePaymentType(
+func (s *WorkService) validateRateOption(
 	ctx context.Context,
-	paymentType *string,
+	rateBasis *string,
+	rateUnit *string,
 	workTypeID string,
+	segmentID string,
 	categoryID string,
 ) error {
-	if isBlank(paymentType) {
+	if isBlank(rateBasis) && isBlank(rateUnit) {
 		return nil
 	}
-	if workTypeID == "" && categoryID == "" {
+	if isBlank(rateBasis) {
+		return fmt.Errorf("rate_basis is required when rate_unit is set")
+	}
+
+	basis := strings.ToLower(strings.TrimSpace(*rateBasis))
+	unit := ""
+	if !isBlank(rateUnit) {
+		unit = strings.ToLower(strings.TrimSpace(*rateUnit))
+	}
+	if basis == "negotiable" && unit != "" {
+		return fmt.Errorf("rate_unit must be empty when rate_basis is negotiable")
+	}
+	if basis != "negotiable" && unit == "" {
+		return fmt.Errorf("rate_unit is required")
+	}
+	if workTypeID == "" && segmentID == "" && categoryID == "" {
 		return nil
 	}
 
-	return s.requireAllowedPaymentType(ctx, strings.ToLower(strings.TrimSpace(*paymentType)), workTypeID, categoryID)
+	return s.requireAllowedRateOption(ctx, basis, unit, workTypeID, segmentID, categoryID)
 }
 
-func (s *WorkService) requireAllowedPaymentType(
+func (s *WorkService) requireAllowedRateOption(
 	ctx context.Context,
-	code string,
+	basis string,
+	unit string,
 	workTypeID string,
+	segmentID string,
 	categoryID string,
 ) error {
-	allowed, err := s.paymentTypeRepository.ListAllowedCodes(ctx, workTypeID, categoryID)
+	allowed, err := s.rateTypeRepository.Resolve(ctx, workTypeID, segmentID, categoryID)
 	if err != nil {
 		return err
 	}
-	if !containsFold(allowed, code) {
-		return fmt.Errorf("payment_type is not allowed for the selected work type or category")
+	if !repository.RateOptionAllowed(allowed, basis, unit) {
+		return fmt.Errorf("rate_basis and rate_unit are not allowed for the selected work type, segment, or category")
 	}
 	return nil
 }
@@ -402,15 +460,6 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
-}
-
-func containsFold(values []string, target string) bool {
-	for _, value := range values {
-		if strings.EqualFold(value, target) {
-			return true
-		}
-	}
-	return false
 }
 
 func validateAttributes(status string, fields []model.WorkTypeField, attributes map[string]string) error {

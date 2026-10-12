@@ -28,6 +28,7 @@ type CreateWorkRequest struct {
 	Title                 *string                `protobuf:"bytes,3,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	WorkTypeId            *string                `protobuf:"bytes,4,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
 	WorkCategoryId        *string                `protobuf:"bytes,26,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
+	WorkSegmentId         *string                `protobuf:"bytes,27,opt,name=work_segment_id,json=workSegmentId,proto3,oneof" json:"work_segment_id,omitempty"`
 	Description           *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Address               *string                `protobuf:"bytes,6,opt,name=address,proto3,oneof" json:"address,omitempty"`
 	City                  *string                `protobuf:"bytes,7,opt,name=city,proto3,oneof" json:"city,omitempty"`
@@ -43,12 +44,13 @@ type CreateWorkRequest struct {
 	DurationValue         *int32                 `protobuf:"varint,17,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
 	DurationUnit          *string                `protobuf:"bytes,18,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
 	ShiftTiming           *string                `protobuf:"bytes,19,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
-	PaymentType           *string                `protobuf:"bytes,20,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
+	RateBasis             *string                `protobuf:"bytes,20,opt,name=rate_basis,json=rateBasis,proto3,oneof" json:"rate_basis,omitempty"`
 	BudgetRate            *float64               `protobuf:"fixed64,21,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
 	PaymentNotes          *string                `protobuf:"bytes,22,opt,name=payment_notes,json=paymentNotes,proto3,oneof" json:"payment_notes,omitempty"`
 	AccommodationProvided *bool                  `protobuf:"varint,23,opt,name=accommodation_provided,json=accommodationProvided,proto3,oneof" json:"accommodation_provided,omitempty"`
 	MealsProvided         *bool                  `protobuf:"varint,24,opt,name=meals_provided,json=mealsProvided,proto3,oneof" json:"meals_provided,omitempty"`
 	Attributes            map[string]string      `protobuf:"bytes,25,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	RateUnit              *string                `protobuf:"bytes,28,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -114,6 +116,13 @@ func (x *CreateWorkRequest) GetWorkTypeId() string {
 func (x *CreateWorkRequest) GetWorkCategoryId() string {
 	if x != nil && x.WorkCategoryId != nil {
 		return *x.WorkCategoryId
+	}
+	return ""
+}
+
+func (x *CreateWorkRequest) GetWorkSegmentId() string {
+	if x != nil && x.WorkSegmentId != nil {
+		return *x.WorkSegmentId
 	}
 	return ""
 }
@@ -223,9 +232,9 @@ func (x *CreateWorkRequest) GetShiftTiming() string {
 	return ""
 }
 
-func (x *CreateWorkRequest) GetPaymentType() string {
-	if x != nil && x.PaymentType != nil {
-		return *x.PaymentType
+func (x *CreateWorkRequest) GetRateBasis() string {
+	if x != nil && x.RateBasis != nil {
+		return *x.RateBasis
 	}
 	return ""
 }
@@ -263,6 +272,13 @@ func (x *CreateWorkRequest) GetAttributes() map[string]string {
 		return x.Attributes
 	}
 	return nil
+}
+
+func (x *CreateWorkRequest) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
 }
 
 type CreateWorkResponse struct {
@@ -319,6 +335,8 @@ type WorkPosting struct {
 	WorkTypeName          *string                `protobuf:"bytes,29,opt,name=work_type_name,json=workTypeName,proto3,oneof" json:"work_type_name,omitempty"`
 	WorkCategoryId        *string                `protobuf:"bytes,31,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
 	WorkCategoryName      *string                `protobuf:"bytes,32,opt,name=work_category_name,json=workCategoryName,proto3,oneof" json:"work_category_name,omitempty"`
+	WorkSegmentId         *string                `protobuf:"bytes,33,opt,name=work_segment_id,json=workSegmentId,proto3,oneof" json:"work_segment_id,omitempty"`
+	WorkSegmentName       *string                `protobuf:"bytes,34,opt,name=work_segment_name,json=workSegmentName,proto3,oneof" json:"work_segment_name,omitempty"`
 	Description           *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Address               *string                `protobuf:"bytes,7,opt,name=address,proto3,oneof" json:"address,omitempty"`
 	City                  *string                `protobuf:"bytes,8,opt,name=city,proto3,oneof" json:"city,omitempty"`
@@ -334,7 +352,7 @@ type WorkPosting struct {
 	DurationValue         *int32                 `protobuf:"varint,18,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
 	DurationUnit          *string                `protobuf:"bytes,19,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
 	ShiftTiming           *string                `protobuf:"bytes,20,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
-	PaymentType           *string                `protobuf:"bytes,21,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
+	RateBasis             *string                `protobuf:"bytes,21,opt,name=rate_basis,json=rateBasis,proto3,oneof" json:"rate_basis,omitempty"`
 	BudgetRate            *float64               `protobuf:"fixed64,22,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
 	PaymentNotes          *string                `protobuf:"bytes,23,opt,name=payment_notes,json=paymentNotes,proto3,oneof" json:"payment_notes,omitempty"`
 	AccommodationProvided *bool                  `protobuf:"varint,24,opt,name=accommodation_provided,json=accommodationProvided,proto3,oneof" json:"accommodation_provided,omitempty"`
@@ -343,6 +361,7 @@ type WorkPosting struct {
 	CreatedAt             string                 `protobuf:"bytes,27,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt             string                 `protobuf:"bytes,28,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Attributes            map[string]string      `protobuf:"bytes,30,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	RateUnit              *string                `protobuf:"bytes,35,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -429,6 +448,20 @@ func (x *WorkPosting) GetWorkCategoryId() string {
 func (x *WorkPosting) GetWorkCategoryName() string {
 	if x != nil && x.WorkCategoryName != nil {
 		return *x.WorkCategoryName
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkSegmentId() string {
+	if x != nil && x.WorkSegmentId != nil {
+		return *x.WorkSegmentId
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkSegmentName() string {
+	if x != nil && x.WorkSegmentName != nil {
+		return *x.WorkSegmentName
 	}
 	return ""
 }
@@ -538,9 +571,9 @@ func (x *WorkPosting) GetShiftTiming() string {
 	return ""
 }
 
-func (x *WorkPosting) GetPaymentType() string {
-	if x != nil && x.PaymentType != nil {
-		return *x.PaymentType
+func (x *WorkPosting) GetRateBasis() string {
+	if x != nil && x.RateBasis != nil {
+		return *x.RateBasis
 	}
 	return ""
 }
@@ -601,13 +634,21 @@ func (x *WorkPosting) GetAttributes() map[string]string {
 	return nil
 }
 
+func (x *WorkPosting) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
+}
+
 type Quotation struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	Amount                 float64                `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	Currency               string                 `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
-	PriceType              string                 `protobuf:"bytes,3,opt,name=price_type,json=priceType,proto3" json:"price_type,omitempty"`
+	RateBasis              string                 `protobuf:"bytes,3,opt,name=rate_basis,json=rateBasis,proto3" json:"rate_basis,omitempty"`
 	EstimatedDurationHours *float64               `protobuf:"fixed64,4,opt,name=estimated_duration_hours,json=estimatedDurationHours,proto3,oneof" json:"estimated_duration_hours,omitempty"`
 	Message                *string                `protobuf:"bytes,5,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	RateUnit               *string                `protobuf:"bytes,6,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -656,9 +697,9 @@ func (x *Quotation) GetCurrency() string {
 	return ""
 }
 
-func (x *Quotation) GetPriceType() string {
+func (x *Quotation) GetRateBasis() string {
 	if x != nil {
-		return x.PriceType
+		return x.RateBasis
 	}
 	return ""
 }
@@ -673,6 +714,13 @@ func (x *Quotation) GetEstimatedDurationHours() float64 {
 func (x *Quotation) GetMessage() string {
 	if x != nil && x.Message != nil {
 		return *x.Message
+	}
+	return ""
+}
+
+func (x *Quotation) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
 	}
 	return ""
 }
@@ -1325,52 +1373,152 @@ func (x *ListMyApplicationsResponse) GetApplications() []*MyWorkApplication {
 	return nil
 }
 
+type WorkLifecycleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkLifecycleRequest) Reset() {
+	*x = WorkLifecycleRequest{}
+	mi := &file_work_work_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkLifecycleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkLifecycleRequest) ProtoMessage() {}
+
+func (x *WorkLifecycleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkLifecycleRequest.ProtoReflect.Descriptor instead.
+func (*WorkLifecycleRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *WorkLifecycleRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *WorkLifecycleRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type WorkLifecycleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Work          *WorkPosting           `protobuf:"bytes,1,opt,name=work,proto3" json:"work,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkLifecycleResponse) Reset() {
+	*x = WorkLifecycleResponse{}
+	mi := &file_work_work_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkLifecycleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkLifecycleResponse) ProtoMessage() {}
+
+func (x *WorkLifecycleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkLifecycleResponse.ProtoReflect.Descriptor instead.
+func (*WorkLifecycleResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *WorkLifecycleResponse) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
 var File_work_work_proto protoreflect.FileDescriptor
 
 const file_work_work_proto_rawDesc = "" +
 	"\n" +
-	"\x0fwork/work.proto\x12\awork.v1\"\xd6\v\n" +
+	"\x0fwork/work.proto\x12\awork.v1\"\xc1\f\n" +
 	"\x11CreateWorkRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01\x12\x19\n" +
 	"\x05title\x18\x03 \x01(\tH\x01R\x05title\x88\x01\x01\x12%\n" +
 	"\fwork_type_id\x18\x04 \x01(\tH\x02R\n" +
 	"workTypeId\x88\x01\x01\x12-\n" +
-	"\x10work_category_id\x18\x1a \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x04R\vdescription\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\x06 \x01(\tH\x05R\aaddress\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\a \x01(\tH\x06R\x04city\x88\x01\x01\x12\x19\n" +
-	"\x05state\x18\b \x01(\tH\aR\x05state\x88\x01\x01\x12\x1f\n" +
-	"\blatitude\x18\t \x01(\x01H\bR\blatitude\x88\x01\x01\x12!\n" +
+	"\x10work_category_id\x18\x1a \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x12+\n" +
+	"\x0fwork_segment_id\x18\x1b \x01(\tH\x04R\rworkSegmentId\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x05 \x01(\tH\x05R\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x06 \x01(\tH\x06R\aaddress\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\a \x01(\tH\aR\x04city\x88\x01\x01\x12\x19\n" +
+	"\x05state\x18\b \x01(\tH\bR\x05state\x88\x01\x01\x12\x1f\n" +
+	"\blatitude\x18\t \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
 	"\tlongitude\x18\n" +
-	" \x01(\x01H\tR\tlongitude\x88\x01\x01\x12*\n" +
-	"\x0eworkers_needed\x18\v \x01(\x05H\n" +
-	"R\rworkersNeeded\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\f \x01(\tH\vR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
+	" \x01(\x01H\n" +
+	"R\tlongitude\x88\x01\x01\x12*\n" +
+	"\x0eworkers_needed\x18\v \x01(\x05H\vR\rworkersNeeded\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\f \x01(\tH\fR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
 	"\x06skills\x18\r \x03(\tR\x06skills\x12*\n" +
-	"\x0etools_provided\x18\x0e \x01(\bH\fR\rtoolsProvided\x88\x01\x01\x122\n" +
-	"\x12materials_provided\x18\x0f \x01(\bH\rR\x11materialsProvided\x88\x01\x01\x12\"\n" +
+	"\x0etools_provided\x18\x0e \x01(\bH\rR\rtoolsProvided\x88\x01\x01\x122\n" +
+	"\x12materials_provided\x18\x0f \x01(\bH\x0eR\x11materialsProvided\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"start_date\x18\x10 \x01(\tH\x0eR\tstartDate\x88\x01\x01\x12*\n" +
-	"\x0eduration_value\x18\x11 \x01(\x05H\x0fR\rdurationValue\x88\x01\x01\x12(\n" +
-	"\rduration_unit\x18\x12 \x01(\tH\x10R\fdurationUnit\x88\x01\x01\x12&\n" +
-	"\fshift_timing\x18\x13 \x01(\tH\x11R\vshiftTiming\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x14 \x01(\tH\x12R\vpaymentType\x88\x01\x01\x12$\n" +
-	"\vbudget_rate\x18\x15 \x01(\x01H\x13R\n" +
+	"start_date\x18\x10 \x01(\tH\x0fR\tstartDate\x88\x01\x01\x12*\n" +
+	"\x0eduration_value\x18\x11 \x01(\x05H\x10R\rdurationValue\x88\x01\x01\x12(\n" +
+	"\rduration_unit\x18\x12 \x01(\tH\x11R\fdurationUnit\x88\x01\x01\x12&\n" +
+	"\fshift_timing\x18\x13 \x01(\tH\x12R\vshiftTiming\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"rate_basis\x18\x14 \x01(\tH\x13R\trateBasis\x88\x01\x01\x12$\n" +
+	"\vbudget_rate\x18\x15 \x01(\x01H\x14R\n" +
 	"budgetRate\x88\x01\x01\x12(\n" +
-	"\rpayment_notes\x18\x16 \x01(\tH\x14R\fpaymentNotes\x88\x01\x01\x12:\n" +
-	"\x16accommodation_provided\x18\x17 \x01(\bH\x15R\x15accommodationProvided\x88\x01\x01\x12*\n" +
-	"\x0emeals_provided\x18\x18 \x01(\bH\x16R\rmealsProvided\x88\x01\x01\x12J\n" +
+	"\rpayment_notes\x18\x16 \x01(\tH\x15R\fpaymentNotes\x88\x01\x01\x12:\n" +
+	"\x16accommodation_provided\x18\x17 \x01(\bH\x16R\x15accommodationProvided\x88\x01\x01\x12*\n" +
+	"\x0emeals_provided\x18\x18 \x01(\bH\x17R\rmealsProvided\x88\x01\x01\x12J\n" +
 	"\n" +
 	"attributes\x18\x19 \x03(\v2*.work.v1.CreateWorkRequest.AttributesEntryR\n" +
-	"attributes\x1a=\n" +
+	"attributes\x12 \n" +
+	"\trate_unit\x18\x1c \x01(\tH\x18R\brateUnit\x88\x01\x01\x1a=\n" +
 	"\x0fAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\t\n" +
 	"\a_statusB\b\n" +
 	"\x06_titleB\x0f\n" +
 	"\r_work_type_idB\x13\n" +
-	"\x11_work_category_idB\x0e\n" +
+	"\x11_work_category_idB\x12\n" +
+	"\x10_work_segment_idB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_addressB\a\n" +
@@ -1386,14 +1534,16 @@ const file_work_work_proto_rawDesc = "" +
 	"\v_start_dateB\x11\n" +
 	"\x0f_duration_valueB\x10\n" +
 	"\x0e_duration_unitB\x0f\n" +
-	"\r_shift_timingB\x0f\n" +
-	"\r_payment_typeB\x0e\n" +
+	"\r_shift_timingB\r\n" +
+	"\v_rate_basisB\x0e\n" +
 	"\f_budget_rateB\x10\n" +
 	"\x0e_payment_notesB\x19\n" +
 	"\x17_accommodation_providedB\x11\n" +
-	"\x0f_meals_provided\">\n" +
+	"\x0f_meals_providedB\f\n" +
+	"\n" +
+	"_rate_unit\">\n" +
 	"\x12CreateWorkResponse\x12(\n" +
-	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xc9\r\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xfb\x0e\n" +
 	"\vWorkPosting\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
@@ -1403,39 +1553,43 @@ const file_work_work_proto_rawDesc = "" +
 	"workTypeId\x88\x01\x01\x12)\n" +
 	"\x0ework_type_name\x18\x1d \x01(\tH\x02R\fworkTypeName\x88\x01\x01\x12-\n" +
 	"\x10work_category_id\x18\x1f \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x121\n" +
-	"\x12work_category_name\x18  \x01(\tH\x04R\x10workCategoryName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x06 \x01(\tH\x05R\vdescription\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\a \x01(\tH\x06R\aaddress\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\b \x01(\tH\aR\x04city\x88\x01\x01\x12\x19\n" +
-	"\x05state\x18\t \x01(\tH\bR\x05state\x88\x01\x01\x12\x1f\n" +
+	"\x12work_category_name\x18  \x01(\tH\x04R\x10workCategoryName\x88\x01\x01\x12+\n" +
+	"\x0fwork_segment_id\x18! \x01(\tH\x05R\rworkSegmentId\x88\x01\x01\x12/\n" +
+	"\x11work_segment_name\x18\" \x01(\tH\x06R\x0fworkSegmentName\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x06 \x01(\tH\aR\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\a \x01(\tH\bR\aaddress\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\b \x01(\tH\tR\x04city\x88\x01\x01\x12\x19\n" +
+	"\x05state\x18\t \x01(\tH\n" +
+	"R\x05state\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\n" +
-	" \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\v \x01(\x01H\n" +
-	"R\tlongitude\x88\x01\x01\x12*\n" +
-	"\x0eworkers_needed\x18\f \x01(\x05H\vR\rworkersNeeded\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\r \x01(\tH\fR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
+	" \x01(\x01H\vR\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\v \x01(\x01H\fR\tlongitude\x88\x01\x01\x12*\n" +
+	"\x0eworkers_needed\x18\f \x01(\x05H\rR\rworkersNeeded\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\r \x01(\tH\x0eR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
 	"\x06skills\x18\x0e \x03(\tR\x06skills\x12*\n" +
-	"\x0etools_provided\x18\x0f \x01(\bH\rR\rtoolsProvided\x88\x01\x01\x122\n" +
-	"\x12materials_provided\x18\x10 \x01(\bH\x0eR\x11materialsProvided\x88\x01\x01\x12\"\n" +
+	"\x0etools_provided\x18\x0f \x01(\bH\x0fR\rtoolsProvided\x88\x01\x01\x122\n" +
+	"\x12materials_provided\x18\x10 \x01(\bH\x10R\x11materialsProvided\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"start_date\x18\x11 \x01(\tH\x0fR\tstartDate\x88\x01\x01\x12*\n" +
-	"\x0eduration_value\x18\x12 \x01(\x05H\x10R\rdurationValue\x88\x01\x01\x12(\n" +
-	"\rduration_unit\x18\x13 \x01(\tH\x11R\fdurationUnit\x88\x01\x01\x12&\n" +
-	"\fshift_timing\x18\x14 \x01(\tH\x12R\vshiftTiming\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x15 \x01(\tH\x13R\vpaymentType\x88\x01\x01\x12$\n" +
-	"\vbudget_rate\x18\x16 \x01(\x01H\x14R\n" +
+	"start_date\x18\x11 \x01(\tH\x11R\tstartDate\x88\x01\x01\x12*\n" +
+	"\x0eduration_value\x18\x12 \x01(\x05H\x12R\rdurationValue\x88\x01\x01\x12(\n" +
+	"\rduration_unit\x18\x13 \x01(\tH\x13R\fdurationUnit\x88\x01\x01\x12&\n" +
+	"\fshift_timing\x18\x14 \x01(\tH\x14R\vshiftTiming\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"rate_basis\x18\x15 \x01(\tH\x15R\trateBasis\x88\x01\x01\x12$\n" +
+	"\vbudget_rate\x18\x16 \x01(\x01H\x16R\n" +
 	"budgetRate\x88\x01\x01\x12(\n" +
-	"\rpayment_notes\x18\x17 \x01(\tH\x15R\fpaymentNotes\x88\x01\x01\x12:\n" +
-	"\x16accommodation_provided\x18\x18 \x01(\bH\x16R\x15accommodationProvided\x88\x01\x01\x12*\n" +
-	"\x0emeals_provided\x18\x19 \x01(\bH\x17R\rmealsProvided\x88\x01\x01\x12&\n" +
-	"\fpublished_at\x18\x1a \x01(\tH\x18R\vpublishedAt\x88\x01\x01\x12\x1d\n" +
+	"\rpayment_notes\x18\x17 \x01(\tH\x17R\fpaymentNotes\x88\x01\x01\x12:\n" +
+	"\x16accommodation_provided\x18\x18 \x01(\bH\x18R\x15accommodationProvided\x88\x01\x01\x12*\n" +
+	"\x0emeals_provided\x18\x19 \x01(\bH\x19R\rmealsProvided\x88\x01\x01\x12&\n" +
+	"\fpublished_at\x18\x1a \x01(\tH\x1aR\vpublishedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x1b \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\x1c \x01(\tR\tupdatedAt\x12D\n" +
 	"\n" +
 	"attributes\x18\x1e \x03(\v2$.work.v1.WorkPosting.AttributesEntryR\n" +
-	"attributes\x1a=\n" +
+	"attributes\x12 \n" +
+	"\trate_unit\x18# \x01(\tH\x1bR\brateUnit\x88\x01\x01\x1a=\n" +
 	"\x0fAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
@@ -1443,7 +1597,9 @@ const file_work_work_proto_rawDesc = "" +
 	"\r_work_type_idB\x11\n" +
 	"\x0f_work_type_nameB\x13\n" +
 	"\x11_work_category_idB\x15\n" +
-	"\x13_work_category_nameB\x0e\n" +
+	"\x13_work_category_nameB\x12\n" +
+	"\x10_work_segment_idB\x14\n" +
+	"\x12_work_segment_nameB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_addressB\a\n" +
@@ -1459,23 +1615,28 @@ const file_work_work_proto_rawDesc = "" +
 	"\v_start_dateB\x11\n" +
 	"\x0f_duration_valueB\x10\n" +
 	"\x0e_duration_unitB\x0f\n" +
-	"\r_shift_timingB\x0f\n" +
-	"\r_payment_typeB\x0e\n" +
+	"\r_shift_timingB\r\n" +
+	"\v_rate_basisB\x0e\n" +
 	"\f_budget_rateB\x10\n" +
 	"\x0e_payment_notesB\x19\n" +
 	"\x17_accommodation_providedB\x11\n" +
 	"\x0f_meals_providedB\x0f\n" +
-	"\r_published_at\"\xe5\x01\n" +
+	"\r_published_atB\f\n" +
+	"\n" +
+	"_rate_unit\"\x95\x02\n" +
 	"\tQuotation\x12\x16\n" +
 	"\x06amount\x18\x01 \x01(\x01R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x12\x1d\n" +
 	"\n" +
-	"price_type\x18\x03 \x01(\tR\tpriceType\x12=\n" +
+	"rate_basis\x18\x03 \x01(\tR\trateBasis\x12=\n" +
 	"\x18estimated_duration_hours\x18\x04 \x01(\x01H\x00R\x16estimatedDurationHours\x88\x01\x01\x12\x1d\n" +
-	"\amessage\x18\x05 \x01(\tH\x01R\amessage\x88\x01\x01B\x1b\n" +
+	"\amessage\x18\x05 \x01(\tH\x01R\amessage\x88\x01\x01\x12 \n" +
+	"\trate_unit\x18\x06 \x01(\tH\x02R\brateUnit\x88\x01\x01B\x1b\n" +
 	"\x19_estimated_duration_hoursB\n" +
 	"\n" +
-	"\b_message\"\xdf\x01\n" +
+	"\b_messageB\f\n" +
+	"\n" +
+	"_rate_unit\"\xdf\x01\n" +
 	"\x0fWorkApplication\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
@@ -1519,7 +1680,12 @@ const file_work_work_proto_rawDesc = "" +
 	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
 	"\a_status\"\\\n" +
 	"\x1aListMyApplicationsResponse\x12>\n" +
-	"\fapplications\x18\x01 \x03(\v2\x1a.work.v1.MyWorkApplicationR\fapplications2\xb9\a\n" +
+	"\fapplications\x18\x01 \x03(\v2\x1a.work.v1.MyWorkApplicationR\fapplications\"H\n" +
+	"\x14WorkLifecycleRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"A\n" +
+	"\x15WorkLifecycleResponse\x12(\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work2\xf9\t\n" +
 	"\vWorkService\x12E\n" +
 	"\n" +
 	"CreateWork\x12\x1a.work.v1.CreateWorkRequest\x1a\x1b.work.v1.CreateWorkResponse\x12H\n" +
@@ -1531,7 +1697,12 @@ const file_work_work_proto_rawDesc = "" +
 	"\x15AcceptWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12f\n" +
 	"\x15RejectWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12h\n" +
 	"\x17WithdrawWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12f\n" +
-	"\x15CancelWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
+	"\x15CancelWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12J\n" +
+	"\tStartWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12M\n" +
+	"\fCompleteWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12V\n" +
+	"\x15ConfirmWorkCompletion\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12K\n" +
+	"\n" +
+	"CancelWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
 
 var (
 	file_work_work_proto_rawDescOnce sync.Once
@@ -1545,7 +1716,7 @@ func file_work_work_proto_rawDescGZIP() []byte {
 	return file_work_work_proto_rawDescData
 }
 
-var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_work_work_proto_goTypes = []any{
 	(*CreateWorkRequest)(nil),             // 0: work.v1.CreateWorkRequest
 	(*CreateWorkResponse)(nil),            // 1: work.v1.CreateWorkResponse
@@ -1563,13 +1734,15 @@ var file_work_work_proto_goTypes = []any{
 	(*MyWorkApplication)(nil),             // 13: work.v1.MyWorkApplication
 	(*ListMyApplicationsRequest)(nil),     // 14: work.v1.ListMyApplicationsRequest
 	(*ListMyApplicationsResponse)(nil),    // 15: work.v1.ListMyApplicationsResponse
-	nil,                                   // 16: work.v1.CreateWorkRequest.AttributesEntry
-	nil,                                   // 17: work.v1.WorkPosting.AttributesEntry
+	(*WorkLifecycleRequest)(nil),          // 16: work.v1.WorkLifecycleRequest
+	(*WorkLifecycleResponse)(nil),         // 17: work.v1.WorkLifecycleResponse
+	nil,                                   // 18: work.v1.CreateWorkRequest.AttributesEntry
+	nil,                                   // 19: work.v1.WorkPosting.AttributesEntry
 }
 var file_work_work_proto_depIdxs = []int32{
-	16, // 0: work.v1.CreateWorkRequest.attributes:type_name -> work.v1.CreateWorkRequest.AttributesEntry
+	18, // 0: work.v1.CreateWorkRequest.attributes:type_name -> work.v1.CreateWorkRequest.AttributesEntry
 	2,  // 1: work.v1.CreateWorkResponse.work:type_name -> work.v1.WorkPosting
-	17, // 2: work.v1.WorkPosting.attributes:type_name -> work.v1.WorkPosting.AttributesEntry
+	19, // 2: work.v1.WorkPosting.attributes:type_name -> work.v1.WorkPosting.AttributesEntry
 	3,  // 3: work.v1.WorkApplication.quotation:type_name -> work.v1.Quotation
 	3,  // 4: work.v1.ApplyToWorkRequest.quotation:type_name -> work.v1.Quotation
 	4,  // 5: work.v1.ApplyToWorkResponse.application:type_name -> work.v1.WorkApplication
@@ -1579,31 +1752,40 @@ var file_work_work_proto_depIdxs = []int32{
 	4,  // 9: work.v1.MyWorkApplication.application:type_name -> work.v1.WorkApplication
 	2,  // 10: work.v1.MyWorkApplication.work:type_name -> work.v1.WorkPosting
 	13, // 11: work.v1.ListMyApplicationsResponse.applications:type_name -> work.v1.MyWorkApplication
-	0,  // 12: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
-	11, // 13: work.v1.WorkService.ListMyWorks:input_type -> work.v1.ListMyWorksRequest
-	5,  // 14: work.v1.WorkService.ApplyToWork:input_type -> work.v1.ApplyToWorkRequest
-	14, // 15: work.v1.WorkService.ListMyApplications:input_type -> work.v1.ListMyApplicationsRequest
-	7,  // 16: work.v1.WorkService.ListWorkApplications:input_type -> work.v1.ListWorkApplicationsRequest
-	9,  // 17: work.v1.WorkService.ShortlistWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 18: work.v1.WorkService.AcceptWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 19: work.v1.WorkService.RejectWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 20: work.v1.WorkService.WithdrawWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 21: work.v1.WorkService.CancelWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	1,  // 22: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
-	12, // 23: work.v1.WorkService.ListMyWorks:output_type -> work.v1.ListMyWorksResponse
-	6,  // 24: work.v1.WorkService.ApplyToWork:output_type -> work.v1.ApplyToWorkResponse
-	15, // 25: work.v1.WorkService.ListMyApplications:output_type -> work.v1.ListMyApplicationsResponse
-	8,  // 26: work.v1.WorkService.ListWorkApplications:output_type -> work.v1.ListWorkApplicationsResponse
-	10, // 27: work.v1.WorkService.ShortlistWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 28: work.v1.WorkService.AcceptWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 29: work.v1.WorkService.RejectWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 30: work.v1.WorkService.WithdrawWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 31: work.v1.WorkService.CancelWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	22, // [22:32] is the sub-list for method output_type
-	12, // [12:22] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	2,  // 12: work.v1.WorkLifecycleResponse.work:type_name -> work.v1.WorkPosting
+	0,  // 13: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
+	11, // 14: work.v1.WorkService.ListMyWorks:input_type -> work.v1.ListMyWorksRequest
+	5,  // 15: work.v1.WorkService.ApplyToWork:input_type -> work.v1.ApplyToWorkRequest
+	14, // 16: work.v1.WorkService.ListMyApplications:input_type -> work.v1.ListMyApplicationsRequest
+	7,  // 17: work.v1.WorkService.ListWorkApplications:input_type -> work.v1.ListWorkApplicationsRequest
+	9,  // 18: work.v1.WorkService.ShortlistWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 19: work.v1.WorkService.AcceptWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 20: work.v1.WorkService.RejectWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 21: work.v1.WorkService.WithdrawWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 22: work.v1.WorkService.CancelWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	16, // 23: work.v1.WorkService.StartWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 24: work.v1.WorkService.CompleteWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 25: work.v1.WorkService.ConfirmWorkCompletion:input_type -> work.v1.WorkLifecycleRequest
+	16, // 26: work.v1.WorkService.CancelWork:input_type -> work.v1.WorkLifecycleRequest
+	1,  // 27: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
+	12, // 28: work.v1.WorkService.ListMyWorks:output_type -> work.v1.ListMyWorksResponse
+	6,  // 29: work.v1.WorkService.ApplyToWork:output_type -> work.v1.ApplyToWorkResponse
+	15, // 30: work.v1.WorkService.ListMyApplications:output_type -> work.v1.ListMyApplicationsResponse
+	8,  // 31: work.v1.WorkService.ListWorkApplications:output_type -> work.v1.ListWorkApplicationsResponse
+	10, // 32: work.v1.WorkService.ShortlistWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 33: work.v1.WorkService.AcceptWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 34: work.v1.WorkService.RejectWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 35: work.v1.WorkService.WithdrawWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 36: work.v1.WorkService.CancelWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	17, // 37: work.v1.WorkService.StartWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 38: work.v1.WorkService.CompleteWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 39: work.v1.WorkService.ConfirmWorkCompletion:output_type -> work.v1.WorkLifecycleResponse
+	17, // 40: work.v1.WorkService.CancelWork:output_type -> work.v1.WorkLifecycleResponse
+	27, // [27:41] is the sub-list for method output_type
+	13, // [13:27] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_work_work_proto_init() }
@@ -1623,7 +1805,7 @@ func file_work_work_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_work_work_proto_rawDesc), len(file_work_work_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

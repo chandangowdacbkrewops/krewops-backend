@@ -27,14 +27,6 @@ func main() {
 		log.Fatal("failed to load configuration: ", err)
 	}
 
-	if err := database.RunMigrations(
-		cfg.DatabaseURL,
-		"migrations",
-		"auth_schema_migrations",
-	); err != nil {
-		log.Fatal("failed to run migrations: ", err)
-	}
-
 	db, err := database.NewPostgresPool(
 		ctx,
 		cfg.DatabaseURL,

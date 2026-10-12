@@ -20,10 +20,13 @@ func (r *WorkTypeFieldRepository) ListActiveByWorkTypeID(
 	ctx context.Context,
 	workTypeID string,
 ) ([]model.WorkTypeField, error) {
+	// Only WORK_POST/BOTH-context fields are relevant to a job posting;
+	// WORKER_PROFILE-only fields (captured once at worker onboarding) are
+	// excluded here.
 	rows, err := r.db.Query(ctx, `
 		SELECT field_key, is_required
 		FROM work_type_fields
-		WHERE work_type_id = $1 AND is_active = TRUE
+		WHERE work_type_id = $1 AND is_active = TRUE AND context IN ('WORK_POST', 'BOTH')
 		ORDER BY display_order ASC, label ASC
 	`, workTypeID)
 	if err != nil {

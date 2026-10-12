@@ -21,8 +21,8 @@ func NewWorkCategoryRepository(db *pgxpool.Pool) *WorkCategoryRepository {
 func (r *WorkCategoryRepository) ListAll(ctx context.Context) ([]model.WorkCategory, error) {
 	rows, err := r.db.Query(ctx, `
 		SELECT id, code, name, description, display_order, is_active, created_at, updated_at
-		FROM work_categories
-		WHERE is_active = TRUE
+		FROM categories
+		WHERE node_type = 'SECTOR' AND is_active = TRUE
 		ORDER BY display_order ASC, name ASC
 	`)
 	if err != nil {
@@ -55,8 +55,8 @@ func (r *WorkCategoryRepository) FindByID(ctx context.Context, id string) (*mode
 	var wc model.WorkCategory
 	err := r.db.QueryRow(ctx, `
 		SELECT id, code, name, description, display_order, is_active, created_at, updated_at
-		FROM work_categories
-		WHERE id = $1
+		FROM categories
+		WHERE id = $1 AND node_type = 'SECTOR'
 	`, id).Scan(
 		&wc.ID,
 		&wc.Code,

@@ -160,6 +160,42 @@ func (h *WorkHandler) CancelWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workService.CancelWorkApplication, "unable to cancel application")
 }
 
+func (h *WorkHandler) StartWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.StartWork, "unable to start work")
+}
+
+func (h *WorkHandler) CompleteWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.CompleteWork, "unable to complete work")
+}
+
+func (h *WorkHandler) ConfirmWorkCompletion(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.ConfirmWorkCompletion, "unable to confirm work completion")
+}
+
+func (h *WorkHandler) CancelWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.CancelWork, "unable to cancel work")
+}
+
+func (h *WorkHandler) updateWorkStatus(
+	c *gin.Context,
+	fn func(ctx context.Context, userID, workID string) (*model.WorkResponse, error),
+	fallback string,
+) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	result, err := fn(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, fallback)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
 func (h *WorkHandler) updateApplication(
 	c *gin.Context,
 	fn func(ctx context.Context, userID, workID, applicationID string) (*model.WorkApplication, error),
@@ -185,7 +221,9 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 	case errors.Is(err, service.ErrWorkerProfileNotCompleted),
 		errors.Is(err, service.ErrCannotApplyToOwnWork),
 		errors.Is(err, service.ErrNotWorkOwner),
-		errors.Is(err, service.ErrNotApplicationWorker):
+		errors.Is(err, service.ErrNotApplicationWorker),
+		errors.Is(err, service.ErrNotAssignedWorker),
+		errors.Is(err, service.ErrContractorRequired):
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotFound),
 		errors.Is(err, service.ErrApplicationNotFound):
@@ -195,6 +233,8 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
+		errors.Is(err, service.ErrInvalidWorkStatus),
+		errors.Is(err, service.ErrWorkNotReadyToStart),
 		isValidationError(err):
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	default:
@@ -217,6 +257,7 @@ func isValidationError(err error) bool {
 		"description",
 		"work_type_id",
 		"work_category_id",
+		"work_segment_id",
 		"address",
 		"city",
 		"state",
@@ -226,7 +267,8 @@ func isValidationError(err error) bool {
 		"start_date",
 		"duration_value",
 		"duration_unit",
-		"payment_type",
+		"rate_basis",
+		"rate_unit",
 		"budget_rate",
 		"payment_notes",
 		"attributes",

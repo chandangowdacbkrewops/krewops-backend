@@ -15,11 +15,26 @@ type WorkCategory struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+// WorkSegment sits between a category and its work types (e.g. Coffee
+// under Agriculture).
+type WorkSegment struct {
+	ID           string    `json:"id"`
+	CategoryID   string    `json:"category_id"`
+	Code         string    `json:"code"`
+	Name         string    `json:"name"`
+	Description  *string   `json:"description,omitempty"`
+	DisplayOrder int32     `json:"display_order"`
+	IsActive     bool      `json:"is_active"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 // WorkType mirrors a row in the work_types table, which now belongs to a
-// WorkCategory and carries a stable code alongside its display name.
+// WorkSegment (and denormalizes the parent category_id).
 type WorkType struct {
 	ID           string    `json:"id"`
 	CategoryID   string    `json:"category_id"`
+	SegmentID    string    `json:"segment_id"`
 	Code         string    `json:"code"`
 	Name         string    `json:"name"`
 	Description  *string   `json:"description,omitempty"`
@@ -47,12 +62,22 @@ type WorkTypeFieldOption struct {
 // WorkTypeField mirrors a row in the work_type_fields table, describing one
 // dynamic form field configured for a work type, along with its options
 // (populated only for SELECT/MULTI_SELECT/RADIO field types).
+// Field context values: WORKER_PROFILE fields are captured once on the
+// worker's work-type selection, WORK_POST fields are captured per job
+// posting (legacy default), BOTH applies to either context.
+const (
+	FieldContextWorkerProfile = "WORKER_PROFILE"
+	FieldContextWorkPost      = "WORK_POST"
+	FieldContextBoth          = "BOTH"
+)
+
 type WorkTypeField struct {
 	ID           string                `json:"id"`
 	WorkTypeID   string                `json:"work_type_id"`
 	FieldKey     string                `json:"field_key"`
 	Label        string                `json:"label"`
 	FieldType    string                `json:"field_type"`
+	Context      string                `json:"context"`
 	Placeholder  *string               `json:"placeholder,omitempty"`
 	HelpText     *string               `json:"help_text,omitempty"`
 	IsRequired   bool                  `json:"is_required"`
@@ -68,20 +93,27 @@ type WorkTypeField struct {
 	Options      []WorkTypeFieldOption `json:"options,omitempty"`
 }
 
-type PaymentType struct {
-	ID        string    `json:"id"`
-	Code      string    `json:"code"`
-	Name      string    `json:"name"`
-	IsActive  bool      `json:"is_active"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
+// Skill is global, reusable master data (no longer tied 1:1 to a single
+// work type); its applicability to a work type is expressed via the
+// work_type_skills join table.
 type Skill struct {
 	ID         string    `json:"id"`
-	WorkTypeID string    `json:"work_type_id"`
 	Code       string    `json:"code"`
 	Name       string    `json:"name"`
+	IsRequired bool      `json:"is_required,omitempty"`
 	IsActive   bool      `json:"is_active"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+// CommonRole is global reusable master data describing a job title/role
+// commonly associated with one or more work types (e.g. "Mason", "Picker").
+type CommonRole struct {
+	ID        string    `json:"id"`
+	Code      string    `json:"code"`
+	Name      string    `json:"name"`
+	IsPrimary bool      `json:"is_primary,omitempty"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

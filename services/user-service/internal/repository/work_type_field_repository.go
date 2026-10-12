@@ -21,7 +21,7 @@ func NewWorkTypeFieldRepository(db *pgxpool.Pool) *WorkTypeFieldRepository {
 // attached (populated only for SELECT/MULTI_SELECT/RADIO field types).
 func (r *WorkTypeFieldRepository) ListByWorkTypeID(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
 	rows, err := r.db.Query(ctx, `
-		SELECT id, work_type_id, field_key, label, field_type, placeholder, help_text,
+		SELECT id, work_type_id, field_key, label, field_type, context, placeholder, help_text,
 		       is_required, unit, min_value, max_value, min_length, max_length,
 		       display_order, is_active, created_at, updated_at
 		FROM work_type_fields
@@ -43,6 +43,7 @@ func (r *WorkTypeFieldRepository) ListByWorkTypeID(ctx context.Context, workType
 			&f.FieldKey,
 			&f.Label,
 			&f.FieldType,
+			&f.Context,
 			&f.Placeholder,
 			&f.HelpText,
 			&f.IsRequired,

@@ -22,8 +22,8 @@ func (r *WorkCategoryRepository) FindByID(ctx context.Context, id string) (*mode
 	category := &model.WorkCategory{}
 	err := r.db.QueryRow(ctx, `
 		SELECT id, name
-		FROM work_categories
-		WHERE id = $1 AND is_active = TRUE
+		FROM categories
+		WHERE id = $1 AND node_type = 'SECTOR' AND is_active = TRUE
 	`, id).Scan(&category.ID, &category.Name)
 
 	if errors.Is(err, pgx.ErrNoRows) {

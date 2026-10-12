@@ -26,6 +26,7 @@ type CreateWorkRequest struct {
 	Title          *string `json:"title"`
 	WorkTypeID     *string `json:"work_type_id"`
 	WorkCategoryID *string `json:"work_category_id"`
+	WorkSegmentID  *string `json:"work_segment_id"`
 	Description    *string `json:"description"`
 
 	Address   *string  `json:"address"`
@@ -45,7 +46,8 @@ type CreateWorkRequest struct {
 	DurationUnit  *string `json:"duration_unit"`
 	ShiftTiming   *string `json:"shift_timing"`
 
-	PaymentType           *string  `json:"payment_type"`
+	RateBasis             *string  `json:"rate_basis"`
+	RateUnit              *string  `json:"rate_unit"`
 	BudgetRate            *float64 `json:"budget_rate"`
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
@@ -63,6 +65,20 @@ func NewWorkHandler(
 	}
 }
 
+// CreateWork godoc
+//
+//	@Summary	Create a work posting
+//	@Tags		Work
+//	@Accept		json
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		request	body		CreateWorkRequest	true	"Work posting details"
+//	@Success	201		{object}	response.SuccessResponse{data=workv1.CreateWorkResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse	"User has not completed onboarding"
+//	@Failure	500		{object}	response.ErrorResponse
+//	@Router		/work [post]
 func (h *WorkHandler) CreateWork(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 	log.Printf("create work started: request_id=%s", requestID)
@@ -100,6 +116,7 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			Title:                 request.Title,
 			WorkTypeId:            request.WorkTypeID,
 			WorkCategoryId:        request.WorkCategoryID,
+			WorkSegmentId:         request.WorkSegmentID,
 			Description:           request.Description,
 			Address:               request.Address,
 			City:                  request.City,
@@ -115,7 +132,8 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			DurationValue:         request.DurationValue,
 			DurationUnit:          request.DurationUnit,
 			ShiftTiming:           request.ShiftTiming,
-			PaymentType:           request.PaymentType,
+			RateBasis:             request.RateBasis,
+			RateUnit:              request.RateUnit,
 			BudgetRate:            request.BudgetRate,
 			PaymentNotes:          request.PaymentNotes,
 			AccommodationProvided: request.AccommodationProvided,
@@ -145,6 +163,17 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 	)
 }
 
+// ListMyWorks godoc
+//
+//	@Summary	List the current user's work postings
+//	@Tags		Work
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		status	query		string	false	"Filter by work posting status"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.ListMyWorksResponse}
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	500		{object}	response.ErrorResponse
+//	@Router		/work [get]
 func (h *WorkHandler) ListMyWorks(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 	userID, ok := gatewayUserID(c)
@@ -188,11 +217,28 @@ type ApplyToWorkRequest struct {
 type Quotation struct {
 	Amount                 float64  `json:"amount"`
 	Currency               string   `json:"currency"`
-	PriceType              string   `json:"price_type"`
+	RateBasis              string   `json:"rate_basis"`
+	RateUnit               *string  `json:"rate_unit"`
 	EstimatedDurationHours *float64 `json:"estimated_duration_hours"`
 	Message                *string  `json:"message"`
 }
 
+// ApplyToWork godoc
+//
+//	@Summary	Apply to a work posting
+//	@Tags		Applications
+//	@Accept		json
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string				true	"Work posting ID"
+//	@Param		request	body		ApplyToWorkRequest	true	"Quotation details"
+//	@Success	201		{object}	response.SuccessResponse{data=workv1.ApplyToWorkResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse	"Work posting not found"
+//	@Failure	409		{object}	response.ErrorResponse	"Already applied"
+//	@Failure	500		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications [post]
 func (h *WorkHandler) ApplyToWork(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 	userID, ok := gatewayUserID(c)
@@ -217,7 +263,8 @@ func (h *WorkHandler) ApplyToWork(c *gin.Context) {
 		Quotation: &workv1.Quotation{
 			Amount:                 request.Quotation.Amount,
 			Currency:               request.Quotation.Currency,
-			PriceType:              request.Quotation.PriceType,
+			RateBasis:              request.Quotation.RateBasis,
+			RateUnit:               request.Quotation.RateUnit,
 			EstimatedDurationHours: request.Quotation.EstimatedDurationHours,
 			Message:                request.Quotation.Message,
 		},
@@ -230,6 +277,20 @@ func (h *WorkHandler) ApplyToWork(c *gin.Context) {
 	response.Success(c, http.StatusCreated, applyResp)
 }
 
+// ListWorkApplications godoc
+//
+//	@Summary	List applications received for a work posting
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string	true	"Work posting ID"
+//	@Param		status	query		string	false	"Filter by application status"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.ListWorkApplicationsResponse}
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse	"Work posting not found"
+//	@Failure	500		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications [get]
 func (h *WorkHandler) ListWorkApplications(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 	userID, ok := gatewayUserID(c)
@@ -260,6 +321,17 @@ func (h *WorkHandler) ListWorkApplications(c *gin.Context) {
 	response.Success(c, http.StatusOK, listResp)
 }
 
+// ListMyApplications godoc
+//
+//	@Summary	List the current user's applications
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		status	query		string	false	"Filter by application status"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.ListMyApplicationsResponse}
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	500		{object}	response.ErrorResponse
+//	@Router		/work/applications [get]
 func (h *WorkHandler) ListMyApplications(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 	userID, ok := gatewayUserID(c)
@@ -289,24 +361,195 @@ func (h *WorkHandler) ListMyApplications(c *gin.Context) {
 	response.Success(c, http.StatusOK, listResp)
 }
 
+// ShortlistWorkApplication godoc
+//
+//	@Summary	Shortlist an application (owner action)
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId			path		string	true	"Work posting ID"
+//	@Param		applicationId	path		string	true	"Application ID"
+//	@Success	200				{object}	response.SuccessResponse{data=workv1.UpdateWorkApplicationResponse}
+//	@Failure	401				{object}	response.ErrorResponse
+//	@Failure	403				{object}	response.ErrorResponse
+//	@Failure	404				{object}	response.ErrorResponse	"Application not found"
+//	@Failure	409				{object}	response.ErrorResponse	"Invalid state transition"
+//	@Failure	500				{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications/{applicationId}/shortlist [post]
 func (h *WorkHandler) ShortlistWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workClient.ShortlistWorkApplication, "failed to shortlist application")
 }
 
+// AcceptWorkApplication godoc
+//
+//	@Summary	Accept an application (owner action)
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId			path		string	true	"Work posting ID"
+//	@Param		applicationId	path		string	true	"Application ID"
+//	@Success	200				{object}	response.SuccessResponse{data=workv1.UpdateWorkApplicationResponse}
+//	@Failure	401				{object}	response.ErrorResponse
+//	@Failure	403				{object}	response.ErrorResponse
+//	@Failure	404				{object}	response.ErrorResponse	"Application not found"
+//	@Failure	409				{object}	response.ErrorResponse	"Invalid state transition"
+//	@Failure	500				{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications/{applicationId}/accept [post]
 func (h *WorkHandler) AcceptWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workClient.AcceptWorkApplication, "failed to accept application")
 }
 
+// RejectWorkApplication godoc
+//
+//	@Summary	Reject an application (owner action)
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId			path		string	true	"Work posting ID"
+//	@Param		applicationId	path		string	true	"Application ID"
+//	@Success	200				{object}	response.SuccessResponse{data=workv1.UpdateWorkApplicationResponse}
+//	@Failure	401				{object}	response.ErrorResponse
+//	@Failure	403				{object}	response.ErrorResponse
+//	@Failure	404				{object}	response.ErrorResponse	"Application not found"
+//	@Failure	409				{object}	response.ErrorResponse	"Invalid state transition"
+//	@Failure	500				{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications/{applicationId}/reject [post]
 func (h *WorkHandler) RejectWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workClient.RejectWorkApplication, "failed to reject application")
 }
 
+// WithdrawWorkApplication godoc
+//
+//	@Summary	Withdraw an application (applicant action)
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId			path		string	true	"Work posting ID"
+//	@Param		applicationId	path		string	true	"Application ID"
+//	@Success	200				{object}	response.SuccessResponse{data=workv1.UpdateWorkApplicationResponse}
+//	@Failure	401				{object}	response.ErrorResponse
+//	@Failure	403				{object}	response.ErrorResponse
+//	@Failure	404				{object}	response.ErrorResponse	"Application not found"
+//	@Failure	409				{object}	response.ErrorResponse	"Invalid state transition"
+//	@Failure	500				{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications/{applicationId}/withdraw [post]
 func (h *WorkHandler) WithdrawWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workClient.WithdrawWorkApplication, "failed to withdraw application")
 }
 
+// CancelWorkApplication godoc
+//
+//	@Summary	Cancel an application (owner or applicant action)
+//	@Tags		Applications
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId			path		string	true	"Work posting ID"
+//	@Param		applicationId	path		string	true	"Application ID"
+//	@Success	200				{object}	response.SuccessResponse{data=workv1.UpdateWorkApplicationResponse}
+//	@Failure	401				{object}	response.ErrorResponse
+//	@Failure	403				{object}	response.ErrorResponse
+//	@Failure	404				{object}	response.ErrorResponse	"Application not found"
+//	@Failure	409				{object}	response.ErrorResponse	"Invalid state transition"
+//	@Failure	500				{object}	response.ErrorResponse
+//	@Router		/work/{workId}/applications/{applicationId}/cancel [post]
 func (h *WorkHandler) CancelWorkApplication(c *gin.Context) {
 	h.updateApplication(c, h.workClient.CancelWorkApplication, "failed to cancel application")
+}
+
+// StartWork godoc
+//
+//	@Summary	Start assigned work
+//	@Tags		Work
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string	true	"Work posting ID"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.WorkLifecycleResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/start [post]
+func (h *WorkHandler) StartWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.StartWork, "failed to start work")
+}
+
+// CompleteWork godoc
+//
+//	@Summary	Mark assigned work completed
+//	@Tags		Work
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string	true	"Work posting ID"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.WorkLifecycleResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/complete [post]
+func (h *WorkHandler) CompleteWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.CompleteWork, "failed to complete work")
+}
+
+// ConfirmWorkCompletion godoc
+//
+//	@Summary	Confirm completed work and close it
+//	@Tags		Work
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string	true	"Work posting ID"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.WorkLifecycleResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/confirm-completion [post]
+func (h *WorkHandler) ConfirmWorkCompletion(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.ConfirmWorkCompletion, "failed to confirm work completion")
+}
+
+// CancelWork godoc
+//
+//	@Summary	Cancel a work posting
+//	@Tags		Work
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		workId	path		string	true	"Work posting ID"
+//	@Success	200		{object}	response.SuccessResponse{data=workv1.WorkLifecycleResponse}
+//	@Failure	400		{object}	response.ErrorResponse
+//	@Failure	401		{object}	response.ErrorResponse
+//	@Failure	403		{object}	response.ErrorResponse
+//	@Failure	404		{object}	response.ErrorResponse
+//	@Router		/work/{workId}/cancel [post]
+func (h *WorkHandler) CancelWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.CancelWork, "failed to cancel work")
+}
+
+func (h *WorkHandler) updateWorkStatus(
+	c *gin.Context,
+	fn func(ctx context.Context, in *workv1.WorkLifecycleRequest, opts ...grpc.CallOption) (*workv1.WorkLifecycleResponse, error),
+	fallback string,
+) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+
+	updateResp, err := fn(ctx, &workv1.WorkLifecycleRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, fallback)
+		return
+	}
+
+	response.Success(c, http.StatusOK, updateResp)
 }
 
 func (h *WorkHandler) updateApplication(

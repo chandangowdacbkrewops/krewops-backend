@@ -35,21 +35,6 @@ func main() {
 	}
 
 	// -------------------------
-	// Database migrations
-	// -------------------------
-
-	if err := database.RunMigrations(
-		cfg.DatabaseURL,
-		"migrations",
-		"user_schema_migrations",
-	); err != nil {
-		log.Fatal(
-			"failed to run migrations: ",
-			err,
-		)
-	}
-
-	// -------------------------
 	// Database connection
 	// -------------------------
 
@@ -85,14 +70,20 @@ func main() {
 	workCategoryRepository :=
 		repository.NewWorkCategoryRepository(db)
 
+	workSegmentRepository :=
+		repository.NewWorkSegmentRepository(db)
+
 	workTypeFieldRepository :=
 		repository.NewWorkTypeFieldRepository(db)
 
-	paymentTypeRepository :=
-		repository.NewPaymentTypeRepository(db)
+	rateTypeRepository :=
+		repository.NewRateTypeRepository(db)
 
 	skillRepository :=
 		repository.NewSkillRepository(db)
+
+	commonRoleRepository :=
+		repository.NewCommonRoleRepository(db)
 
 	// -------------------------
 	// Services
@@ -110,9 +101,11 @@ func main() {
 			ownerService,
 			workTypeRepository,
 			workCategoryRepository,
+			workSegmentRepository,
 			workTypeFieldRepository,
-			paymentTypeRepository,
+			rateTypeRepository,
 			skillRepository,
+			commonRoleRepository,
 		)
 
 	userService :=

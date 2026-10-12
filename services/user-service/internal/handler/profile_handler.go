@@ -54,7 +54,7 @@ func (h *ProfileHandler) CreateProfile(c *gin.Context) {
 		switch {
 		case errors.Is(err, repository.ErrProfileAlreadyExists):
 			c.JSON(http.StatusConflict, gin.H{"error": "profile already exists"})
-		case errors.Is(err, service.ErrInvalidProfile):
+		case errors.Is(err, service.ErrInvalidProfile), errors.Is(err, service.ErrInvalidGender):
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to save profile"})
@@ -83,7 +83,7 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		switch {
 		case errors.Is(err, repository.ErrProfileNotFound):
 			c.JSON(http.StatusNotFound, gin.H{"error": "profile not found"})
-		case errors.Is(err, service.ErrInvalidProfile):
+		case errors.Is(err, service.ErrInvalidProfile), errors.Is(err, service.ErrInvalidGender):
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update profile"})
@@ -181,6 +181,30 @@ func (h *ProfileHandler) ListWorkTypesByCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": types})
 }
 
+func (h *ProfileHandler) ListWorkSegmentsByCategory(c *gin.Context) {
+	categoryID := c.Param("categoryId")
+
+	segments, err := h.profileService.ListWorkSegmentsByCategory(c.Request.Context(), categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch work segments"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": segments})
+}
+
+func (h *ProfileHandler) ListWorkTypesBySegment(c *gin.Context) {
+	segmentID := c.Param("segmentId")
+
+	types, err := h.profileService.ListWorkTypesBySegment(c.Request.Context(), segmentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch work types"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": types})
+}
+
 func (h *ProfileHandler) ListWorkTypeFields(c *gin.Context) {
 	workTypeID := c.Param("workTypeId")
 
@@ -193,28 +217,40 @@ func (h *ProfileHandler) ListWorkTypeFields(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": fields})
 }
 
-func (h *ProfileHandler) ListWorkTypePaymentTypes(c *gin.Context) {
+func (h *ProfileHandler) ListWorkTypeRateTypes(c *gin.Context) {
 	workTypeID := c.Param("workTypeId")
 
-	paymentTypes, err := h.profileService.ListWorkTypePaymentTypes(c.Request.Context(), workTypeID)
+	options, err := h.profileService.ListWorkTypeRateTypes(c.Request.Context(), workTypeID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch payment types"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch rate types"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": paymentTypes})
+	c.JSON(http.StatusOK, gin.H{"data": options})
 }
 
-func (h *ProfileHandler) ListWorkCategoryPaymentTypes(c *gin.Context) {
-	categoryID := c.Param("categoryId")
+func (h *ProfileHandler) ListWorkSegmentRateTypes(c *gin.Context) {
+	segmentID := c.Param("segmentId")
 
-	paymentTypes, err := h.profileService.ListWorkCategoryPaymentTypes(c.Request.Context(), categoryID)
+	options, err := h.profileService.ListWorkSegmentRateTypes(c.Request.Context(), segmentID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch payment types"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch rate types"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": paymentTypes})
+	c.JSON(http.StatusOK, gin.H{"data": options})
+}
+
+func (h *ProfileHandler) ListWorkCategoryRateTypes(c *gin.Context) {
+	categoryID := c.Param("categoryId")
+
+	options, err := h.profileService.ListWorkCategoryRateTypes(c.Request.Context(), categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch rate types"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": options})
 }
 
 func (h *ProfileHandler) ListWorkTypeSkills(c *gin.Context) {
@@ -227,6 +263,30 @@ func (h *ProfileHandler) ListWorkTypeSkills(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": skills})
+}
+
+func (h *ProfileHandler) ListWorkTypeCommonRoles(c *gin.Context) {
+	workTypeID := c.Param("workTypeId")
+
+	roles, err := h.profileService.ListWorkTypeCommonRoles(c.Request.Context(), workTypeID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch common roles"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": roles})
+}
+
+func (h *ProfileHandler) GetWorkTypeConfiguration(c *gin.Context) {
+	workTypeID := c.Param("workTypeId")
+
+	config, err := h.profileService.GetWorkTypeConfiguration(c.Request.Context(), workTypeID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to fetch work type configuration"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": config})
 }
 
 func (h *ProfileHandler) Health(c *gin.Context) {

@@ -1,0 +1,2270 @@
+basePath: /api/v1
+definitions:
+  github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorDetail:
+    properties:
+      code:
+        type: string
+      details: {}
+      message:
+        type: string
+    type: object
+  github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorDetail'
+      meta:
+        $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.Meta'
+      success:
+        type: boolean
+    type: object
+  github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.Meta:
+    properties:
+      request_id:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.Meta'
+      success:
+        type: boolean
+    type: object
+  internal_handler.ApplyToWorkRequest:
+    properties:
+      quotation:
+        $ref: '#/definitions/internal_handler.Quotation'
+    type: object
+  internal_handler.CreateProfileRequest:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      last_name:
+        type: string
+      postal_code:
+        type: string
+      state:
+        type: string
+      user_type:
+        type: string
+    required:
+    - city
+    - country
+    - first_name
+    - last_name
+    - postal_code
+    - state
+    - user_type
+    type: object
+  internal_handler.CreateWorkRequest:
+    properties:
+      accommodation_provided:
+        type: boolean
+      address:
+        type: string
+      attributes:
+        additionalProperties:
+          type: string
+        type: object
+      budget_rate:
+        type: number
+      city:
+        type: string
+      description:
+        type: string
+      duration_unit:
+        type: string
+      duration_value:
+        type: integer
+      experience_level:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      materials_provided:
+        type: boolean
+      meals_provided:
+        type: boolean
+      payment_notes:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      shift_timing:
+        type: string
+      skills:
+        items:
+          type: string
+        type: array
+      start_date:
+        type: string
+      state:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      tools_provided:
+        type: boolean
+      work_category_id:
+        type: string
+      work_segment_id:
+        type: string
+      work_type_id:
+        type: string
+      workers_needed:
+        type: integer
+    type: object
+  internal_handler.CreateWorkerProfileRequest:
+    properties:
+      availability_status:
+        type: string
+      bio:
+        type: string
+      crew_name:
+        type: string
+      crew_size:
+        type: integer
+      expected_rate:
+        type: number
+      expected_rate_max:
+        type: number
+      expected_rate_min:
+        type: number
+      experience_years:
+        type: number
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/internal_handler.WorkerCategorySelection'
+        type: array
+      worker_type:
+        type: string
+    required:
+    - worker_type
+    type: object
+  internal_handler.Quotation:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      estimated_duration_hours:
+        type: number
+      message:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+    type: object
+  internal_handler.RequestOTPRequest:
+    properties:
+      phone_number:
+        type: string
+    required:
+    - phone_number
+    type: object
+  internal_handler.RequestOTPResponseData:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_handler.UpdateProfileRequest:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      last_name:
+        type: string
+      postal_code:
+        type: string
+      state:
+        type: string
+      user_type:
+        type: string
+    required:
+    - city
+    - country
+    - first_name
+    - last_name
+    - postal_code
+    - state
+    - user_type
+    type: object
+  internal_handler.UpdateWorkerProfileRequest:
+    properties:
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      selections:
+        items:
+          $ref: '#/definitions/internal_handler.WorkerCategorySelection'
+        type: array
+    type: object
+  internal_handler.VerifyOTPRequest:
+    properties:
+      otp:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - otp
+    - phone_number
+    type: object
+  internal_handler.VerifyOTPResponseData:
+    properties:
+      access_token:
+        type: string
+      is_new_user:
+        type: boolean
+      onboarding_completed:
+        type: boolean
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/internal_handler.VerifyOTPResponseUser'
+    type: object
+  internal_handler.VerifyOTPResponseUser:
+    properties:
+      id:
+        type: string
+      phone_number:
+        type: string
+      phone_verified:
+        type: boolean
+    type: object
+  internal_handler.WorkerCategorySelection:
+    properties:
+      segments:
+        items:
+          $ref: '#/definitions/internal_handler.WorkerSegmentSelection'
+        type: array
+      work_category_id:
+        type: string
+    type: object
+  internal_handler.WorkerSegmentSelection:
+    properties:
+      work_segment_id:
+        type: string
+      work_types:
+        items:
+          $ref: '#/definitions/internal_handler.WorkerTypeSelection'
+        type: array
+    type: object
+  internal_handler.WorkerTypeSelection:
+    properties:
+      skill_ids:
+        items:
+          type: string
+        type: array
+      work_type_id:
+        type: string
+    type: object
+  searchv1.SearchWorkResponse:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/searchv1.WorkSummary'
+        type: array
+      total:
+        type: integer
+    type: object
+  searchv1.SearchWorkersResponse:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/searchv1.WorkerSummary'
+        type: array
+      total:
+        type: integer
+    type: object
+  searchv1.WorkSummary:
+    properties:
+      address:
+        type: string
+      budget_rate:
+        type: number
+      city:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      duration_unit:
+        type: string
+      duration_value:
+        type: integer
+      experience_level:
+        type: string
+      id:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      published_at:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      shift_timing:
+        type: string
+      skills:
+        items:
+          type: string
+        type: array
+      start_date:
+        type: string
+      state:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+      work_category_id:
+        type: string
+      work_category_name:
+        type: string
+      work_segment_id:
+        type: string
+      work_segment_name:
+        type: string
+      work_type_id:
+        type: string
+      work_type_name:
+        type: string
+      workers_needed:
+        type: integer
+    type: object
+  searchv1.WorkerSkillSummary:
+    properties:
+      experience_years:
+        type: number
+      work_type_id:
+        type: string
+      work_type_name:
+        type: string
+    type: object
+  searchv1.WorkerSummary:
+    properties:
+      availability_status:
+        type: string
+      bio:
+        type: string
+      city:
+        type: string
+      crew_name:
+        type: string
+      crew_size:
+        type: integer
+      expected_rate:
+        type: number
+      expected_rate_max:
+        type: number
+      expected_rate_min:
+        type: number
+      experience_years:
+        type: number
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      skills:
+        items:
+          $ref: '#/definitions/searchv1.WorkerSkillSummary'
+        type: array
+      state:
+        type: string
+      user_id:
+        type: string
+      verification_status:
+        type: string
+      worker_type:
+        type: string
+    type: object
+  userv1.CommonRole:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_primary:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  userv1.CreateProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/userv1.UserProfile'
+    type: object
+  userv1.CreateWorkerProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/userv1.WorkerProfile'
+    type: object
+  userv1.GetProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/userv1.UserProfile'
+    type: object
+  userv1.GetWorkTypeConfigurationResponse:
+    properties:
+      common_roles:
+        items:
+          $ref: '#/definitions/userv1.CommonRole'
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/userv1.WorkTypeField'
+        type: array
+      rate_types:
+        items:
+          $ref: '#/definitions/userv1.RateOption'
+        type: array
+      skills:
+        items:
+          $ref: '#/definitions/userv1.Skill'
+        type: array
+    type: object
+  userv1.ListRateTypesResponse:
+    properties:
+      rate_types:
+        items:
+          $ref: '#/definitions/userv1.RateOption'
+        type: array
+    type: object
+  userv1.ListWorkCategoriesResponse:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/userv1.WorkCategory'
+        type: array
+    type: object
+  userv1.ListWorkSegmentsResponse:
+    properties:
+      segments:
+        items:
+          $ref: '#/definitions/userv1.WorkSegment'
+        type: array
+    type: object
+  userv1.ListWorkTypeCommonRolesResponse:
+    properties:
+      common_roles:
+        items:
+          $ref: '#/definitions/userv1.CommonRole'
+        type: array
+    type: object
+  userv1.ListWorkTypeFieldsResponse:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/userv1.WorkTypeField'
+        type: array
+    type: object
+  userv1.ListWorkTypeSkillsResponse:
+    properties:
+      skills:
+        items:
+          $ref: '#/definitions/userv1.Skill'
+        type: array
+    type: object
+  userv1.ListWorkTypesResponse:
+    properties:
+      work_types:
+        items:
+          $ref: '#/definitions/userv1.WorkType'
+        type: array
+    type: object
+  userv1.RateOption:
+    properties:
+      is_default:
+        type: boolean
+      label:
+        type: string
+      rate_basis:
+        type: string
+      rate_basis_name:
+        type: string
+      rate_unit:
+        type: string
+      rate_unit_name:
+        type: string
+    type: object
+  userv1.Skill:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_required:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  userv1.UpdateProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/userv1.UserProfile'
+    type: object
+  userv1.UpdateWorkerProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/userv1.WorkerProfile'
+    type: object
+  userv1.UserProfile:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      expected_rate_max:
+        type: number
+      expected_rate_min:
+        type: number
+      first_name:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      onboarding_completed:
+        type: boolean
+      postal_code:
+        type: string
+      preferred_language:
+        type: string
+      profile_completed:
+        type: boolean
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      state:
+        type: string
+      user_id:
+        type: string
+      user_type:
+        type: string
+      work_categories:
+        items:
+          $ref: '#/definitions/userv1.WorkerWorkCategory'
+        type: array
+    type: object
+  userv1.WorkCategory:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  userv1.WorkSegment:
+    properties:
+      category_id:
+        type: string
+      code:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  userv1.WorkType:
+    properties:
+      category_id:
+        type: string
+      code:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      segment_id:
+        type: string
+    type: object
+  userv1.WorkTypeField:
+    properties:
+      context:
+        description: |-
+          WORKER_PROFILE | WORK_POST | BOTH - which context(s) this dynamic
+          field applies to.
+        type: string
+      display_order:
+        type: integer
+      field_key:
+        type: string
+      field_type:
+        type: string
+      help_text:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_required:
+        type: boolean
+      label:
+        type: string
+      max_length:
+        type: integer
+      max_value:
+        type: number
+      min_length:
+        type: integer
+      min_value:
+        type: number
+      options:
+        items:
+          $ref: '#/definitions/userv1.WorkTypeFieldOption'
+        type: array
+      placeholder:
+        type: string
+      unit:
+        type: string
+      work_type_id:
+        type: string
+    type: object
+  userv1.WorkTypeFieldOption:
+    properties:
+      display_order:
+        type: integer
+      field_key:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      label:
+        type: string
+      value:
+        type: string
+    type: object
+  userv1.WorkerProfile:
+    properties:
+      availability_status:
+        type: string
+      bio:
+        type: string
+      crew_name:
+        type: string
+      crew_size:
+        type: integer
+      expected_rate:
+        type: number
+      expected_rate_max:
+        type: number
+      expected_rate_min:
+        type: number
+      experience_years:
+        type: number
+      id:
+        type: string
+      profile_completed:
+        type: boolean
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      user_id:
+        type: string
+      verification_status:
+        type: string
+      work_categories:
+        items:
+          $ref: '#/definitions/userv1.WorkerWorkCategory'
+        type: array
+      worker_type:
+        $ref: '#/definitions/userv1.WorkerType'
+    type: object
+  userv1.WorkerSkill:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      work_type_id:
+        type: string
+    type: object
+  userv1.WorkerType:
+    enum:
+    - 0
+    - 1
+    - 2
+    format: int32
+    type: integer
+    x-enum-varnames:
+    - WorkerType_WORKER_TYPE_UNSPECIFIED
+    - WorkerType_WORKER_TYPE_INDIVIDUAL
+    - WorkerType_WORKER_TYPE_CONTRACTOR
+  userv1.WorkerWorkCategory:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+      segments:
+        items:
+          $ref: '#/definitions/userv1.WorkerWorkSegment'
+        type: array
+      work_category_id:
+        type: string
+      work_types:
+        items:
+          $ref: '#/definitions/userv1.WorkerWorkType'
+        type: array
+    type: object
+  userv1.WorkerWorkSegment:
+    properties:
+      category_id:
+        type: string
+      code:
+        type: string
+      name:
+        type: string
+      work_segment_id:
+        type: string
+      work_types:
+        items:
+          $ref: '#/definitions/userv1.WorkerWorkType'
+        type: array
+    type: object
+  userv1.WorkerWorkType:
+    properties:
+      category_id:
+        type: string
+      is_primary:
+        type: boolean
+      name:
+        type: string
+      segment_id:
+        type: string
+      skills:
+        items:
+          $ref: '#/definitions/userv1.WorkerSkill'
+        type: array
+      work_type_id:
+        type: string
+    type: object
+  workv1.ApplyToWorkResponse:
+    properties:
+      application:
+        $ref: '#/definitions/workv1.WorkApplication'
+    type: object
+  workv1.CreateWorkResponse:
+    properties:
+      work:
+        $ref: '#/definitions/workv1.WorkPosting'
+    type: object
+  workv1.ListMyApplicationsResponse:
+    properties:
+      applications:
+        items:
+          $ref: '#/definitions/workv1.MyWorkApplication'
+        type: array
+    type: object
+  workv1.ListMyWorksResponse:
+    properties:
+      works:
+        items:
+          $ref: '#/definitions/workv1.WorkPosting'
+        type: array
+    type: object
+  workv1.ListWorkApplicationsResponse:
+    properties:
+      applications:
+        items:
+          $ref: '#/definitions/workv1.WorkApplication'
+        type: array
+    type: object
+  workv1.MyWorkApplication:
+    properties:
+      application:
+        $ref: '#/definitions/workv1.WorkApplication'
+      work:
+        $ref: '#/definitions/workv1.WorkPosting'
+    type: object
+  workv1.Quotation:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      estimated_duration_hours:
+        type: number
+      message:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+    type: object
+  workv1.UpdateWorkApplicationResponse:
+    properties:
+      application:
+        $ref: '#/definitions/workv1.WorkApplication'
+    type: object
+  workv1.WorkApplication:
+    properties:
+      applied_at:
+        type: string
+      id:
+        type: string
+      quotation:
+        $ref: '#/definitions/workv1.Quotation'
+      status:
+        type: string
+      updated_at:
+        type: string
+      work_id:
+        type: string
+      worker_id:
+        type: string
+    type: object
+  workv1.WorkPosting:
+    properties:
+      accommodation_provided:
+        type: boolean
+      address:
+        type: string
+      attributes:
+        additionalProperties:
+          type: string
+        type: object
+      budget_rate:
+        type: number
+      city:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      duration_unit:
+        type: string
+      duration_value:
+        type: integer
+      experience_level:
+        type: string
+      id:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      materials_provided:
+        type: boolean
+      meals_provided:
+        type: boolean
+      payment_notes:
+        type: string
+      published_at:
+        type: string
+      rate_basis:
+        type: string
+      rate_unit:
+        type: string
+      shift_timing:
+        type: string
+      skills:
+        items:
+          type: string
+        type: array
+      start_date:
+        type: string
+      state:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      tools_provided:
+        type: boolean
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      work_category_id:
+        type: string
+      work_category_name:
+        type: string
+      work_segment_id:
+        type: string
+      work_segment_name:
+        type: string
+      work_type_id:
+        type: string
+      work_type_name:
+        type: string
+      workers_needed:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: |-
+    Public REST API exposed by the KrewOps API Gateway. The gateway fronts the auth,
+    user, work, and search gRPC services, exposing them as a single JSON/REST surface
+    for mobile and web clients. All responses are wrapped in a consistent envelope
+    (see response.SuccessResponse / response.ErrorResponse).
+  title: KrewOps API Gateway
+  version: "1.0"
+paths:
+  /auth/otp/request:
+    post:
+      consumes:
+      - application/json
+      description: Sends a one-time password via SMS to the given phone number. Used
+        to start login/signup.
+      parameters:
+      - description: Phone number to send the OTP to
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.RequestOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_handler.RequestOTPResponseData'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "429":
+          description: Too many OTP requests for this phone number
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      summary: Request an OTP
+      tags:
+      - Auth
+  /auth/otp/verify:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Verifies the OTP sent to the given phone number. On success returns an access/refresh token pair
+        and the authenticated user's profile completion state. Creates the user on first verification.
+      parameters:
+      - description: Phone number and OTP code to verify
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_handler.VerifyOTPResponseData'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: OTP is invalid or expired
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      summary: Verify an OTP and log in
+      tags:
+      - Auth
+  /search/work:
+    get:
+      parameters:
+      - description: Free-text keyword search
+        in: query
+        name: keyword
+        type: string
+      - description: Filter by work type ID
+        in: query
+        name: work_type_id
+        type: string
+      - description: Filter by work category ID
+        in: query
+        name: work_category_id
+        type: string
+      - description: Filter by work segment ID
+        in: query
+        name: work_segment_id
+        type: string
+      - description: Filter by city
+        in: query
+        name: city
+        type: string
+      - description: Filter by state
+        in: query
+        name: state
+        type: string
+      - description: Filter by experience level
+        in: query
+        name: experience_level
+        type: string
+      - description: Filter by rate basis
+        in: query
+        name: rate_basis
+        type: string
+      - description: Filter by rate unit
+        in: query
+        name: rate_unit
+        type: string
+      - description: Minimum budget rate
+        in: query
+        name: min_budget_rate
+        type: number
+      - description: Maximum budget rate
+        in: query
+        name: max_budget_rate
+        type: number
+      - description: Page number (1-indexed)
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/searchv1.SearchWorkResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Search work postings
+      tags:
+      - Search
+  /search/workers:
+    get:
+      parameters:
+      - description: Free-text keyword search
+        in: query
+        name: keyword
+        type: string
+      - description: Filter by work type ID
+        in: query
+        name: work_type_id
+        type: string
+      - description: Filter by work segment ID
+        in: query
+        name: work_segment_id
+        type: string
+      - description: Filter by city
+        in: query
+        name: city
+        type: string
+      - description: Filter by state
+        in: query
+        name: state
+        type: string
+      - description: Filter by worker type
+        in: query
+        name: worker_type
+        type: string
+      - description: Filter by availability status
+        in: query
+        name: availability_status
+        type: string
+      - description: Minimum years of experience
+        in: query
+        name: min_experience_years
+        type: number
+      - description: Page number (1-indexed)
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/searchv1.SearchWorkersResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Search worker profiles
+      tags:
+      - Search
+  /users/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.GetProfileResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Profile not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the current user's profile
+      tags:
+      - Profile
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Profile details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.CreateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.CreateProfileResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Profile already exists
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create the current user's profile
+      tags:
+      - Profile
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Profile details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.UpdateProfileResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Profile not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update the current user's profile
+      tags:
+      - Profile
+  /users/worker-profile:
+    post:
+      consumes:
+      - application/json
+      description: Onboards the user as a worker and records their initial sector/segment
+        selections.
+      parameters:
+      - description: Worker profile details and category/segment selections
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.CreateWorkerProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.CreateWorkerProfileResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Worker profile already exists
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create the current user's worker profile
+      tags:
+      - Profile
+    put:
+      consumes:
+      - application/json
+      description: Updates the worker's selected work types, skills, and rate preferences.
+      parameters:
+      - description: Updated work type/skill selections and rate preferences
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.UpdateWorkerProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.UpdateWorkerProfileResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Worker profile not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update the current user's worker profile selections
+      tags:
+      - Profile
+  /work:
+    get:
+      parameters:
+      - description: Filter by work posting status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.ListMyWorksResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List the current user's work postings
+      tags:
+      - Work
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Work posting details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.CreateWorkRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.CreateWorkResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: User has not completed onboarding
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a work posting
+      tags:
+      - Work
+  /work-categories:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkCategoriesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all work categories (sectors)
+      tags:
+      - WorkTypes
+  /work-categories/{categoryId}/rate-types:
+    get:
+      parameters:
+      - description: Work category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListRateTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List allowed rate types for a work category
+      tags:
+      - WorkTypes
+  /work-categories/{categoryId}/segments:
+    get:
+      parameters:
+      - description: Work category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkSegmentsResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List work segments (groups) under a category
+      tags:
+      - WorkTypes
+  /work-categories/{categoryId}/work-types:
+    get:
+      parameters:
+      - description: Work category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List work types under a category
+      tags:
+      - WorkTypes
+  /work-segments/{segmentId}/rate-types:
+    get:
+      parameters:
+      - description: Work segment ID
+        in: path
+        name: segmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListRateTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List allowed rate types for a work segment
+      tags:
+      - WorkTypes
+  /work-segments/{segmentId}/work-types:
+    get:
+      parameters:
+      - description: Work segment ID
+        in: path
+        name: segmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List work types under a segment (group)
+      tags:
+      - WorkTypes
+  /work-types:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all work types
+      tags:
+      - WorkTypes
+  /work-types/{workTypeId}/common-roles:
+    get:
+      parameters:
+      - description: Work type ID
+        in: path
+        name: workTypeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypeCommonRolesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List common roles mapped to a work type
+      tags:
+      - WorkTypes
+  /work-types/{workTypeId}/configuration:
+    get:
+      description: Returns skills, common roles, rate types, and dynamic attribute
+        fields for a work type in one call.
+      parameters:
+      - description: Work type ID
+        in: path
+        name: workTypeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.GetWorkTypeConfigurationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the bundled configuration for a work type
+      tags:
+      - WorkTypes
+  /work-types/{workTypeId}/fields:
+    get:
+      parameters:
+      - description: Work type ID
+        in: path
+        name: workTypeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypeFieldsResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List dynamic attribute fields for a work type
+      tags:
+      - WorkTypes
+  /work-types/{workTypeId}/rate-types:
+    get:
+      parameters:
+      - description: Work type ID
+        in: path
+        name: workTypeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListRateTypesResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List allowed rate types for a work type
+      tags:
+      - WorkTypes
+  /work-types/{workTypeId}/skills:
+    get:
+      parameters:
+      - description: Work type ID
+        in: path
+        name: workTypeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/userv1.ListWorkTypeSkillsResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List reusable skills mapped to a work type
+      tags:
+      - WorkTypes
+  /work/{workId}/applications:
+    get:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Filter by application status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.ListWorkApplicationsResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Work posting not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List applications received for a work posting
+      tags:
+      - Applications
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Quotation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.ApplyToWorkRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.ApplyToWorkResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Work posting not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Already applied
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Apply to a work posting
+      tags:
+      - Applications
+  /work/{workId}/applications/{applicationId}/accept:
+    post:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Application ID
+        in: path
+        name: applicationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.UpdateWorkApplicationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Application not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Invalid state transition
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Accept an application (owner action)
+      tags:
+      - Applications
+  /work/{workId}/applications/{applicationId}/cancel:
+    post:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Application ID
+        in: path
+        name: applicationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.UpdateWorkApplicationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Application not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Invalid state transition
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Cancel an application (owner or applicant action)
+      tags:
+      - Applications
+  /work/{workId}/applications/{applicationId}/reject:
+    post:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Application ID
+        in: path
+        name: applicationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.UpdateWorkApplicationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Application not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Invalid state transition
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reject an application (owner action)
+      tags:
+      - Applications
+  /work/{workId}/applications/{applicationId}/shortlist:
+    post:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Application ID
+        in: path
+        name: applicationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.UpdateWorkApplicationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Application not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Invalid state transition
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Shortlist an application (owner action)
+      tags:
+      - Applications
+  /work/{workId}/applications/{applicationId}/withdraw:
+    post:
+      parameters:
+      - description: Work posting ID
+        in: path
+        name: workId
+        required: true
+        type: string
+      - description: Application ID
+        in: path
+        name: applicationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.UpdateWorkApplicationResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "404":
+          description: Application not found
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "409":
+          description: Invalid state transition
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Withdraw an application (applicant action)
+      tags:
+      - Applications
+  /work/applications:
+    get:
+      parameters:
+      - description: Filter by application status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/workv1.ListMyApplicationsResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List the current user's applications
+      tags:
+      - Applications
+securityDefinitions:
+  BearerAuth:
+    description: Bearer JWT access token issued by /auth/otp/verify. Pass as "Bearer
+      <token>".
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

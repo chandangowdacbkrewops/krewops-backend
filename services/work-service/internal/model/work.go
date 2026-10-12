@@ -1,11 +1,15 @@
 package model
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // WorkType mirrors user-service's lookup row for the shared work_types table.
 type WorkType struct {
 	ID         string `json:"id"`
 	CategoryID string `json:"category_id"`
+	SegmentID  string `json:"segment_id"`
 	Name       string `json:"name"`
 }
 
@@ -15,17 +19,137 @@ type WorkCategory struct {
 	Name string `json:"name"`
 }
 
+// WorkSegment mirrors a row in the shared work_segments table.
+type WorkSegment struct {
+	ID         string `json:"id"`
+	CategoryID string `json:"category_id"`
+	Name       string `json:"name"`
+}
+
 const (
-	StatusDraft     = "draft"
-	StatusPublished = "published"
+	StatusDraft         = "draft"
+	StatusPublished     = "published"
+	StatusAssigned      = "assigned"
+	StatusInProgress    = "in_progress"
+	StatusWorkCompleted = "work_completed"
+	StatusClosed        = "closed"
+	StatusCancelled     = "cancelled"
 )
 
-func ValidStatus(status string) bool {
+// ValidCreateStatus reports whether a client may set this status when posting work.
+// published is the open state used by the existing create, apply, and search APIs.
+func ValidCreateStatus(status string) bool {
 	switch status {
 	case StatusDraft, StatusPublished:
 		return true
 	default:
 		return false
+	}
+}
+
+func ValidStatus(status string) bool {
+	switch status {
+	case StatusDraft,
+		StatusPublished,
+		StatusAssigned,
+		StatusInProgress,
+		StatusWorkCompleted,
+		StatusClosed,
+		StatusCancelled:
+		return true
+	default:
+		return false
+	}
+}
+
+// NormalizeWorkStatus maps stored values and the lifecycle names used by clients
+// onto the status values persisted with a work posting.
+func NormalizeWorkStatus(status string) string {
+	switch strings.ToUpper(strings.TrimSpace(status)) {
+	case "DRAFT":
+		return StatusDraft
+	case "PUBLISHED", "OPEN":
+		return StatusPublished
+	case "ASSIGNED":
+		return StatusAssigned
+	case "IN_PROGRESS", "INPROGRESS":
+		return StatusInProgress
+	case "WORK_COMPLETED", "WORKCOMPLETED":
+		return StatusWorkCompleted
+	case "CLOSED":
+		return StatusClosed
+	case "CANCELLED", "CANCELED":
+		return StatusCancelled
+	default:
+		return strings.ToLower(strings.TrimSpace(status))
+	}
+}
+
+// CanTransition reports whether a work posting may move from one status to another.
+// Workers cannot move a work directly to closed; that step is owner confirmation only.
+func CanTransition(from string, to string) bool {
+	from = NormalizeWorkStatus(from)
+	to = NormalizeWorkStatus(to)
+	switch to {
+	case StatusAssigned:
+		return from == StatusPublished
+	case StatusPublished:
+		return from == StatusAssigned
+	case StatusInProgress:
+		return from == StatusAssigned || from == StatusPublished
+	case StatusWorkCompleted:
+		return from == StatusInProgress
+	case StatusClosed:
+		return from == StatusWorkCompleted
+	case StatusCancelled:
+		switch from {
+		case StatusDraft, StatusPublished, StatusAssigned, StatusInProgress:
+			return true
+		default:
+			return false
+		}
+	default:
+		return false
+	}
+}
+
+// StatusMatchValues returns stored status spellings that should match the given statuses.
+func StatusMatchValues(statuses ...string) []string {
+	seen := make(map[string]struct{})
+	values := make([]string, 0, len(statuses)*4)
+	for _, status := range statuses {
+		for _, alias := range statusAliases(NormalizeWorkStatus(status)) {
+			if _, exists := seen[alias]; exists {
+				continue
+			}
+			seen[alias] = struct{}{}
+			values = append(values, alias)
+		}
+	}
+	return values
+}
+
+func statusAliases(status string) []string {
+	switch NormalizeWorkStatus(status) {
+	case StatusPublished:
+		return []string{StatusPublished, "PUBLISHED", "open", "OPEN"}
+	case StatusAssigned:
+		return []string{StatusAssigned, "ASSIGNED"}
+	case StatusInProgress:
+		return []string{StatusInProgress, "IN_PROGRESS", "inprogress", "INPROGRESS"}
+	case StatusWorkCompleted:
+		return []string{StatusWorkCompleted, "WORK_COMPLETED", "workcompleted", "WORKCOMPLETED"}
+	case StatusCancelled:
+		return []string{StatusCancelled, "CANCELLED", "canceled", "CANCELED"}
+	case StatusDraft:
+		return []string{StatusDraft, "DRAFT"}
+	case StatusClosed:
+		return []string{StatusClosed, "CLOSED"}
+	default:
+		if status == "" {
+			return nil
+		}
+		return []string{status}
 	}
 }
 
@@ -54,6 +178,7 @@ type CreateWorkRequest struct {
 	Title          *string `json:"title"`
 	WorkTypeID     *string `json:"work_type_id"`
 	WorkCategoryID *string `json:"work_category_id"`
+	WorkSegmentID  *string `json:"work_segment_id"`
 	Description    *string `json:"description"`
 
 	Address   *string  `json:"address"`
@@ -73,7 +198,8 @@ type CreateWorkRequest struct {
 	DurationUnit  *string `json:"duration_unit"`
 	ShiftTiming   *string `json:"shift_timing"`
 
-	PaymentType           *string  `json:"payment_type"`
+	RateBasis             *string  `json:"rate_basis"`
+	RateUnit              *string  `json:"rate_unit"`
 	BudgetRate            *float64 `json:"budget_rate"`
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
@@ -92,6 +218,8 @@ type WorkRecord struct {
 	WorkTypeName     *string
 	WorkCategoryID   *string
 	WorkCategoryName *string
+	WorkSegmentID    *string
+	WorkSegmentName  *string
 	Description      *string
 
 	Attributes map[string]string
@@ -113,7 +241,8 @@ type WorkRecord struct {
 	DurationUnit  *string
 	ShiftTiming   *string
 
-	PaymentType           *string
+	RateBasis             *string
+	RateUnit              *string
 	BudgetRate            *float64
 	PaymentNotes          *string
 	AccommodationProvided *bool
@@ -136,6 +265,8 @@ type WorkResponse struct {
 	WorkTypeName     *string `json:"work_type_name,omitempty"`
 	WorkCategoryID   *string `json:"work_category_id,omitempty"`
 	WorkCategoryName *string `json:"work_category_name,omitempty"`
+	WorkSegmentID    *string `json:"work_segment_id,omitempty"`
+	WorkSegmentName  *string `json:"work_segment_name,omitempty"`
 	Description      *string `json:"description,omitempty"`
 
 	Address   *string  `json:"address,omitempty"`
@@ -155,7 +286,8 @@ type WorkResponse struct {
 	DurationUnit  *string `json:"duration_unit,omitempty"`
 	ShiftTiming   *string `json:"shift_timing,omitempty"`
 
-	PaymentType           *string  `json:"payment_type,omitempty"`
+	RateBasis             *string  `json:"rate_basis,omitempty"`
+	RateUnit              *string  `json:"rate_unit,omitempty"`
 	BudgetRate            *float64 `json:"budget_rate,omitempty"`
 	PaymentNotes          *string  `json:"payment_notes,omitempty"`
 	AccommodationProvided *bool    `json:"accommodation_provided,omitempty"`
@@ -179,6 +311,8 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 		WorkTypeName:     record.WorkTypeName,
 		WorkCategoryID:   record.WorkCategoryID,
 		WorkCategoryName: record.WorkCategoryName,
+		WorkSegmentID:    record.WorkSegmentID,
+		WorkSegmentName:  record.WorkSegmentName,
 		Description:      record.Description,
 
 		Address:   record.Address,
@@ -197,7 +331,8 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 		DurationUnit:  record.DurationUnit,
 		ShiftTiming:   record.ShiftTiming,
 
-		PaymentType:           record.PaymentType,
+		RateBasis:             record.RateBasis,
+		RateUnit:              record.RateUnit,
 		BudgetRate:            record.BudgetRate,
 		PaymentNotes:          record.PaymentNotes,
 		AccommodationProvided: record.AccommodationProvided,

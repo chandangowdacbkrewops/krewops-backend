@@ -7,12 +7,26 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	_ "github.com/chandangowdacbkrewops/krewops-backend/gateway/docs"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/client"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/handler"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/middleware"
 )
 
+// @title						KrewOps API Gateway
+// @version						1.0
+// @description					Public REST API exposed by the KrewOps API Gateway. The gateway fronts the auth,
+// @description					user, work, and search gRPC services, exposing them as a single JSON/REST surface
+// @description					for mobile and web clients. All responses are wrapped in a consistent envelope
+// @description					(see response.SuccessResponse / response.ErrorResponse).
+// @BasePath					/api/v1
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
+// @description					Bearer JWT access token issued by /auth/otp/verify. Pass as "Bearer <token>".
 func main() {
 
 	_ = godotenv.Load()
@@ -126,15 +140,33 @@ func main() {
 	)
 
 	api.GET(
+		"/work-categories/:categoryId/segments",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkSegmentsByCategory,
+	)
+
+	api.GET(
+		"/work-segments/:segmentId/work-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypesBySegment,
+	)
+
+	api.GET(
 		"/work-types/:workTypeId/fields",
 		middleware.AuthMiddleware(jwtSecret),
 		userHandler.ListWorkTypeFields,
 	)
 
 	api.GET(
-		"/work-types/:workTypeId/payment-types",
+		"/work-types/:workTypeId/rate-types",
 		middleware.AuthMiddleware(jwtSecret),
-		userHandler.ListWorkTypePaymentTypes,
+		userHandler.ListWorkTypeRateTypes,
+	)
+
+	api.GET(
+		"/work-segments/:segmentId/rate-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkSegmentRateTypes,
 	)
 
 	api.GET(
@@ -144,9 +176,21 @@ func main() {
 	)
 
 	api.GET(
-		"/work-categories/:categoryId/payment-types",
+		"/work-types/:workTypeId/common-roles",
 		middleware.AuthMiddleware(jwtSecret),
-		userHandler.ListWorkCategoryPaymentTypes,
+		userHandler.ListWorkTypeCommonRoles,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/configuration",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.GetWorkTypeConfiguration,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/rate-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkCategoryRateTypes,
 	)
 
 	authRoutes :=
@@ -251,6 +295,26 @@ func main() {
 		workHandler.CancelWorkApplication,
 	)
 
+	workRoutes.POST(
+		"/:workId/start",
+		workHandler.StartWork,
+	)
+
+	workRoutes.POST(
+		"/:workId/complete",
+		workHandler.CompleteWork,
+	)
+
+	workRoutes.POST(
+		"/:workId/confirm-completion",
+		workHandler.ConfirmWorkCompletion,
+	)
+
+	workRoutes.POST(
+		"/:workId/cancel",
+		workHandler.CancelWork,
+	)
+
 	searchRoutes :=
 		api.Group("/search")
 
@@ -266,6 +330,11 @@ func main() {
 	searchRoutes.GET(
 		"/workers",
 		searchHandler.SearchWorkers,
+	)
+
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
 	)
 
 	log.Printf(

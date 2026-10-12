@@ -22,6 +22,10 @@ var (
 	ErrNotApplicationWorker       = errors.New("only the applicant can perform this action")
 	ErrInvalidApplicationStatus   = errors.New("application cannot be updated from its current status")
 	ErrApplicationAlreadyAccepted = repository.ErrApplicationAlreadyAccepted
+	ErrContractorRequired         = errors.New("only contractors can apply when more than one worker is required")
+	ErrInvalidWorkStatus          = errors.New("work cannot change to the requested status")
+	ErrNotAssignedWorker          = errors.New("only the assigned worker can perform this action")
+	ErrWorkNotReadyToStart        = errors.New("work cannot be started before the scheduled start date")
 )
 
 func (s *WorkService) ApplyToWork(
@@ -36,12 +40,12 @@ func (s *WorkService) ApplyToWork(
 		return nil, fmt.Errorf("work_id is required")
 	}
 
-	completed, err := s.workOwnerRepository.HasCompletedWorkerProfile(ctx, userID)
+	completedType, err := s.workOwnerRepository.FindCompletedWorkerType(ctx, userID)
 	if err != nil {
 		log.Printf("apply to work failed: user_id=%s work_id=%s stage=worker_profile_check error=%v", userID, workID, err)
 		return nil, err
 	}
-	if !completed {
+	if completedType == "" {
 		log.Printf("apply to work rejected: user_id=%s work_id=%s reason=worker_profile_incomplete", userID, workID)
 		return nil, ErrWorkerProfileNotCompleted
 	}
@@ -60,24 +64,33 @@ func (s *WorkService) ApplyToWork(
 	if work.Status != model.StatusPublished {
 		return nil, ErrWorkNotPublished
 	}
+	if workersNeeded(work) > 1 && strings.ToLower(strings.TrimSpace(completedType)) != "contractor" {
+		log.Printf("apply to work rejected: user_id=%s work_id=%s reason=contractor_required worker_type=%s workers_needed=%d", userID, workID, completedType, workersNeeded(work))
+		return nil, ErrContractorRequired
+	}
 
 	quotation, err := normalizeQuotation(req.Quotation)
 	if err != nil {
 		log.Printf("apply to work rejected: user_id=%s work_id=%s stage=quotation_validation error=%v", userID, workID, err)
 		return nil, err
 	}
-	allowed, err := s.paymentTypeRepository.ListAllowedCodes(
+	allowed, err := s.rateTypeRepository.Resolve(
 		ctx,
 		stringValue(work.WorkTypeID),
+		stringValue(work.WorkSegmentID),
 		stringValue(work.WorkCategoryID),
 	)
 	if err != nil {
-		log.Printf("apply to work failed: user_id=%s work_id=%s stage=payment_types error=%v", userID, workID, err)
+		log.Printf("apply to work failed: user_id=%s work_id=%s stage=rate_types error=%v", userID, workID, err)
 		return nil, err
 	}
-	if !containsFold(allowed, quotation.PriceType) {
-		log.Printf("apply to work rejected: user_id=%s work_id=%s stage=quotation_price_type price_type=%s", userID, workID, quotation.PriceType)
-		return nil, fmt.Errorf("quotation.price_type is not allowed for this work")
+	unit := ""
+	if quotation.RateUnit != nil {
+		unit = *quotation.RateUnit
+	}
+	if !repository.RateOptionAllowed(allowed, quotation.RateBasis, unit) {
+		log.Printf("apply to work rejected: user_id=%s work_id=%s stage=quotation_rate_option rate_basis=%s rate_unit=%s", userID, workID, quotation.RateBasis, unit)
+		return nil, fmt.Errorf("quotation.rate_basis and rate_unit are not allowed for this work")
 	}
 
 	saved, err := s.applicationRepository.Insert(ctx, &model.WorkApplication{
@@ -97,6 +110,13 @@ func (s *WorkService) ApplyToWork(
 	log.Printf("apply to work succeeded: user_id=%s work_id=%s application_id=%s", userID, workID, saved.ID)
 
 	return saved, nil
+}
+
+func workersNeeded(work *model.WorkRecord) int {
+	if work == nil || work.WorkersNeeded == nil || *work.WorkersNeeded < 1 {
+		return 1
+	}
+	return *work.WorkersNeeded
 }
 
 func (s *WorkService) ListWorkApplications(
@@ -223,7 +243,22 @@ func (s *WorkService) CancelWorkApplication(
 	workID string,
 	applicationID string,
 ) (*model.WorkApplication, error) {
-	return s.updateOwnerApplication(
+	work, err := s.requireWorkOwner(ctx, userID, workID)
+	if err != nil {
+		return nil, err
+	}
+
+	application, err := s.requireApplicationOnWork(ctx, workID, applicationID)
+	if err != nil {
+		return nil, err
+	}
+	if application.Status == model.ApplicationStatusAccepted &&
+		work.Status != model.StatusAssigned &&
+		work.Status != model.StatusPublished {
+		return nil, ErrInvalidWorkStatus
+	}
+
+	updated, err := s.updateOwnerApplication(
 		ctx,
 		userID,
 		workID,
@@ -236,6 +271,18 @@ func (s *WorkService) CancelWorkApplication(
 		model.ApplicationStatusCancelled,
 		"cancel",
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	if application.Status == model.ApplicationStatusAccepted && work.Status == model.StatusAssigned {
+		if _, err := s.transitionWorkStatus(ctx, workID, model.StatusAssigned, model.StatusPublished); err != nil {
+			log.Printf("cancel work application failed: user_id=%s work_id=%s application_id=%s stage=reopen_work error=%v", userID, workID, applicationID, err)
+			return nil, err
+		}
+	}
+
+	return updated, nil
 }
 
 func (s *WorkService) WithdrawWorkApplication(
@@ -284,13 +331,23 @@ func (s *WorkService) AcceptWorkApplication(
 ) (*model.WorkApplication, error) {
 	log.Printf("accept work application started: user_id=%s work_id=%s application_id=%s", userID, workID, applicationID)
 
-	if _, err := s.requireWorkOwner(ctx, userID, workID); err != nil {
+	work, err := s.requireWorkOwner(ctx, userID, workID)
+	if err != nil {
 		return nil, err
+	}
+	if work.Status != model.StatusPublished && work.Status != model.StatusAssigned {
+		return nil, ErrInvalidWorkStatus
 	}
 
 	application, err := s.requireApplicationOnWork(ctx, workID, applicationID)
 	if err != nil {
 		return nil, err
+	}
+	if application.Status == model.ApplicationStatusAccepted {
+		if err := s.markWorkAssigned(ctx, workID); err != nil {
+			return nil, err
+		}
+		return application, nil
 	}
 	if application.Status != model.ApplicationStatusApplied &&
 		application.Status != model.ApplicationStatusShortlisted {
@@ -307,6 +364,11 @@ func (s *WorkService) AcceptWorkApplication(
 	}
 	if updated == nil {
 		return nil, ErrInvalidApplicationStatus
+	}
+
+	if err := s.markWorkAssigned(ctx, workID); err != nil {
+		log.Printf("accept work application failed: user_id=%s work_id=%s application_id=%s stage=assign_work error=%v", userID, workID, applicationID, err)
+		return nil, err
 	}
 
 	return updated, nil
@@ -375,6 +437,7 @@ func (s *WorkService) requireWorkOwner(
 		return nil, ErrNotWorkOwner
 	}
 
+	work.Status = model.NormalizeWorkStatus(work.Status)
 	return work, nil
 }
 
@@ -408,9 +471,22 @@ func normalizeQuotation(quotation model.Quotation) (model.Quotation, error) {
 		currency = "INR"
 	}
 
-	priceType := strings.ToLower(strings.TrimSpace(quotation.PriceType))
-	if priceType == "" {
-		return model.Quotation{}, fmt.Errorf("quotation.price_type is required")
+	rateBasis := strings.ToLower(strings.TrimSpace(quotation.RateBasis))
+	if rateBasis == "" {
+		return model.Quotation{}, fmt.Errorf("quotation.rate_basis is required")
+	}
+	var rateUnit *string
+	if quotation.RateUnit != nil {
+		trimmed := strings.ToLower(strings.TrimSpace(*quotation.RateUnit))
+		if trimmed != "" {
+			rateUnit = &trimmed
+		}
+	}
+	if rateBasis == "negotiable" && rateUnit != nil {
+		return model.Quotation{}, fmt.Errorf("quotation.rate_unit must be empty when rate_basis is negotiable")
+	}
+	if rateBasis != "negotiable" && rateUnit == nil {
+		return model.Quotation{}, fmt.Errorf("quotation.rate_unit is required")
 	}
 
 	if quotation.EstimatedDurationHours != nil && *quotation.EstimatedDurationHours <= 0 {
@@ -431,7 +507,8 @@ func normalizeQuotation(quotation model.Quotation) (model.Quotation, error) {
 	return model.Quotation{
 		Amount:                 quotation.Amount,
 		Currency:               currency,
-		PriceType:              priceType,
+		RateBasis:              rateBasis,
+		RateUnit:               rateUnit,
 		EstimatedDurationHours: quotation.EstimatedDurationHours,
 		Message:                message,
 	}, nil

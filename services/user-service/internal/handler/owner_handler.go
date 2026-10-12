@@ -66,6 +66,7 @@ func isValidationError(err error) bool {
 		"business_type_id",
 		"date_of_birth",
 		"user must be",
+		"gender",
 	}
 	for _, prefix := range validationPrefixes {
 		if strings.HasPrefix(msg, prefix) {

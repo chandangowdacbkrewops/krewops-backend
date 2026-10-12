@@ -29,6 +29,10 @@ const (
 	WorkService_RejectWorkApplication_FullMethodName    = "/work.v1.WorkService/RejectWorkApplication"
 	WorkService_WithdrawWorkApplication_FullMethodName  = "/work.v1.WorkService/WithdrawWorkApplication"
 	WorkService_CancelWorkApplication_FullMethodName    = "/work.v1.WorkService/CancelWorkApplication"
+	WorkService_StartWork_FullMethodName                = "/work.v1.WorkService/StartWork"
+	WorkService_CompleteWork_FullMethodName             = "/work.v1.WorkService/CompleteWork"
+	WorkService_ConfirmWorkCompletion_FullMethodName    = "/work.v1.WorkService/ConfirmWorkCompletion"
+	WorkService_CancelWork_FullMethodName               = "/work.v1.WorkService/CancelWork"
 )
 
 // WorkServiceClient is the client API for WorkService service.
@@ -45,6 +49,10 @@ type WorkServiceClient interface {
 	RejectWorkApplication(ctx context.Context, in *UpdateWorkApplicationRequest, opts ...grpc.CallOption) (*UpdateWorkApplicationResponse, error)
 	WithdrawWorkApplication(ctx context.Context, in *UpdateWorkApplicationRequest, opts ...grpc.CallOption) (*UpdateWorkApplicationResponse, error)
 	CancelWorkApplication(ctx context.Context, in *UpdateWorkApplicationRequest, opts ...grpc.CallOption) (*UpdateWorkApplicationResponse, error)
+	StartWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	CompleteWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	ConfirmWorkCompletion(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	CancelWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
 }
 
 type workServiceClient struct {
@@ -155,6 +163,46 @@ func (c *workServiceClient) CancelWorkApplication(ctx context.Context, in *Updat
 	return out, nil
 }
 
+func (c *workServiceClient) StartWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_StartWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CompleteWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CompleteWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ConfirmWorkCompletion(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_ConfirmWorkCompletion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CancelWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CancelWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkServiceServer is the server API for WorkService service.
 // All implementations must embed UnimplementedWorkServiceServer
 // for forward compatibility.
@@ -169,6 +217,10 @@ type WorkServiceServer interface {
 	RejectWorkApplication(context.Context, *UpdateWorkApplicationRequest) (*UpdateWorkApplicationResponse, error)
 	WithdrawWorkApplication(context.Context, *UpdateWorkApplicationRequest) (*UpdateWorkApplicationResponse, error)
 	CancelWorkApplication(context.Context, *UpdateWorkApplicationRequest) (*UpdateWorkApplicationResponse, error)
+	StartWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	CompleteWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	ConfirmWorkCompletion(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	CancelWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
 	mustEmbedUnimplementedWorkServiceServer()
 }
 
@@ -208,6 +260,18 @@ func (UnimplementedWorkServiceServer) WithdrawWorkApplication(context.Context, *
 }
 func (UnimplementedWorkServiceServer) CancelWorkApplication(context.Context, *UpdateWorkApplicationRequest) (*UpdateWorkApplicationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelWorkApplication not implemented")
+}
+func (UnimplementedWorkServiceServer) StartWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartWork not implemented")
+}
+func (UnimplementedWorkServiceServer) CompleteWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteWork not implemented")
+}
+func (UnimplementedWorkServiceServer) ConfirmWorkCompletion(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmWorkCompletion not implemented")
+}
+func (UnimplementedWorkServiceServer) CancelWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelWork not implemented")
 }
 func (UnimplementedWorkServiceServer) mustEmbedUnimplementedWorkServiceServer() {}
 func (UnimplementedWorkServiceServer) testEmbeddedByValue()                     {}
@@ -410,6 +474,78 @@ func _WorkService_CancelWorkApplication_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkService_StartWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).StartWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_StartWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).StartWork(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CompleteWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CompleteWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CompleteWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CompleteWork(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ConfirmWorkCompletion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ConfirmWorkCompletion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ConfirmWorkCompletion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ConfirmWorkCompletion(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CancelWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CancelWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CancelWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CancelWork(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkService_ServiceDesc is the grpc.ServiceDesc for WorkService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -456,6 +592,22 @@ var WorkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelWorkApplication",
 			Handler:    _WorkService_CancelWorkApplication_Handler,
+		},
+		{
+			MethodName: "StartWork",
+			Handler:    _WorkService_StartWork_Handler,
+		},
+		{
+			MethodName: "CompleteWork",
+			Handler:    _WorkService_CompleteWork_Handler,
+		},
+		{
+			MethodName: "ConfirmWorkCompletion",
+			Handler:    _WorkService_ConfirmWorkCompletion_Handler,
+		},
+		{
+			MethodName: "CancelWork",
+			Handler:    _WorkService_CancelWork_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

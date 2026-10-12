@@ -18,19 +18,21 @@ const workApplicationsCollection = "work_applications"
 type quotationDocument struct {
 	Amount                 float64  `bson:"amount"`
 	Currency               string   `bson:"currency"`
-	PriceType              string   `bson:"price_type"`
+	RateBasis              string   `bson:"rate_basis"`
+	RateUnit               *string  `bson:"rate_unit,omitempty"`
+	PriceType              string   `bson:"price_type,omitempty"`
 	EstimatedDurationHours *float64 `bson:"estimated_duration_hours,omitempty"`
 	Message                *string  `bson:"message,omitempty"`
 }
 
 type applicationDocument struct {
-	ID        string             `bson:"_id"`
-	WorkID    string             `bson:"work_id"`
-	WorkerID  string             `bson:"worker_id"`
-	Status    string             `bson:"status"`
-	Quotation quotationDocument  `bson:"quotation"`
-	AppliedAt time.Time          `bson:"applied_at"`
-	UpdatedAt time.Time          `bson:"updated_at"`
+	ID        string            `bson:"_id"`
+	WorkID    string            `bson:"work_id"`
+	WorkerID  string            `bson:"worker_id"`
+	Status    string            `bson:"status"`
+	Quotation quotationDocument `bson:"quotation"`
+	AppliedAt time.Time         `bson:"applied_at"`
+	UpdatedAt time.Time         `bson:"updated_at"`
 }
 
 type ApplicationRepository struct {
@@ -92,6 +94,26 @@ func (r *ApplicationRepository) FindByID(
 ) (*model.WorkApplication, error) {
 	var doc applicationDocument
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.toRecord(), nil
+}
+
+func (r *ApplicationRepository) FindByWorkIDAndStatus(
+	ctx context.Context,
+	workID string,
+	status string,
+) (*model.WorkApplication, error) {
+	var doc applicationDocument
+	err := r.collection.FindOne(ctx, bson.M{
+		"work_id": workID,
+		"status":  status,
+	}).Decode(&doc)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil
 	}
@@ -268,7 +290,8 @@ func toApplicationDocument(record *model.WorkApplication) applicationDocument {
 		Quotation: quotationDocument{
 			Amount:                 record.Quotation.Amount,
 			Currency:               record.Quotation.Currency,
-			PriceType:              record.Quotation.PriceType,
+			RateBasis:              record.Quotation.RateBasis,
+			RateUnit:               record.Quotation.RateUnit,
 			EstimatedDurationHours: record.Quotation.EstimatedDurationHours,
 			Message:                record.Quotation.Message,
 		},
@@ -286,11 +309,34 @@ func (d applicationDocument) toRecord() *model.WorkApplication {
 		Quotation: model.Quotation{
 			Amount:                 d.Quotation.Amount,
 			Currency:               d.Quotation.Currency,
-			PriceType:              d.Quotation.PriceType,
+			RateBasis:              quotationRateBasis(d.Quotation),
+			RateUnit:               quotationRateUnit(d.Quotation),
 			EstimatedDurationHours: d.Quotation.EstimatedDurationHours,
 			Message:                d.Quotation.Message,
 		},
 		AppliedAt: d.AppliedAt,
 		UpdatedAt: d.UpdatedAt,
 	}
+}
+
+func quotationRateBasis(quotation quotationDocument) string {
+	if quotation.RateBasis != "" {
+		return quotation.RateBasis
+	}
+	basis, _, ok := mapLegacyPaymentType(&quotation.PriceType)
+	if !ok {
+		return quotation.PriceType
+	}
+	return basis
+}
+
+func quotationRateUnit(quotation quotationDocument) *string {
+	if quotation.RateBasis != "" {
+		return quotation.RateUnit
+	}
+	_, unit, ok := mapLegacyPaymentType(&quotation.PriceType)
+	if !ok || unit == "" {
+		return nil
+	}
+	return &unit
 }

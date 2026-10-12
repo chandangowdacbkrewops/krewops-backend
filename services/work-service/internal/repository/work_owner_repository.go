@@ -45,21 +45,32 @@ func (r *WorkOwnerRepository) HasCompletedWorkerProfile(
 	ctx context.Context,
 	userID string,
 ) (bool, error) {
-	var exists int
-
-	err := r.db.QueryRow(ctx, `
-		SELECT 1
-		FROM worker_profiles
-		WHERE user_id = $1
-			AND profile_completed = TRUE
-	`, userID).Scan(&exists)
-
-	if errors.Is(err, pgx.ErrNoRows) {
-		return false, nil
-	}
+	workerType, err := r.FindCompletedWorkerType(ctx, userID)
 	if err != nil {
 		return false, err
 	}
+	return workerType != "", nil
+}
 
-	return true, nil
+func (r *WorkOwnerRepository) FindCompletedWorkerType(
+	ctx context.Context,
+	userID string,
+) (string, error) {
+	var workerType string
+
+	err := r.db.QueryRow(ctx, `
+		SELECT worker_type
+		FROM worker_profiles
+		WHERE user_id = $1
+			AND profile_completed = TRUE
+	`, userID).Scan(&workerType)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", err
+	}
+
+	return workerType, nil
 }

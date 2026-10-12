@@ -24,6 +24,8 @@ type workDocument struct {
 	WorkTypeName     *string `bson:"work_type_name,omitempty"`
 	WorkCategoryID   *string `bson:"work_category_id,omitempty"`
 	WorkCategoryName *string `bson:"work_category_name,omitempty"`
+	WorkSegmentID    *string `bson:"work_segment_id,omitempty"`
+	WorkSegmentName  *string `bson:"work_segment_name,omitempty"`
 	Description      *string `bson:"description,omitempty"`
 
 	Address   *string  `bson:"address,omitempty"`
@@ -43,6 +45,8 @@ type workDocument struct {
 	DurationUnit  *string    `bson:"duration_unit,omitempty"`
 	ShiftTiming   *string    `bson:"shift_timing,omitempty"`
 
+	RateBasis             *string  `bson:"rate_basis,omitempty"`
+	RateUnit              *string  `bson:"rate_unit,omitempty"`
 	PaymentType           *string  `bson:"payment_type,omitempty"`
 	BudgetRate            *float64 `bson:"budget_rate,omitempty"`
 	PaymentNotes          *string  `bson:"payment_notes,omitempty"`
@@ -73,6 +77,7 @@ func (r *WorkRepository) EnsureIndexes(ctx context.Context) error {
 		{Keys: bson.D{{Key: "status", Value: 1}}},
 		{Keys: bson.D{{Key: "work_type_id", Value: 1}}},
 		{Keys: bson.D{{Key: "work_category_id", Value: 1}}},
+		{Keys: bson.D{{Key: "work_segment_id", Value: 1}}},
 		{Keys: bson.D{{Key: "city", Value: 1}}, Options: options.Index().SetCollation(&options.Collation{Locale: "en", Strength: 2})},
 		{Keys: bson.D{{Key: "state", Value: 1}}},
 		{Keys: bson.D{{Key: "published_at", Value: -1}}},
@@ -109,6 +114,8 @@ func (r *WorkRepository) InsertWork(
 		WorkTypeName:          record.WorkTypeName,
 		WorkCategoryID:        record.WorkCategoryID,
 		WorkCategoryName:      record.WorkCategoryName,
+		WorkSegmentID:         record.WorkSegmentID,
+		WorkSegmentName:       record.WorkSegmentName,
 		Description:           record.Description,
 		Address:               record.Address,
 		City:                  record.City,
@@ -124,7 +131,8 @@ func (r *WorkRepository) InsertWork(
 		DurationValue:         record.DurationValue,
 		DurationUnit:          record.DurationUnit,
 		ShiftTiming:           record.ShiftTiming,
-		PaymentType:           record.PaymentType,
+		RateBasis:             record.RateBasis,
+		RateUnit:              record.RateUnit,
 		BudgetRate:            record.BudgetRate,
 		PaymentNotes:          record.PaymentNotes,
 		AccommodationProvided: record.AccommodationProvided,
@@ -194,6 +202,33 @@ func (r *WorkRepository) ListByUserID(
 	return records, nil
 }
 
+func (r *WorkRepository) UpdateStatus(
+	ctx context.Context,
+	id string,
+	from []string,
+	to string,
+) (*model.WorkRecord, error) {
+	now := time.Now().UTC()
+	var doc workDocument
+	err := r.collection.FindOneAndUpdate(
+		ctx,
+		bson.M{
+			"_id":    id,
+			"status": bson.M{"$in": model.StatusMatchValues(from...)},
+		},
+		bson.M{"$set": bson.M{"status": to, "updated_at": now}},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.toRecord(), nil
+}
+
 func (r *WorkRepository) FindByIDs(
 	ctx context.Context,
 	ids []string,
@@ -241,6 +276,8 @@ func (d workDocument) toRecord() *model.WorkRecord {
 		WorkTypeName:          d.WorkTypeName,
 		WorkCategoryID:        d.WorkCategoryID,
 		WorkCategoryName:      d.WorkCategoryName,
+		WorkSegmentID:         d.WorkSegmentID,
+		WorkSegmentName:       d.WorkSegmentName,
 		Description:           d.Description,
 		Attributes:            attributes,
 		Address:               d.Address,
@@ -257,14 +294,53 @@ func (d workDocument) toRecord() *model.WorkRecord {
 		DurationValue:         d.DurationValue,
 		DurationUnit:          d.DurationUnit,
 		ShiftTiming:           d.ShiftTiming,
-		PaymentType:           d.PaymentType,
+		RateBasis:             applyLegacyRate(d.RateBasis, d.RateUnit, d.PaymentType),
+		RateUnit:              applyLegacyRateUnit(d.RateBasis, d.RateUnit, d.PaymentType),
 		BudgetRate:            d.BudgetRate,
 		PaymentNotes:          d.PaymentNotes,
 		AccommodationProvided: d.AccommodationProvided,
 		MealsProvided:         d.MealsProvided,
-		Status:                d.Status,
+		Status:                model.NormalizeWorkStatus(d.Status),
 		PublishedAt:           d.PublishedAt,
 		CreatedAt:             d.CreatedAt,
 		UpdatedAt:             d.UpdatedAt,
+	}
+}
+
+func applyLegacyRate(basis, unit, paymentType *string) *string {
+	if basis != nil && *basis != "" {
+		return basis
+	}
+	mapped, _, ok := mapLegacyPaymentType(paymentType)
+	if !ok {
+		return nil
+	}
+	return &mapped
+}
+
+func applyLegacyRateUnit(basis, unit, paymentType *string) *string {
+	if basis != nil && *basis != "" {
+		return unit
+	}
+	_, mapped, ok := mapLegacyPaymentType(paymentType)
+	if !ok || mapped == "" {
+		return nil
+	}
+	return &mapped
+}
+
+func mapLegacyPaymentType(paymentType *string) (string, string, bool) {
+	if paymentType == nil {
+		return "", "", false
+	}
+	switch *paymentType {
+	case "hourly":
+		return "per_time", "hour", true
+	case "per_day", "daily":
+		return "per_time", "day", true
+	case "fixed":
+		return "fixed", "job", true
+	default:
+		return "", "", false
 	}
 }

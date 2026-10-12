@@ -36,15 +36,33 @@ func RegisterRoutes(
 		)
 
 		v1.GET(
+			"/work-categories/:categoryId/segments",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkSegmentsByCategory,
+		)
+
+		v1.GET(
+			"/work-segments/:segmentId/work-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypesBySegment,
+		)
+
+		v1.GET(
 			"/work-types/:workTypeId/fields",
 			middleware.AuthMiddleware(jwtSecret),
 			profileHandler.ListWorkTypeFields,
 		)
 
 		v1.GET(
-			"/work-types/:workTypeId/payment-types",
+			"/work-types/:workTypeId/rate-types",
 			middleware.AuthMiddleware(jwtSecret),
-			profileHandler.ListWorkTypePaymentTypes,
+			profileHandler.ListWorkTypeRateTypes,
+		)
+
+		v1.GET(
+			"/work-segments/:segmentId/rate-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkSegmentRateTypes,
 		)
 
 		v1.GET(
@@ -54,9 +72,21 @@ func RegisterRoutes(
 		)
 
 		v1.GET(
-			"/work-categories/:categoryId/payment-types",
+			"/work-types/:workTypeId/common-roles",
 			middleware.AuthMiddleware(jwtSecret),
-			profileHandler.ListWorkCategoryPaymentTypes,
+			profileHandler.ListWorkTypeCommonRoles,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/configuration",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.GetWorkTypeConfiguration,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/rate-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkCategoryRateTypes,
 		)
 
 		users := v1.Group("/users")

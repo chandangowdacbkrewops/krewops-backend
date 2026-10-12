@@ -27,6 +27,29 @@ func NewSearchHandler(
 	}
 }
 
+// SearchWork godoc
+//
+//	@Summary	Search work postings
+//	@Tags		Search
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		keyword				query		string	false	"Free-text keyword search"
+//	@Param		work_type_id		query		string	false	"Filter by work type ID"
+//	@Param		work_category_id	query		string	false	"Filter by work category ID"
+//	@Param		work_segment_id		query		string	false	"Filter by work segment ID"
+//	@Param		city				query		string	false	"Filter by city"
+//	@Param		state				query		string	false	"Filter by state"
+//	@Param		experience_level	query		string	false	"Filter by experience level"
+//	@Param		rate_basis			query		string	false	"Filter by rate basis"
+//	@Param		rate_unit			query		string	false	"Filter by rate unit"
+//	@Param		min_budget_rate		query		number	false	"Minimum budget rate"
+//	@Param		max_budget_rate		query		number	false	"Maximum budget rate"
+//	@Param		page				query		int		false	"Page number (1-indexed)"
+//	@Param		page_size			query		int		false	"Page size"
+//	@Success	200					{object}	response.SuccessResponse{data=searchv1.SearchWorkResponse}
+//	@Failure	401					{object}	response.ErrorResponse
+//	@Failure	500					{object}	response.ErrorResponse
+//	@Router		/search/work [get]
 func (h *SearchHandler) SearchWork(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 
@@ -42,10 +65,12 @@ func (h *SearchHandler) SearchWork(c *gin.Context) {
 			Keyword:         optionalQueryParam(c, "keyword"),
 			WorkTypeId:      optionalQueryParam(c, "work_type_id"),
 			WorkCategoryId:  optionalQueryParam(c, "work_category_id"),
+			WorkSegmentId:   optionalQueryParam(c, "work_segment_id"),
 			City:            optionalQueryParam(c, "city"),
 			State:           optionalQueryParam(c, "state"),
 			ExperienceLevel: optionalQueryParam(c, "experience_level"),
-			PaymentType:     optionalQueryParam(c, "payment_type"),
+			RateBasis:       optionalQueryParam(c, "rate_basis"),
+			RateUnit:        optionalQueryParam(c, "rate_unit"),
 			MinBudgetRate:   optionalQueryFloat(c, "min_budget_rate"),
 			MaxBudgetRate:   optionalQueryFloat(c, "max_budget_rate"),
 			Page:            page,
@@ -60,6 +85,26 @@ func (h *SearchHandler) SearchWork(c *gin.Context) {
 	response.Success(c, http.StatusOK, searchResp)
 }
 
+// SearchWorkers godoc
+//
+//	@Summary	Search worker profiles
+//	@Tags		Search
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		keyword					query		string	false	"Free-text keyword search"
+//	@Param		work_type_id			query		string	false	"Filter by work type ID"
+//	@Param		work_segment_id			query		string	false	"Filter by work segment ID"
+//	@Param		city					query		string	false	"Filter by city"
+//	@Param		state					query		string	false	"Filter by state"
+//	@Param		worker_type				query		string	false	"Filter by worker type"
+//	@Param		availability_status		query		string	false	"Filter by availability status"
+//	@Param		min_experience_years	query		number	false	"Minimum years of experience"
+//	@Param		page					query		int		false	"Page number (1-indexed)"
+//	@Param		page_size				query		int		false	"Page size"
+//	@Success	200						{object}	response.SuccessResponse{data=searchv1.SearchWorkersResponse}
+//	@Failure	401						{object}	response.ErrorResponse
+//	@Failure	500						{object}	response.ErrorResponse
+//	@Router		/search/workers [get]
 func (h *SearchHandler) SearchWorkers(c *gin.Context) {
 	requestID := c.GetString(response.RequestIDContextKey)
 
@@ -74,6 +119,7 @@ func (h *SearchHandler) SearchWorkers(c *gin.Context) {
 		&searchv1.SearchWorkersRequest{
 			Keyword:            optionalQueryParam(c, "keyword"),
 			WorkTypeId:         optionalQueryParam(c, "work_type_id"),
+			WorkSegmentId:      optionalQueryParam(c, "work_segment_id"),
 			City:               optionalQueryParam(c, "city"),
 			State:              optionalQueryParam(c, "state"),
 			WorkerType:         optionalQueryParam(c, "worker_type"),

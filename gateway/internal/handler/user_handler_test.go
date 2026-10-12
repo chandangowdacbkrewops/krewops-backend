@@ -82,15 +82,35 @@ func (s userServiceClientStub) ListWorkTypeFields(ctx context.Context, req *user
 	return nil, errors.New("not implemented")
 }
 
-func (s userServiceClientStub) ListWorkTypePaymentTypes(context.Context, *userv1.ListWorkTypePaymentTypesRequest, ...grpc.CallOption) (*userv1.ListPaymentTypesResponse, error) {
+func (s userServiceClientStub) ListWorkTypeRateTypes(context.Context, *userv1.ListWorkTypeRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (s userServiceClientStub) ListWorkCategoryPaymentTypes(context.Context, *userv1.ListWorkCategoryPaymentTypesRequest, ...grpc.CallOption) (*userv1.ListPaymentTypesResponse, error) {
+func (s userServiceClientStub) ListWorkSegmentRateTypes(context.Context, *userv1.ListWorkSegmentRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkCategoryRateTypes(context.Context, *userv1.ListWorkCategoryRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
 	return nil, errors.New("not implemented")
 }
 
 func (s userServiceClientStub) ListWorkTypeSkills(context.Context, *userv1.ListWorkTypeSkillsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeSkillsResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeCommonRoles(context.Context, *userv1.ListWorkTypeCommonRolesRequest, ...grpc.CallOption) (*userv1.ListWorkTypeCommonRolesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) GetWorkTypeConfiguration(context.Context, *userv1.GetWorkTypeConfigurationRequest, ...grpc.CallOption) (*userv1.GetWorkTypeConfigurationResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkSegmentsByCategory(context.Context, *userv1.ListWorkSegmentsByCategoryRequest, ...grpc.CallOption) (*userv1.ListWorkSegmentsResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypesBySegment(context.Context, *userv1.ListWorkTypesBySegmentRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
 	return nil, errors.New("not implemented")
 }
 

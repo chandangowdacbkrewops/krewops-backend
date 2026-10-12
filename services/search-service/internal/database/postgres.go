@@ -10,7 +10,7 @@ import (
 // NewPostgresPool connects search-service to the shared KrewOps database.
 // search-service does not own any tables or migrations - it only issues
 // read queries against tables owned by user-service (profiles,
-// worker_profiles, worker_work_types). Work postings live in MongoDB.
+// worker_profiles, worker_categories). Work postings live in MongoDB.
 func NewPostgresPool(
 	ctx context.Context,
 	databaseURL string,

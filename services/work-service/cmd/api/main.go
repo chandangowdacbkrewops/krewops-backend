@@ -27,14 +27,6 @@ func main() {
 		log.Fatal("failed to load configuration: ", err)
 	}
 
-	if err := database.RunMigrations(
-		cfg.DatabaseURL,
-		"migrations",
-		"work_schema_migrations",
-	); err != nil {
-		log.Fatal("failed to run migrations: ", err)
-	}
-
 	db, err := database.NewPostgresPool(
 		ctx,
 		cfg.DatabaseURL,
@@ -76,8 +68,9 @@ func main() {
 	workOwnerRepository := repository.NewWorkOwnerRepository(db)
 	workTypeRepository := repository.NewWorkTypeRepository(db)
 	workCategoryRepository := repository.NewWorkCategoryRepository(db)
+	workSegmentRepository := repository.NewWorkSegmentRepository(db)
 	workTypeFieldRepository := repository.NewWorkTypeFieldRepository(db)
-	paymentTypeRepository := repository.NewPaymentTypeRepository(db)
+	rateTypeRepository := repository.NewRateTypeRepository(db)
 
 	// -------------------------
 	// Services
@@ -89,8 +82,9 @@ func main() {
 		workOwnerRepository,
 		workTypeRepository,
 		workCategoryRepository,
+		workSegmentRepository,
 		workTypeFieldRepository,
-		paymentTypeRepository,
+		rateTypeRepository,
 	)
 
 	// -------------------------

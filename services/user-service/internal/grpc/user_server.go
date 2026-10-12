@@ -60,6 +60,7 @@ func (s *UserServer) CreateProfile(
 			model.CreateProfileRequest{
 				FirstName:  req.FirstName,
 				LastName:   req.LastName,
+				Gender:     req.Gender,
 				UserType:   req.UserType,
 				Country:    req.Country,
 				State:      req.State,
@@ -72,7 +73,7 @@ func (s *UserServer) CreateProfile(
 		if errors.Is(err, repository.ErrProfileAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, "profile already exists")
 		}
-		if errors.Is(err, service.ErrInvalidProfile) {
+		if errors.Is(err, service.ErrInvalidProfile) || errors.Is(err, service.ErrInvalidGender) {
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
 		return nil, status.Error(codes.Internal, "unable to create profile")
@@ -93,6 +94,7 @@ func (s *UserServer) UpdateProfile(
 		model.UpdateProfileRequest{
 			FirstName:  req.FirstName,
 			LastName:   req.LastName,
+			Gender:     req.Gender,
 			Country:    req.Country,
 			State:      req.State,
 			City:       req.City,
@@ -103,7 +105,7 @@ func (s *UserServer) UpdateProfile(
 		switch {
 		case errors.Is(err, repository.ErrProfileNotFound):
 			return nil, status.Error(codes.NotFound, "profile not found")
-		case errors.Is(err, service.ErrInvalidProfile):
+		case errors.Is(err, service.ErrInvalidProfile), errors.Is(err, service.ErrInvalidGender):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		default:
 			return nil, status.Error(codes.Internal, "unable to update profile")
@@ -126,10 +128,12 @@ func (s *UserServer) CreateWorkerProfile(
 			CrewSize:           req.CrewSize,
 			ExperienceYears:    req.ExperienceYears,
 			ExpectedRate:       req.ExpectedRate,
-			RateType:           req.RateType,
+			ExpectedRateMin:    req.ExpectedRateMin,
+			ExpectedRateMax:    req.ExpectedRateMax,
+			RateBasis:          req.RateBasis,
+			RateUnit:           req.RateUnit,
 			AvailabilityStatus: req.AvailabilityStatus,
 			Bio:                req.Bio,
-			WorkCategoryID:     req.WorkCategoryId,
 			Selections:         workerSelectionsFromProto(req.Selections),
 		},
 	)
@@ -163,6 +167,8 @@ func (s *UserServer) UpdateWorkerProfile(
 		req.UserId,
 		model.UpdateWorkerProfileRequest{
 			Selections: workerSelectionsFromProto(req.Selections),
+			RateBasis:  req.RateBasis,
+			RateUnit:   req.RateUnit,
 		},
 	)
 	if err != nil {
@@ -200,18 +206,14 @@ func toWorkerProfile(profile *model.WorkerProfile) *userv1.WorkerProfile {
 		CrewSize:           profile.CrewSize,
 		ExperienceYears:    profile.ExperienceYears,
 		ExpectedRate:       profile.ExpectedRate,
-		RateType:           rateTypeEnum(profile.RateType),
+		ExpectedRateMin:    profile.ExpectedRateMin,
+		ExpectedRateMax:    profile.ExpectedRateMax,
+		RateBasis:          profile.RateBasis,
+		RateUnit:           profile.RateUnit,
 		AvailabilityStatus: profile.AvailabilityStatus,
 		VerificationStatus: profile.VerificationStatus,
 		Bio:                profile.Bio,
 		ProfileCompleted:   profile.ProfileCompleted,
-	}
-	if profile.WorkCategory != nil {
-		result.WorkCategory = &userv1.WorkCategory{
-			Id:   profile.WorkCategory.WorkCategoryID,
-			Code: profile.WorkCategory.Code,
-			Name: profile.WorkCategory.Name,
-		}
 	}
 	result.WorkCategories = workerCategoriesToProto(profile.WorkCategories)
 	return result
@@ -223,19 +225,62 @@ func workerSelectionsFromProto(selections []*userv1.WorkerCategorySelection) []m
 		if selection == nil {
 			continue
 		}
-		workTypes := make([]model.WorkerTypeSelection, 0, len(selection.WorkTypes))
-		for _, workType := range selection.WorkTypes {
-			if workType == nil {
+		segments := make([]model.WorkerSegmentSelection, 0, len(selection.Segments))
+		for _, segment := range selection.Segments {
+			if segment == nil {
 				continue
 			}
-			workTypes = append(workTypes, model.WorkerTypeSelection{
-				WorkTypeID: workType.WorkTypeId,
-				SkillIDs:   workType.SkillIds,
+			segments = append(segments, model.WorkerSegmentSelection{
+				WorkSegmentID: segment.WorkSegmentId,
+				WorkTypes:     workerTypeSelectionsFromProto(segment.WorkTypes),
+			})
+		}
+		if len(segments) == 0 && len(selection.WorkTypes) > 0 {
+			segments = append(segments, model.WorkerSegmentSelection{
+				WorkTypes: workerTypeSelectionsFromProto(selection.WorkTypes),
 			})
 		}
 		result = append(result, model.WorkerCategorySelection{
 			WorkCategoryID: selection.WorkCategoryId,
-			WorkTypes:      workTypes,
+			Segments:       segments,
+		})
+	}
+	return result
+}
+
+func workerTypeSelectionsFromProto(workTypes []*userv1.WorkerTypeSelection) []model.WorkerTypeSelection {
+	result := make([]model.WorkerTypeSelection, 0, len(workTypes))
+	for _, workType := range workTypes {
+		if workType == nil {
+			continue
+		}
+		result = append(result, model.WorkerTypeSelection{
+			WorkTypeID: workType.WorkTypeId,
+			SkillIDs:   workType.SkillIds,
+		})
+	}
+	return result
+}
+
+func workerWorkTypesToProto(workTypes []model.WorkerWorkTypeSummary) []*userv1.WorkerWorkType {
+	result := make([]*userv1.WorkerWorkType, 0, len(workTypes))
+	for _, workType := range workTypes {
+		skills := make([]*userv1.WorkerSkill, 0, len(workType.Skills))
+		for _, skill := range workType.Skills {
+			skills = append(skills, &userv1.WorkerSkill{
+				Id:         skill.ID,
+				WorkTypeId: skill.WorkTypeID,
+				Code:       skill.Code,
+				Name:       skill.Name,
+			})
+		}
+		result = append(result, &userv1.WorkerWorkType{
+			WorkTypeId: workType.WorkTypeID,
+			Name:       workType.Name,
+			CategoryId: workType.CategoryID,
+			SegmentId:  workType.SegmentID,
+			IsPrimary:  workType.IsPrimary,
+			Skills:     skills,
 		})
 	}
 	return result
@@ -244,30 +289,22 @@ func workerSelectionsFromProto(selections []*userv1.WorkerCategorySelection) []m
 func workerCategoriesToProto(categories []model.WorkerWorkCategorySummary) []*userv1.WorkerWorkCategory {
 	result := make([]*userv1.WorkerWorkCategory, 0, len(categories))
 	for _, category := range categories {
-		workTypes := make([]*userv1.WorkerWorkType, 0, len(category.WorkTypes))
-		for _, workType := range category.WorkTypes {
-			skills := make([]*userv1.WorkerSkill, 0, len(workType.Skills))
-			for _, skill := range workType.Skills {
-				skills = append(skills, &userv1.WorkerSkill{
-					Id:         skill.ID,
-					WorkTypeId: skill.WorkTypeID,
-					Code:       skill.Code,
-					Name:       skill.Name,
-				})
-			}
-			workTypes = append(workTypes, &userv1.WorkerWorkType{
-				WorkTypeId: workType.WorkTypeID,
-				Name:       workType.Name,
-				CategoryId: workType.CategoryID,
-				IsPrimary:  workType.IsPrimary,
-				Skills:     skills,
+		segments := make([]*userv1.WorkerWorkSegment, 0, len(category.Segments))
+		for _, segment := range category.Segments {
+			segments = append(segments, &userv1.WorkerWorkSegment{
+				WorkSegmentId: segment.WorkSegmentID,
+				Code:          segment.Code,
+				Name:          segment.Name,
+				CategoryId:    segment.CategoryID,
+				WorkTypes:     workerWorkTypesToProto(segment.WorkTypes),
 			})
 		}
 		result = append(result, &userv1.WorkerWorkCategory{
 			WorkCategoryId: category.WorkCategoryID,
 			Code:           category.Code,
 			Name:           category.Name,
-			WorkTypes:      workTypes,
+			WorkTypes:      workerWorkTypesToProto(category.WorkTypes),
+			Segments:       segments,
 		})
 	}
 	return result
@@ -281,22 +318,6 @@ func workerTypeEnum(value string) userv1.WorkerType {
 		return userv1.WorkerType_WORKER_TYPE_CONTRACTOR
 	default:
 		return userv1.WorkerType_WORKER_TYPE_UNSPECIFIED
-	}
-}
-
-func rateTypeEnum(value *string) userv1.RateType {
-	if value == nil {
-		return userv1.RateType_RATE_TYPE_UNSPECIFIED
-	}
-	switch *value {
-	case "hourly":
-		return userv1.RateType_RATE_TYPE_HOURLY
-	case "daily":
-		return userv1.RateType_RATE_TYPE_DAILY
-	case "fixed":
-		return userv1.RateType_RATE_TYPE_FIXED
-	default:
-		return userv1.RateType_RATE_TYPE_UNSPECIFIED
 	}
 }
 
@@ -317,6 +338,7 @@ func (s *UserServer) CreateOwnerProfile(
 			GSTRegistrationNumber: req.GstRegistrationNumber,
 			FirstName:             req.FirstName,
 			LastName:              req.LastName,
+			Gender:                req.Gender,
 			DateOfBirth:           req.DateOfBirth,
 			Email:                 req.Email,
 			Country:               req.Country,
@@ -327,6 +349,9 @@ func (s *UserServer) CreateOwnerProfile(
 		},
 	)
 	if err != nil {
+		if errors.Is(err, service.ErrInvalidGender) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 		return nil, err
 	}
 
@@ -403,11 +428,56 @@ func toWorkTypeProto(wt model.WorkType) *userv1.WorkType {
 		Id:           wt.ID,
 		Name:         wt.Name,
 		CategoryId:   wt.CategoryID,
+		SegmentId:    wt.SegmentID,
 		Code:         wt.Code,
 		Description:  wt.Description,
 		DisplayOrder: wt.DisplayOrder,
 		IsActive:     wt.IsActive,
 	}
+}
+
+func (s *UserServer) ListWorkSegmentsByCategory(
+	ctx context.Context,
+	req *userv1.ListWorkSegmentsByCategoryRequest,
+) (*userv1.ListWorkSegmentsResponse, error) {
+	segments, err := s.userService.ListWorkSegmentsByCategory(ctx, req.CategoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkSegmentsResponse{
+		Segments: make([]*userv1.WorkSegment, 0, len(segments)),
+	}
+	for _, segment := range segments {
+		resp.Segments = append(resp.Segments, &userv1.WorkSegment{
+			Id:           segment.ID,
+			CategoryId:   segment.CategoryID,
+			Code:         segment.Code,
+			Name:         segment.Name,
+			Description:  segment.Description,
+			DisplayOrder: segment.DisplayOrder,
+			IsActive:     segment.IsActive,
+		})
+	}
+	return resp, nil
+}
+
+func (s *UserServer) ListWorkTypesBySegment(
+	ctx context.Context,
+	req *userv1.ListWorkTypesBySegmentRequest,
+) (*userv1.ListWorkTypesResponse, error) {
+	workTypes, err := s.userService.ListWorkTypesBySegment(ctx, req.SegmentId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.ListWorkTypesResponse{
+		WorkTypes: make([]*userv1.WorkType, 0, len(workTypes)),
+	}
+	for _, wt := range workTypes {
+		resp.WorkTypes = append(resp.WorkTypes, toWorkTypeProto(wt))
+	}
+	return resp, nil
 }
 
 func (s *UserServer) ListWorkTypeFields(
@@ -437,6 +507,7 @@ func toWorkTypeFieldProto(f model.WorkTypeField) *userv1.WorkTypeField {
 		FieldKey:     f.FieldKey,
 		Label:        f.Label,
 		FieldType:    f.FieldType,
+		Context:      f.Context,
 		Placeholder:  f.Placeholder,
 		HelpText:     f.HelpText,
 		IsRequired:   f.IsRequired,
@@ -462,39 +533,51 @@ func toWorkTypeFieldProto(f model.WorkTypeField) *userv1.WorkTypeField {
 	return pbField
 }
 
-func (s *UserServer) ListWorkTypePaymentTypes(
+func (s *UserServer) ListWorkTypeRateTypes(
 	ctx context.Context,
-	req *userv1.ListWorkTypePaymentTypesRequest,
-) (*userv1.ListPaymentTypesResponse, error) {
-	paymentTypes, err := s.userService.ListWorkTypePaymentTypes(ctx, req.WorkTypeId)
+	req *userv1.ListWorkTypeRateTypesRequest,
+) (*userv1.ListRateTypesResponse, error) {
+	options, err := s.userService.ListWorkTypeRateTypes(ctx, req.WorkTypeId)
 	if err != nil {
 		return nil, err
 	}
-	return toPaymentTypesResponse(paymentTypes), nil
+	return toRateTypesResponse(options), nil
 }
 
-func (s *UserServer) ListWorkCategoryPaymentTypes(
+func (s *UserServer) ListWorkSegmentRateTypes(
 	ctx context.Context,
-	req *userv1.ListWorkCategoryPaymentTypesRequest,
-) (*userv1.ListPaymentTypesResponse, error) {
-	paymentTypes, err := s.userService.ListWorkCategoryPaymentTypes(ctx, req.CategoryId)
+	req *userv1.ListWorkSegmentRateTypesRequest,
+) (*userv1.ListRateTypesResponse, error) {
+	options, err := s.userService.ListWorkSegmentRateTypes(ctx, req.SegmentId)
 	if err != nil {
 		return nil, err
 	}
-	return toPaymentTypesResponse(paymentTypes), nil
+	return toRateTypesResponse(options), nil
 }
 
-func toPaymentTypesResponse(paymentTypes []model.PaymentType) *userv1.ListPaymentTypesResponse {
-	resp := &userv1.ListPaymentTypesResponse{
-		PaymentTypes: make([]*userv1.PaymentType, 0, len(paymentTypes)),
+func (s *UserServer) ListWorkCategoryRateTypes(
+	ctx context.Context,
+	req *userv1.ListWorkCategoryRateTypesRequest,
+) (*userv1.ListRateTypesResponse, error) {
+	options, err := s.userService.ListWorkCategoryRateTypes(ctx, req.CategoryId)
+	if err != nil {
+		return nil, err
 	}
-	for _, paymentType := range paymentTypes {
-		resp.PaymentTypes = append(resp.PaymentTypes, &userv1.PaymentType{
-			Id:        paymentType.ID,
-			Code:      paymentType.Code,
-			Name:      paymentType.Name,
-			IsActive:  paymentType.IsActive,
-			CreatedAt: paymentType.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+	return toRateTypesResponse(options), nil
+}
+
+func toRateTypesResponse(options []model.RateOption) *userv1.ListRateTypesResponse {
+	resp := &userv1.ListRateTypesResponse{
+		RateTypes: make([]*userv1.RateOption, 0, len(options)),
+	}
+	for _, option := range options {
+		resp.RateTypes = append(resp.RateTypes, &userv1.RateOption{
+			RateBasis:     option.RateBasis,
+			RateBasisName: option.RateBasisName,
+			RateUnit:      option.RateUnit,
+			RateUnitName:  option.RateUnitName,
+			IsDefault:     option.IsDefault,
+			Label:         option.Label,
 		})
 	}
 	return resp
@@ -513,16 +596,76 @@ func (s *UserServer) ListWorkTypeSkills(
 		Skills: make([]*userv1.Skill, 0, len(skills)),
 	}
 	for _, skill := range skills {
-		resp.Skills = append(resp.Skills, &userv1.Skill{
-			Id:         skill.ID,
-			WorkTypeId: skill.WorkTypeID,
-			Code:       skill.Code,
-			Name:       skill.Name,
-			IsActive:   skill.IsActive,
-			CreatedAt:  skill.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
-			UpdatedAt:  skill.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
-		})
+		resp.Skills = append(resp.Skills, toSkillProto(skill))
 	}
+	return resp, nil
+}
+
+func toSkillProto(skill model.Skill) *userv1.Skill {
+	return &userv1.Skill{
+		Id:         skill.ID,
+		Code:       skill.Code,
+		Name:       skill.Name,
+		IsActive:   skill.IsActive,
+		CreatedAt:  skill.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt:  skill.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		IsRequired: skill.IsRequired,
+	}
+}
+
+func toCommonRoleProto(role model.CommonRole) *userv1.CommonRole {
+	return &userv1.CommonRole{
+		Id:        role.ID,
+		Code:      role.Code,
+		Name:      role.Name,
+		IsActive:  role.IsActive,
+		CreatedAt: role.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt: role.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		IsPrimary: role.IsPrimary,
+	}
+}
+
+func (s *UserServer) ListWorkTypeCommonRoles(
+	ctx context.Context,
+	req *userv1.ListWorkTypeCommonRolesRequest,
+) (*userv1.ListWorkTypeCommonRolesResponse, error) {
+	roles, err := s.userService.ListWorkTypeCommonRoles(ctx, req.WorkTypeId)
+	if err != nil {
+		return nil, err
+	}
+	resp := &userv1.ListWorkTypeCommonRolesResponse{
+		CommonRoles: make([]*userv1.CommonRole, 0, len(roles)),
+	}
+	for _, role := range roles {
+		resp.CommonRoles = append(resp.CommonRoles, toCommonRoleProto(role))
+	}
+	return resp, nil
+}
+
+func (s *UserServer) GetWorkTypeConfiguration(
+	ctx context.Context,
+	req *userv1.GetWorkTypeConfigurationRequest,
+) (*userv1.GetWorkTypeConfigurationResponse, error) {
+	config, err := s.userService.GetWorkTypeConfiguration(ctx, req.WorkTypeId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &userv1.GetWorkTypeConfigurationResponse{
+		Skills:      make([]*userv1.Skill, 0, len(config.Skills)),
+		CommonRoles: make([]*userv1.CommonRole, 0, len(config.CommonRoles)),
+		Fields:      make([]*userv1.WorkTypeField, 0, len(config.Fields)),
+	}
+	for _, skill := range config.Skills {
+		resp.Skills = append(resp.Skills, toSkillProto(skill))
+	}
+	for _, role := range config.CommonRoles {
+		resp.CommonRoles = append(resp.CommonRoles, toCommonRoleProto(role))
+	}
+	for _, field := range config.Fields {
+		resp.Fields = append(resp.Fields, toWorkTypeFieldProto(field))
+	}
+	resp.RateTypes = toRateTypesResponse(config.RateTypes).RateTypes
 	return resp, nil
 }
 
@@ -563,6 +706,7 @@ func toOwnerProfile(profile *model.OwnerProfileResponse) *userv1.OwnerProfile {
 		UserType:          profile.UserType,
 		FirstName:         profile.FirstName,
 		LastName:          profile.LastName,
+		Gender:            profile.Gender,
 		DateOfBirth:       profile.DateOfBirth,
 		Email:             profile.Email,
 		Country:           profile.Country,
@@ -599,6 +743,7 @@ func toUserProfile(profile *model.ProfileResponse) *userv1.UserProfile {
 		UserId:              profile.AuthUserID,
 		FirstName:           stringValue(profile.FirstName),
 		LastName:            stringValue(profile.LastName),
+		Gender:              profile.Gender,
 		UserType:            stringValue(profile.UserType),
 		ProfileCompleted:    profile.ProfileCompleted,
 		OnboardingCompleted: profile.OnboardingCompleted,
@@ -610,13 +755,10 @@ func toUserProfile(profile *model.ProfileResponse) *userv1.UserProfile {
 		PostalCode:          stringValue(profile.PostalCode),
 		PreferredLanguage:   stringValue(profile.PreferredLanguage),
 		WorkCategories:      workerCategoriesToProto(profile.WorkCategories),
-	}
-	if profile.WorkCategory != nil {
-		result.WorkCategory = &userv1.WorkCategory{
-			Id:   profile.WorkCategory.WorkCategoryID,
-			Code: profile.WorkCategory.Code,
-			Name: profile.WorkCategory.Name,
-		}
+		ExpectedRateMin:     profile.ExpectedRateMin,
+		ExpectedRateMax:     profile.ExpectedRateMax,
+		RateBasis:           profile.RateBasis,
+		RateUnit:            profile.RateUnit,
 	}
 	return result
 }

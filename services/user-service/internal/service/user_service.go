@@ -98,18 +98,38 @@ func (s *UserService) ListWorkTypesByCategory(ctx context.Context, categoryID st
 	return s.profileService.ListWorkTypesByCategory(ctx, categoryID)
 }
 
+func (s *UserService) ListWorkSegmentsByCategory(ctx context.Context, categoryID string) ([]model.WorkSegment, error) {
+	return s.profileService.ListWorkSegmentsByCategory(ctx, categoryID)
+}
+
+func (s *UserService) ListWorkTypesBySegment(ctx context.Context, segmentID string) ([]model.WorkType, error) {
+	return s.profileService.ListWorkTypesBySegment(ctx, segmentID)
+}
+
 func (s *UserService) ListWorkTypeFields(ctx context.Context, workTypeID string) ([]model.WorkTypeField, error) {
 	return s.profileService.ListWorkTypeFields(ctx, workTypeID)
 }
 
-func (s *UserService) ListWorkTypePaymentTypes(ctx context.Context, workTypeID string) ([]model.PaymentType, error) {
-	return s.profileService.ListWorkTypePaymentTypes(ctx, workTypeID)
+func (s *UserService) ListWorkTypeRateTypes(ctx context.Context, workTypeID string) ([]model.RateOption, error) {
+	return s.profileService.ListWorkTypeRateTypes(ctx, workTypeID)
 }
 
-func (s *UserService) ListWorkCategoryPaymentTypes(ctx context.Context, categoryID string) ([]model.PaymentType, error) {
-	return s.profileService.ListWorkCategoryPaymentTypes(ctx, categoryID)
+func (s *UserService) ListWorkSegmentRateTypes(ctx context.Context, segmentID string) ([]model.RateOption, error) {
+	return s.profileService.ListWorkSegmentRateTypes(ctx, segmentID)
+}
+
+func (s *UserService) ListWorkCategoryRateTypes(ctx context.Context, categoryID string) ([]model.RateOption, error) {
+	return s.profileService.ListWorkCategoryRateTypes(ctx, categoryID)
 }
 
 func (s *UserService) ListWorkTypeSkills(ctx context.Context, workTypeID string) ([]model.Skill, error) {
 	return s.profileService.ListWorkTypeSkills(ctx, workTypeID)
+}
+
+func (s *UserService) ListWorkTypeCommonRoles(ctx context.Context, workTypeID string) ([]model.CommonRole, error) {
+	return s.profileService.ListWorkTypeCommonRoles(ctx, workTypeID)
+}
+
+func (s *UserService) GetWorkTypeConfiguration(ctx context.Context, workTypeID string) (*WorkTypeConfiguration, error) {
+	return s.profileService.GetWorkTypeConfiguration(ctx, workTypeID)
 }

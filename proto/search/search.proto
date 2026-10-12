@@ -22,15 +22,17 @@ message SearchWorkRequest {
   optional string keyword = 1;
   optional string work_type_id = 2;
   optional string work_category_id = 11;
+  optional string work_segment_id = 12;
   optional string city = 3;
   optional string state = 4;
   optional string experience_level = 5;
-  optional string payment_type = 6;
+  optional string rate_basis = 6;
   optional double min_budget_rate = 7;
   optional double max_budget_rate = 8;
 
   optional int32 page = 9;
   optional int32 page_size = 10;
+  optional string rate_unit = 13;
 }
 
 message WorkSummary {
@@ -43,6 +45,8 @@ message WorkSummary {
   optional string work_type_name = 6;
   optional string work_category_id = 24;
   optional string work_category_name = 25;
+  optional string work_segment_id = 26;
+  optional string work_segment_name = 27;
   optional string description = 7;
 
   optional string address = 8;
@@ -60,11 +64,12 @@ message WorkSummary {
   optional string duration_unit = 18;
   optional string shift_timing = 19;
 
-  optional string payment_type = 20;
+  optional string rate_basis = 20;
   optional double budget_rate = 21;
 
   optional string published_at = 22;
   string created_at = 23;
+  optional string rate_unit = 28;
 }
 
 message SearchWorkResponse {
@@ -77,6 +82,7 @@ message SearchWorkResponse {
 message SearchWorkersRequest {
   optional string keyword = 1;
   optional string work_type_id = 2;
+  optional string work_segment_id = 10;
   optional string city = 3;
   optional string state = 4;
   optional string worker_type = 5;
@@ -108,7 +114,10 @@ message WorkerSummary {
 
   optional double experience_years = 10;
   optional double expected_rate = 11;
-  optional string rate_type = 12;
+  optional string rate_basis = 12;
+  optional double expected_rate_min = 17;
+  optional double expected_rate_max = 18;
+  optional string rate_unit = 19;
 
   string availability_status = 13;
   string verification_status = 14;

@@ -42,6 +42,7 @@ func (s *WorkServer) CreateWork(
 			Title:                 req.Title,
 			WorkTypeID:            req.WorkTypeId,
 			WorkCategoryID:        req.WorkCategoryId,
+			WorkSegmentID:         req.WorkSegmentId,
 			Description:           req.Description,
 			Address:               req.Address,
 			City:                  req.City,
@@ -57,7 +58,8 @@ func (s *WorkServer) CreateWork(
 			DurationValue:         int32PtrToIntPtr(req.DurationValue),
 			DurationUnit:          req.DurationUnit,
 			ShiftTiming:           req.ShiftTiming,
-			PaymentType:           req.PaymentType,
+			RateBasis:             req.RateBasis,
+			RateUnit:              req.RateUnit,
 			BudgetRate:            req.BudgetRate,
 			PaymentNotes:          req.PaymentNotes,
 			AccommodationProvided: req.AccommodationProvided,
@@ -214,6 +216,52 @@ func (s *WorkServer) CancelWorkApplication(
 	return s.updateApplication(ctx, req, s.workService.CancelWorkApplication, "unable to cancel application")
 }
 
+func (s *WorkServer) StartWork(
+	ctx context.Context,
+	req *workv1.WorkLifecycleRequest,
+) (*workv1.WorkLifecycleResponse, error) {
+	return s.updateWorkStatus(ctx, req, s.workService.StartWork, "unable to start work")
+}
+
+func (s *WorkServer) CompleteWork(
+	ctx context.Context,
+	req *workv1.WorkLifecycleRequest,
+) (*workv1.WorkLifecycleResponse, error) {
+	return s.updateWorkStatus(ctx, req, s.workService.CompleteWork, "unable to complete work")
+}
+
+func (s *WorkServer) ConfirmWorkCompletion(
+	ctx context.Context,
+	req *workv1.WorkLifecycleRequest,
+) (*workv1.WorkLifecycleResponse, error) {
+	return s.updateWorkStatus(ctx, req, s.workService.ConfirmWorkCompletion, "unable to confirm work completion")
+}
+
+func (s *WorkServer) CancelWork(
+	ctx context.Context,
+	req *workv1.WorkLifecycleRequest,
+) (*workv1.WorkLifecycleResponse, error) {
+	return s.updateWorkStatus(ctx, req, s.workService.CancelWork, "unable to cancel work")
+}
+
+func (s *WorkServer) updateWorkStatus(
+	ctx context.Context,
+	req *workv1.WorkLifecycleRequest,
+	fn func(ctx context.Context, userID, workID string) (*model.WorkResponse, error),
+	fallback string,
+) (*workv1.WorkLifecycleResponse, error) {
+	requestID := incomingRequestID(ctx)
+	result, err := fn(ctx, req.UserId, req.WorkId)
+	if err != nil {
+		log.Printf("update work status failed: request_id=%s user_id=%s work_id=%s error=%v", requestID, req.UserId, req.WorkId, err)
+		return nil, mapApplicationError(err, fallback)
+	}
+
+	return &workv1.WorkLifecycleResponse{
+		Work: toProtoWorkPosting(result),
+	}, nil
+}
+
 func (s *WorkServer) updateApplication(
 	ctx context.Context,
 	req *workv1.UpdateWorkApplicationRequest,
@@ -248,6 +296,7 @@ func isValidationError(err error) bool {
 		"description",
 		"work_type_id",
 		"work_category_id",
+		"work_segment_id",
 		"address",
 		"city",
 		"state",
@@ -257,7 +306,8 @@ func isValidationError(err error) bool {
 		"start_date",
 		"duration_value",
 		"duration_unit",
-		"payment_type",
+		"rate_basis",
+		"rate_unit",
 		"budget_rate",
 		"payment_notes",
 		"attributes",
@@ -303,6 +353,8 @@ func toProtoWorkPosting(resp *model.WorkResponse) *workv1.WorkPosting {
 		WorkTypeName:          resp.WorkTypeName,
 		WorkCategoryId:        resp.WorkCategoryID,
 		WorkCategoryName:      resp.WorkCategoryName,
+		WorkSegmentId:         resp.WorkSegmentID,
+		WorkSegmentName:       resp.WorkSegmentName,
 		Description:           resp.Description,
 		Address:               resp.Address,
 		City:                  resp.City,
@@ -318,7 +370,8 @@ func toProtoWorkPosting(resp *model.WorkResponse) *workv1.WorkPosting {
 		DurationValue:         intPtrToInt32Ptr(resp.DurationValue),
 		DurationUnit:          resp.DurationUnit,
 		ShiftTiming:           resp.ShiftTiming,
-		PaymentType:           resp.PaymentType,
+		RateBasis:             resp.RateBasis,
+		RateUnit:              resp.RateUnit,
 		BudgetRate:            resp.BudgetRate,
 		PaymentNotes:          resp.PaymentNotes,
 		AccommodationProvided: resp.AccommodationProvided,
@@ -335,7 +388,9 @@ func mapApplicationError(err error, fallback string) error {
 	case errors.Is(err, service.ErrWorkerProfileNotCompleted),
 		errors.Is(err, service.ErrCannotApplyToOwnWork),
 		errors.Is(err, service.ErrNotWorkOwner),
-		errors.Is(err, service.ErrNotApplicationWorker):
+		errors.Is(err, service.ErrNotApplicationWorker),
+		errors.Is(err, service.ErrNotAssignedWorker),
+		errors.Is(err, service.ErrContractorRequired):
 		return status.Error(codes.PermissionDenied, err.Error())
 	case errors.Is(err, service.ErrWorkNotFound),
 		errors.Is(err, service.ErrApplicationNotFound):
@@ -344,7 +399,9 @@ func mapApplicationError(err error, fallback string) error {
 		errors.Is(err, service.ErrApplicationAlreadyAccepted):
 		return status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, service.ErrWorkNotPublished),
-		errors.Is(err, service.ErrInvalidApplicationStatus):
+		errors.Is(err, service.ErrInvalidApplicationStatus),
+		errors.Is(err, service.ErrInvalidWorkStatus),
+		errors.Is(err, service.ErrWorkNotReadyToStart):
 		return status.Error(codes.FailedPrecondition, err.Error())
 	case isValidationError(err):
 		return status.Error(codes.InvalidArgument, err.Error())
@@ -361,7 +418,8 @@ func quotationFromProto(quotation *workv1.Quotation) model.Quotation {
 	return model.Quotation{
 		Amount:                 quotation.Amount,
 		Currency:               quotation.Currency,
-		PriceType:              quotation.PriceType,
+		RateBasis:              quotation.RateBasis,
+		RateUnit:               quotation.RateUnit,
 		EstimatedDurationHours: quotation.EstimatedDurationHours,
 		Message:                quotation.Message,
 	}
@@ -380,7 +438,8 @@ func toProtoWorkApplication(application *model.WorkApplication) *workv1.WorkAppl
 		Quotation: &workv1.Quotation{
 			Amount:                 application.Quotation.Amount,
 			Currency:               application.Quotation.Currency,
-			PriceType:              application.Quotation.PriceType,
+			RateBasis:              application.Quotation.RateBasis,
+			RateUnit:               application.Quotation.RateUnit,
 			EstimatedDurationHours: application.Quotation.EstimatedDurationHours,
 			Message:                application.Quotation.Message,
 		},

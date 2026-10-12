@@ -19,9 +19,9 @@ func NewWorkTypeRepository(db *pgxpool.Pool) *WorkTypeRepository {
 
 func (r *WorkTypeRepository) ListAll(ctx context.Context) ([]model.WorkType, error) {
 	rows, err := r.db.Query(ctx, `
-		SELECT id, category_id, code, name, description, display_order, is_active, created_at, updated_at
-		FROM work_types
-		WHERE is_active = TRUE
+		SELECT id, category_id, segment_id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM categories
+		WHERE node_type = 'WORK_TYPE' AND is_active = TRUE
 		ORDER BY display_order ASC, name ASC
 	`)
 	if err != nil {
@@ -36,11 +36,26 @@ func (r *WorkTypeRepository) ListAll(ctx context.Context) ([]model.WorkType, err
 // category, ordered by display_order then name.
 func (r *WorkTypeRepository) ListByCategoryID(ctx context.Context, categoryID string) ([]model.WorkType, error) {
 	rows, err := r.db.Query(ctx, `
-		SELECT id, category_id, code, name, description, display_order, is_active, created_at, updated_at
-		FROM work_types
-		WHERE category_id = $1 AND is_active = TRUE
+		SELECT id, category_id, segment_id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM categories
+		WHERE category_id = $1 AND node_type = 'WORK_TYPE' AND is_active = TRUE
 		ORDER BY display_order ASC, name ASC
 	`, categoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return scanWorkTypes(rows)
+}
+
+func (r *WorkTypeRepository) ListBySegmentID(ctx context.Context, segmentID string) ([]model.WorkType, error) {
+	rows, err := r.db.Query(ctx, `
+		SELECT id, category_id, segment_id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM categories
+		WHERE segment_id = $1 AND node_type = 'WORK_TYPE' AND is_active = TRUE
+		ORDER BY display_order ASC, name ASC
+	`, segmentID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +71,7 @@ func scanWorkTypes(rows pgx.Rows) ([]model.WorkType, error) {
 		if err := rows.Scan(
 			&wt.ID,
 			&wt.CategoryID,
+			&wt.SegmentID,
 			&wt.Code,
 			&wt.Name,
 			&wt.Description,
@@ -79,9 +95,9 @@ func (r *WorkTypeRepository) FindByIDs(ctx context.Context, ids []string) (map[s
 	}
 
 	rows, err := r.db.Query(ctx, `
-		SELECT id, category_id, code, name, description, display_order, is_active, created_at, updated_at
-		FROM work_types
-		WHERE id = ANY($1)
+		SELECT id, category_id, segment_id, code, name, description, display_order, is_active, created_at, updated_at
+		FROM categories
+		WHERE id = ANY($1) AND node_type = 'WORK_TYPE'
 	`, ids)
 	if err != nil {
 		return nil, err

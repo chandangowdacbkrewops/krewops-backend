@@ -28,7 +28,8 @@ func ValidApplicationStatus(status string) bool {
 type Quotation struct {
 	Amount                 float64  `json:"amount"`
 	Currency               string   `json:"currency"`
-	PriceType              string   `json:"price_type"`
+	RateBasis              string   `json:"rate_basis"`
+	RateUnit               *string  `json:"rate_unit,omitempty"`
 	EstimatedDurationHours *float64 `json:"estimated_duration_hours,omitempty"`
 	Message                *string  `json:"message,omitempty"`
 }

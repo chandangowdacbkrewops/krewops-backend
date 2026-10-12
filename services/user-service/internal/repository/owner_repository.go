@@ -66,6 +66,7 @@ func (r *OwnerRepository) upsertProfile(
 			user_id,
 			first_name,
 			last_name,
+			gender,
 			user_type,
 			date_of_birth,
 			email,
@@ -77,10 +78,11 @@ func (r *OwnerRepository) upsertProfile(
 			profile_completed,
 			onboarding_completed
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, TRUE, TRUE)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, TRUE, TRUE)
 		ON CONFLICT (user_id) DO UPDATE SET
 			first_name = EXCLUDED.first_name,
 			last_name = EXCLUDED.last_name,
+			gender = EXCLUDED.gender,
 			user_type = EXCLUDED.user_type,
 			date_of_birth = EXCLUDED.date_of_birth,
 			email = EXCLUDED.email,
@@ -97,6 +99,7 @@ func (r *OwnerRepository) upsertProfile(
 			user_id,
 			first_name,
 			last_name,
+			gender,
 			user_type,
 			date_of_birth,
 			email,
@@ -115,6 +118,7 @@ func (r *OwnerRepository) upsertProfile(
 		authUserID,
 		req.FirstName,
 		req.LastName,
+		req.Gender,
 		userType,
 		dob,
 		req.Email,
@@ -128,6 +132,7 @@ func (r *OwnerRepository) upsertProfile(
 		&profile.AuthUserID,
 		&profile.FirstName,
 		&profile.LastName,
+		&profile.Gender,
 		&profile.UserType,
 		&profile.DateOfBirth,
 		&profile.Email,
@@ -229,6 +234,7 @@ func (r *OwnerRepository) GetOwnerProfileByAuthUserID(
 			user_id,
 			first_name,
 			last_name,
+			gender,
 			user_type,
 			date_of_birth,
 			email,
@@ -250,6 +256,7 @@ func (r *OwnerRepository) GetOwnerProfileByAuthUserID(
 		&profile.AuthUserID,
 		&profile.FirstName,
 		&profile.LastName,
+		&profile.Gender,
 		&profile.UserType,
 		&profile.DateOfBirth,
 		&profile.Email,

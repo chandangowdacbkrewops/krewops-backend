@@ -29,6 +29,10 @@ func RegisterRoutes(
 			work.POST("/:workId/applications/:applicationId/reject", workHandler.RejectWorkApplication)
 			work.POST("/:workId/applications/:applicationId/withdraw", workHandler.WithdrawWorkApplication)
 			work.POST("/:workId/applications/:applicationId/cancel", workHandler.CancelWorkApplication)
+			work.POST("/:workId/start", workHandler.StartWork)
+			work.POST("/:workId/complete", workHandler.CompleteWork)
+			work.POST("/:workId/confirm-completion", workHandler.ConfirmWorkCompletion)
+			work.POST("/:workId/cancel", workHandler.CancelWork)
 		}
 	}
 }

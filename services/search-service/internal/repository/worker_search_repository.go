@@ -11,9 +11,10 @@ import (
 )
 
 // WorkerSearchRepository issues read-only search queries against the
-// profiles / worker_profiles / worker_work_types tables (owned by
-// user-service) and the shared work_types lookup table. It intentionally
-// does not write to any of these tables.
+// profiles / worker_profiles / worker_categories tables (owned by
+// user-service) and the shared, unified `categories` lookup table
+// (filtered by node_type = 'WORK_TYPE' for skill/work-type joins). It
+// intentionally does not write to any of these tables.
 type WorkerSearchRepository struct {
 	db *pgxpool.Pool
 }
@@ -36,8 +37,14 @@ func (r *WorkerSearchRepository) SearchWorkers(
 
 	if v := trimmed(filters.WorkTypeID); v != "" {
 		addCondition(`EXISTS (
-			SELECT 1 FROM worker_work_types wwt
-			WHERE wwt.worker_profile_id = wp.id AND wwt.work_type_id = $%d AND wwt.is_active = TRUE
+			SELECT 1 FROM worker_categories wc
+			WHERE wc.worker_profile_id = wp.id AND wc.category_id = $%d AND wc.is_active = TRUE
+		)`, v)
+	}
+	if v := trimmed(filters.WorkSegmentID); v != "" {
+		addCondition(`EXISTS (
+			SELECT 1 FROM worker_categories wc
+			WHERE wc.worker_profile_id = wp.id AND wc.category_id = $%d AND wc.is_active = TRUE
 		)`, v)
 	}
 	if v := trimmed(filters.City); v != "" {
@@ -84,7 +91,10 @@ func (r *WorkerSearchRepository) SearchWorkers(
 			wp.crew_size,
 			wp.experience_years,
 			wp.expected_rate,
-			wp.rate_type,
+			wp.expected_rate_min,
+			wp.expected_rate_max,
+			wp.rate_basis,
+			wp.rate_unit,
 			wp.availability_status,
 			wp.verification_status,
 			wp.bio,
@@ -126,7 +136,10 @@ func (r *WorkerSearchRepository) SearchWorkers(
 			&item.CrewSize,
 			&item.ExperienceYears,
 			&item.ExpectedRate,
-			&item.RateType,
+			&item.ExpectedRateMin,
+			&item.ExpectedRateMax,
+			&item.RateBasis,
+			&item.RateUnit,
 			&item.AvailabilityStatus,
 			&item.VerificationStatus,
 			&item.Bio,
@@ -166,11 +179,11 @@ func (r *WorkerSearchRepository) attachSkills(
 	byID map[string]*model.WorkerSearchResult,
 ) error {
 	rows, err := r.db.Query(ctx, `
-		SELECT wwt.worker_profile_id, wt.id, wt.name, wwt.years_experience
-		FROM worker_work_types wwt
-		JOIN work_types wt ON wt.id = wwt.work_type_id
-		WHERE wwt.worker_profile_id = ANY($1) AND wwt.is_active = TRUE
-		ORDER BY wwt.is_primary DESC, wwt.created_at
+		SELECT wc.worker_profile_id, c.id, c.name, wc.experience_years
+		FROM worker_categories wc
+		JOIN categories c ON c.id = wc.category_id
+		WHERE wc.worker_profile_id = ANY($1) AND wc.is_active = TRUE AND c.node_type = 'WORK_TYPE'
+		ORDER BY wc.is_primary DESC, wc.created_at
 	`, workerProfileIDs)
 	if err != nil {
 		return err

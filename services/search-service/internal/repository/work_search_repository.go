@@ -25,6 +25,8 @@ type workSearchDocument struct {
 	WorkTypeName     *string `bson:"work_type_name,omitempty"`
 	WorkCategoryID   *string `bson:"work_category_id,omitempty"`
 	WorkCategoryName *string `bson:"work_category_name,omitempty"`
+	WorkSegmentID    *string `bson:"work_segment_id,omitempty"`
+	WorkSegmentName  *string `bson:"work_segment_name,omitempty"`
 	Description      *string `bson:"description,omitempty"`
 
 	Address   *string  `bson:"address,omitempty"`
@@ -42,6 +44,8 @@ type workSearchDocument struct {
 	DurationUnit  *string    `bson:"duration_unit,omitempty"`
 	ShiftTiming   *string    `bson:"shift_timing,omitempty"`
 
+	RateBasis   *string  `bson:"rate_basis,omitempty"`
+	RateUnit    *string  `bson:"rate_unit,omitempty"`
 	PaymentType *string  `bson:"payment_type,omitempty"`
 	BudgetRate  *float64 `bson:"budget_rate,omitempty"`
 
@@ -73,6 +77,9 @@ func (r *WorkSearchRepository) SearchWork(
 	if v := trimmed(filters.WorkCategoryID); v != "" {
 		filter["work_category_id"] = v
 	}
+	if v := trimmed(filters.WorkSegmentID); v != "" {
+		filter["work_segment_id"] = v
+	}
 	if v := trimmed(filters.City); v != "" {
 		filter["city"] = caseInsensitiveExact(v)
 	}
@@ -82,8 +89,11 @@ func (r *WorkSearchRepository) SearchWork(
 	if v := trimmed(filters.ExperienceLevel); v != "" {
 		filter["experience_level"] = v
 	}
-	if v := trimmed(filters.PaymentType); v != "" {
-		filter["payment_type"] = v
+	if v := trimmed(filters.RateBasis); v != "" {
+		filter["rate_basis"] = v
+	}
+	if v := trimmed(filters.RateUnit); v != "" {
+		filter["rate_unit"] = v
 	}
 
 	budget := bson.M{}
@@ -146,6 +156,8 @@ func (r *WorkSearchRepository) SearchWork(
 			WorkTypeName:     doc.WorkTypeName,
 			WorkCategoryID:   doc.WorkCategoryID,
 			WorkCategoryName: doc.WorkCategoryName,
+			WorkSegmentID:    doc.WorkSegmentID,
+			WorkSegmentName:  doc.WorkSegmentName,
 			Description:      doc.Description,
 			Address:          doc.Address,
 			City:             doc.City,
@@ -159,7 +171,8 @@ func (r *WorkSearchRepository) SearchWork(
 			DurationValue:    doc.DurationValue,
 			DurationUnit:     doc.DurationUnit,
 			ShiftTiming:      doc.ShiftTiming,
-			PaymentType:      doc.PaymentType,
+			RateBasis:        applyLegacyRate(doc.RateBasis, doc.RateUnit, doc.PaymentType),
+			RateUnit:         applyLegacyRateUnit(doc.RateBasis, doc.RateUnit, doc.PaymentType),
 			BudgetRate:       doc.BudgetRate,
 			PublishedAt:      doc.PublishedAt,
 			CreatedAt:        doc.CreatedAt,
@@ -189,4 +202,42 @@ func trimmed(value *string) string {
 		return ""
 	}
 	return strings.TrimSpace(*value)
+}
+
+func applyLegacyRate(basis, unit, paymentType *string) *string {
+	if basis != nil && *basis != "" {
+		return basis
+	}
+	mapped, _, ok := mapLegacyPaymentType(paymentType)
+	if !ok {
+		return nil
+	}
+	return &mapped
+}
+
+func applyLegacyRateUnit(basis, unit, paymentType *string) *string {
+	if basis != nil && *basis != "" {
+		return unit
+	}
+	_, mapped, ok := mapLegacyPaymentType(paymentType)
+	if !ok || mapped == "" {
+		return nil
+	}
+	return &mapped
+}
+
+func mapLegacyPaymentType(paymentType *string) (string, string, bool) {
+	if paymentType == nil {
+		return "", "", false
+	}
+	switch *paymentType {
+	case "hourly":
+		return "per_time", "hour", true
+	case "per_day", "daily":
+		return "per_time", "day", true
+	case "fixed":
+		return "fixed", "job", true
+	default:
+		return "", "", false
+	}
 }

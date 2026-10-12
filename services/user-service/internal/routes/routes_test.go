@@ -42,6 +42,38 @@ func TestWorkCategoriesRouteRequiresAuthentication(t *testing.T) {
 	}
 }
 
+func TestWorkSegmentsByCategoryRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/segments", nil),
+	)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestWorkTypesBySegmentRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-segments/segment-1/work-types", nil),
+	)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
 func TestWorkTypesByCategoryRouteRequiresAuthentication(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
@@ -58,7 +90,7 @@ func TestWorkTypesByCategoryRouteRequiresAuthentication(t *testing.T) {
 	}
 }
 
-func TestWorkTypePaymentTypesRouteRequiresAuthentication(t *testing.T) {
+func TestWorkTypeRateTypesRouteRequiresAuthentication(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
@@ -66,7 +98,7 @@ func TestWorkTypePaymentTypesRouteRequiresAuthentication(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(
 		recorder,
-		httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/payment-types", nil),
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/rate-types", nil),
 	)
 
 	if recorder.Code != http.StatusUnauthorized {
@@ -74,7 +106,7 @@ func TestWorkTypePaymentTypesRouteRequiresAuthentication(t *testing.T) {
 	}
 }
 
-func TestWorkCategoryPaymentTypesRouteRequiresAuthentication(t *testing.T) {
+func TestWorkSegmentRateTypesRouteRequiresAuthentication(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
@@ -82,7 +114,23 @@ func TestWorkCategoryPaymentTypesRouteRequiresAuthentication(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(
 		recorder,
-		httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/payment-types", nil),
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-segments/segment-1/rate-types", nil),
+	)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestWorkCategoryRateTypesRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	RegisterRoutes(router, handler.NewProfileHandler(nil), nil, "test-secret")
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/rate-types", nil),
 	)
 
 	if recorder.Code != http.StatusUnauthorized {
