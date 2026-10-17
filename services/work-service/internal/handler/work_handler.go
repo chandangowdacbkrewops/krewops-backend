@@ -176,6 +176,168 @@ func (h *WorkHandler) CancelWork(c *gin.Context) {
 	h.updateWorkStatus(c, h.workService.CancelWork, "unable to cancel work")
 }
 
+func (h *WorkHandler) CloseApplications(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.CloseApplications, "unable to close applications")
+}
+
+func (h *WorkHandler) CompleteJob(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.CompleteJob, "unable to complete job")
+}
+
+func (h *WorkHandler) CloseWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workService.CloseWork, "unable to close work")
+}
+
+func (h *WorkHandler) StartAssignment(c *gin.Context) {
+	h.updateAssignment(c, h.workService.StartAssignment, "unable to start assignment")
+}
+
+func (h *WorkHandler) CompleteAssignment(c *gin.Context) {
+	h.updateAssignment(c, h.workService.CompleteAssignment, "unable to complete assignment")
+}
+
+func (h *WorkHandler) UpsertDailyLog(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.UpsertDailyLogRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+	result, err := h.workService.UpsertDailyLog(c.Request.Context(), userID, c.Param("assignmentId"), c.Param("date"), req)
+	if err != nil {
+		writeApplicationError(c, err, "unable to save daily log")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) ListAssignmentDailyLogs(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.ListAssignmentDailyLogs(c.Request.Context(), userID, c.Param("assignmentId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to list daily logs")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) ListWorkDailyLogs(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.ListWorkDailyLogs(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to list daily logs")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) GetWorkSettlement(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetWorkSettlement(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get settlement")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) RecordAssignmentPayment(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.RecordPaymentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+	result, err := h.workService.RecordAssignmentPayment(c.Request.Context(), userID, c.Param("workId"), c.Param("assignmentId"), req)
+	if err != nil {
+		writeApplicationError(c, err, "unable to record payment")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) ListAssignmentPayments(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.ListAssignmentPayments(c.Request.Context(), userID, c.Param("assignmentId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to list payments")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) ConfirmAssignmentPayment(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.ConfirmAssignmentPayment(c.Request.Context(), userID, c.Param("assignmentId"), c.Param("paymentId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to confirm payment")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) DisputeAssignmentPayment(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.DisputePaymentRequest
+	_ = c.ShouldBindJSON(&req)
+	result, err := h.workService.DisputeAssignmentPayment(c.Request.Context(), userID, c.Param("assignmentId"), c.Param("paymentId"), req.Message)
+	if err != nil {
+		writeApplicationError(c, err, "unable to dispute payment")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) updateAssignment(
+	c *gin.Context,
+	fn func(ctx context.Context, userID, assignmentID string) (*model.WorkAssignment, error),
+	fallback string,
+) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := fn(c.Request.Context(), userID, c.Param("assignmentId"))
+	if err != nil {
+		writeApplicationError(c, err, fallback)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
 func (h *WorkHandler) updateWorkStatus(
 	c *gin.Context,
 	fn func(ctx context.Context, userID, workID string) (*model.WorkResponse, error),
@@ -226,20 +388,162 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		errors.Is(err, service.ErrContractorRequired):
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotFound),
-		errors.Is(err, service.ErrApplicationNotFound):
+		errors.Is(err, service.ErrApplicationNotFound),
+		errors.Is(err, service.ErrAssignmentNotFound):
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrDuplicateApplication),
-		errors.Is(err, service.ErrApplicationAlreadyAccepted):
+		errors.Is(err, service.ErrApplicationAlreadyAccepted),
+		errors.Is(err, service.ErrNoWorkerSeats):
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
 		errors.Is(err, service.ErrInvalidWorkStatus),
 		errors.Is(err, service.ErrWorkNotReadyToStart),
+		errors.Is(err, service.ErrApplicationsClosed),
+		errors.Is(err, service.ErrInvalidAssignmentStatus),
+		errors.Is(err, service.ErrLogsFrozen),
+		errors.Is(err, service.ErrAssignmentsNotCompleted),
+		errors.Is(err, service.ErrPaymentsIncomplete),
+		errors.Is(err, service.ErrInvalidPaymentMethod),
+		errors.Is(err, service.ErrNoActiveAssignment),
+		errors.Is(err, service.ErrContractorAssignmentRequired),
+		errors.Is(err, service.ErrContractorAlreadyAssigned),
+		errors.Is(err, service.ErrHiringModeMismatch),
+		errors.Is(err, service.ErrPaymentAdjustmentRequired),
+		errors.Is(err, service.ErrOverpayment),
+		errors.Is(err, service.ErrIndividualWorkersNotAllowed),
 		isValidationError(err):
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fallback})
 	}
+}
+
+func (h *WorkHandler) GetWorkDayRecords(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetWorkDayRecords(c.Request.Context(), userID, c.Param("workId"), c.Query("date"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get work records")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) SaveWorkDayRecords(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.SaveWorkDayRecordsRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+	result, err := h.workService.SaveWorkDayRecords(c.Request.Context(), userID, c.Param("workId"), req)
+	if err != nil {
+		writeApplicationError(c, err, "unable to save work records")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) GetWorkerWorkSummary(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetWorkerWorkSummary(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get worker work summary")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) GetContractorWorkRecords(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetContractorWorkRecords(c.Request.Context(), userID, c.Param("workId"), c.Query("date"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get contractor work records")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) SaveContractorWorkRecord(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.SaveContractorWorkRecordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+	result, err := h.workService.SaveContractorWorkRecord(c.Request.Context(), userID, c.Param("workId"), req)
+	if err != nil {
+		writeApplicationError(c, err, "unable to save contractor work record")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) GetContractorWorkSummary(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetContractorWorkSummary(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get contractor work summary")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) GetWorkPayments(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	result, err := h.workService.GetWorkPayments(c.Request.Context(), userID, c.Param("workId"))
+	if err != nil {
+		writeApplicationError(c, err, "unable to get work payments")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *WorkHandler) RecordObligationPayment(c *gin.Context) {
+	userID, ok := middleware.GetAuthUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	var req model.RecordObligationPaymentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+	result, err := h.workService.RecordObligationPayment(c.Request.Context(), userID, c.Param("paymentId"), req)
+	if err != nil {
+		writeApplicationError(c, err, "unable to record payment")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": result})
 }
 
 func (h *WorkHandler) Health(c *gin.Context) {
@@ -275,6 +579,16 @@ func isValidationError(err error) bool {
 		"quotation",
 		"work_id",
 		"application_id",
+		"day_portion",
+		"day_type",
+		"work_date",
+		"amount",
+		"amount_minor",
+		"assignment_id",
+		"deployed_worker_count",
+		"paid_at",
+		"hiring_mode",
+		"payment_id",
 	}
 	for _, prefix := range validationPrefixes {
 		if strings.HasPrefix(msg, prefix) {

@@ -51,4 +51,6 @@ type WorkApplication struct {
 type MyWorkApplication struct {
 	Application WorkApplication `json:"application"`
 	Work        *WorkResponse   `json:"work,omitempty"`
+	Assignment  *WorkAssignment `json:"assignment,omitempty"`
+	Payments    []WorkPayment   `json:"payments,omitempty"`
 }

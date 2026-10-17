@@ -46,20 +46,14 @@ func NewApplicationRepository(db *mongo.Database) *ApplicationRepository {
 }
 
 func (r *ApplicationRepository) EnsureIndexes(ctx context.Context) error {
+	_ = r.collection.Indexes().DropOne(ctx, "uniq_accepted_per_work")
 	_, err := r.collection.Indexes().CreateMany(ctx, []mongo.IndexModel{
 		{
 			Keys:    bson.D{{Key: "work_id", Value: 1}, {Key: "worker_id", Value: 1}},
 			Options: options.Index().SetUnique(true),
 		},
-		{Keys: bson.D{{Key: "work_id", Value: 1}, {Key: "status", Value: 1}}},
-		{Keys: bson.D{{Key: "worker_id", Value: 1}}},
-		{
-			Keys: bson.D{{Key: "work_id", Value: 1}},
-			Options: options.Index().
-				SetName("uniq_accepted_per_work").
-				SetUnique(true).
-				SetPartialFilterExpression(bson.D{{Key: "status", Value: model.ApplicationStatusAccepted}}),
-		},
+		{Keys: bson.D{{Key: "work_id", Value: 1}, {Key: "status", Value: 1}, {Key: "applied_at", Value: -1}}},
+		{Keys: bson.D{{Key: "worker_id", Value: 1}, {Key: "applied_at", Value: -1}}},
 	})
 	return err
 }
@@ -225,60 +219,18 @@ func (r *ApplicationRepository) UpdateStatus(
 	return doc.toRecord(), nil
 }
 
-func (r *ApplicationRepository) AcceptAndRejectOthers(
+func (r *ApplicationRepository) AcceptOne(
 	ctx context.Context,
 	workID string,
 	applicationID string,
 ) (*model.WorkApplication, error) {
-	now := time.Now().UTC()
-
-	var doc applicationDocument
-	err := r.collection.FindOneAndUpdate(
+	return r.UpdateStatus(
 		ctx,
-		bson.M{
-			"_id":     applicationID,
-			"work_id": workID,
-			"status": bson.M{"$in": []string{
-				model.ApplicationStatusApplied,
-				model.ApplicationStatusShortlisted,
-			}},
-		},
-		bson.M{"$set": bson.M{
-			"status":     model.ApplicationStatusAccepted,
-			"updated_at": now,
-		}},
-		options.FindOneAndUpdate().SetReturnDocument(options.After),
-	).Decode(&doc)
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return nil, nil
-	}
-	if mongo.IsDuplicateKeyError(err) {
-		return nil, ErrApplicationAlreadyAccepted
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = r.collection.UpdateMany(
-		ctx,
-		bson.M{
-			"work_id": workID,
-			"_id":     bson.M{"$ne": applicationID},
-			"status": bson.M{"$in": []string{
-				model.ApplicationStatusApplied,
-				model.ApplicationStatusShortlisted,
-			}},
-		},
-		bson.M{"$set": bson.M{
-			"status":     model.ApplicationStatusRejected,
-			"updated_at": now,
-		}},
+		workID,
+		applicationID,
+		[]string{model.ApplicationStatusApplied, model.ApplicationStatusShortlisted},
+		model.ApplicationStatusAccepted,
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	return doc.toRecord(), nil
 }
 
 func toApplicationDocument(record *model.WorkApplication) applicationDocument {

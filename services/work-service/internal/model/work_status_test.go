@@ -4,14 +4,16 @@ import "testing"
 
 func TestNormalizeWorkStatus(t *testing.T) {
 	cases := map[string]string{
-		"draft":          StatusDraft,
-		"OPEN":           StatusPublished,
-		"published":      StatusPublished,
-		"ASSIGNED":       StatusAssigned,
-		"in_progress":    StatusInProgress,
-		"WORK_COMPLETED": StatusWorkCompleted,
-		"closed":         StatusClosed,
-		"CANCELLED":      StatusCancelled,
+		"draft":           StatusDraft,
+		"OPEN":            StatusOpen,
+		"published":       StatusOpen,
+		"ASSIGNED":        StatusOpen,
+		"in_progress":     StatusInProgress,
+		"COMPLETED":       StatusCompleted,
+		"WORK_COMPLETED":  StatusPaymentPending,
+		"PAYMENT_PENDING": StatusPaymentPending,
+		"closed":          StatusClosed,
+		"CANCELLED":       StatusCancelled,
 	}
 
 	for input, want := range cases {
@@ -23,15 +25,14 @@ func TestNormalizeWorkStatus(t *testing.T) {
 
 func TestWorkStatusTransitions(t *testing.T) {
 	allowed := [][2]string{
-		{StatusPublished, StatusAssigned},
-		{StatusAssigned, StatusPublished},
-		{StatusAssigned, StatusInProgress},
-		{StatusPublished, StatusInProgress},
-		{StatusInProgress, StatusWorkCompleted},
-		{StatusWorkCompleted, StatusClosed},
+		{StatusOpen, StatusInProgress},
+		{StatusInProgress, StatusCompleted},
+		{StatusInProgress, StatusPaymentPending},
+		{StatusCompleted, StatusPaymentPending},
+		{StatusPaymentPending, StatusClosed},
+		{StatusCompleted, StatusClosed},
 		{StatusDraft, StatusCancelled},
-		{StatusPublished, StatusCancelled},
-		{StatusAssigned, StatusCancelled},
+		{StatusOpen, StatusCancelled},
 		{StatusInProgress, StatusCancelled},
 	}
 	for _, step := range allowed {
@@ -41,13 +42,13 @@ func TestWorkStatusTransitions(t *testing.T) {
 	}
 
 	blocked := [][2]string{
-		{StatusPublished, StatusClosed},
-		{StatusAssigned, StatusClosed},
+		{StatusOpen, StatusClosed},
 		{StatusInProgress, StatusClosed},
-		{StatusWorkCompleted, StatusCancelled},
+		{StatusPaymentPending, StatusCancelled},
 		{StatusClosed, StatusCancelled},
-		{StatusCancelled, StatusPublished},
-		{StatusDraft, StatusAssigned},
+		{StatusCancelled, StatusOpen},
+		{StatusDraft, StatusInProgress},
+		{StatusOpen, StatusPaymentPending},
 	}
 	for _, step := range blocked {
 		if CanTransition(step[0], step[1]) {
@@ -59,16 +60,38 @@ func TestWorkStatusTransitions(t *testing.T) {
 func TestCanStartFromOpenAliases(t *testing.T) {
 	for _, from := range []string{"published", "PUBLISHED", "open", "OPEN", "assigned", "ASSIGNED"} {
 		if !CanTransition(from, StatusInProgress) {
-			t.Fatalf("accepted worker should be able to start from %q", from)
+			t.Fatalf("owner should be able to start from %q", from)
 		}
 	}
 }
 
-func TestCreateStatusStaysDraftOrPublished(t *testing.T) {
-	if !ValidCreateStatus(StatusDraft) || !ValidCreateStatus(StatusPublished) {
-		t.Fatal("create must still accept draft and published")
+func TestCreateStatusStaysDraftOrOpen(t *testing.T) {
+	if !ValidCreateStatus(StatusDraft) || !ValidCreateStatus(StatusOpen) || !ValidCreateStatus("published") {
+		t.Fatal("create must still accept draft, open, and published")
 	}
-	if ValidCreateStatus(StatusAssigned) || ValidCreateStatus(StatusClosed) {
+	if ValidCreateStatus(StatusClosed) || ValidCreateStatus(StatusInProgress) {
 		t.Fatal("create must not accept lifecycle statuses")
+	}
+}
+
+func TestWorkerCanCompleteAssignmentAfterOwnerCompletesWork(t *testing.T) {
+	for _, status := range []string{StatusOpen, StatusInProgress, StatusPaymentPending, StatusCompleted, "IN_PROGRESS", "WORK_COMPLETED"} {
+		if WorkRecordsLocked(status) {
+			t.Fatalf("worker should still be able to complete an assignment while work is %q", status)
+		}
+	}
+	for _, status := range []string{StatusClosed, StatusCancelled, "CLOSED", "CANCELLED"} {
+		if !WorkRecordsLocked(status) {
+			t.Fatalf("worker must not complete an assignment after work is %q", status)
+		}
+	}
+}
+
+func TestHiringModeNormalization(t *testing.T) {
+	if NormalizeHiringMode("") != HiringModeIndividual {
+		t.Fatal("empty hiring mode should default to INDIVIDUAL")
+	}
+	if NormalizeHiringMode("contractor") != HiringModeContractor {
+		t.Fatal("contractor hiring mode should normalize")
 	}
 }

@@ -48,6 +48,69 @@ service WorkService {
 
   rpc CancelWork(WorkLifecycleRequest)
       returns (WorkLifecycleResponse);
+
+  rpc CloseApplications(WorkLifecycleRequest)
+      returns (WorkLifecycleResponse);
+
+  rpc CompleteJob(WorkLifecycleRequest)
+      returns (WorkLifecycleResponse);
+
+  rpc CloseWork(WorkLifecycleRequest)
+      returns (WorkLifecycleResponse);
+
+  rpc StartAssignment(AssignmentLifecycleRequest)
+      returns (AssignmentLifecycleResponse);
+
+  rpc CompleteAssignment(AssignmentLifecycleRequest)
+      returns (AssignmentLifecycleResponse);
+
+  rpc UpsertDailyLog(UpsertDailyLogRequest)
+      returns (UpsertDailyLogResponse);
+
+  rpc ListAssignmentDailyLogs(ListAssignmentDailyLogsRequest)
+      returns (ListDailyLogsResponse);
+
+  rpc ListWorkDailyLogs(ListWorkDailyLogsRequest)
+      returns (ListDailyLogsResponse);
+
+  rpc GetWorkSettlement(GetWorkSettlementRequest)
+      returns (GetWorkSettlementResponse);
+
+  rpc RecordAssignmentPayment(RecordAssignmentPaymentRequest)
+      returns (RecordAssignmentPaymentResponse);
+
+  rpc ListAssignmentPayments(ListAssignmentPaymentsRequest)
+      returns (ListAssignmentPaymentsResponse);
+
+  rpc ConfirmAssignmentPayment(UpdateAssignmentPaymentRequest)
+      returns (RecordAssignmentPaymentResponse);
+
+  rpc DisputeAssignmentPayment(DisputeAssignmentPaymentRequest)
+      returns (RecordAssignmentPaymentResponse);
+
+  rpc GetWorkDayRecords(GetWorkDayRecordsRequest)
+      returns (GetWorkDayRecordsResponse);
+
+  rpc SaveWorkDayRecords(SaveWorkDayRecordsRequest)
+      returns (GetWorkDayRecordsResponse);
+
+  rpc GetWorkerWorkSummary(GetWorkerWorkSummaryRequest)
+      returns (GetWorkerWorkSummaryResponse);
+
+  rpc GetContractorWorkRecords(GetContractorWorkRecordsRequest)
+      returns (GetContractorWorkRecordsResponse);
+
+  rpc SaveContractorWorkRecord(SaveContractorWorkRecordRequest)
+      returns (GetContractorWorkRecordsResponse);
+
+  rpc GetContractorWorkSummary(GetContractorWorkSummaryRequest)
+      returns (GetContractorWorkSummaryResponse);
+
+  rpc GetWorkPayments(GetWorkPaymentsRequest)
+      returns (GetWorkPaymentsResponse);
+
+  rpc RecordPayment(RecordPaymentRequest)
+      returns (RecordPaymentResponse);
 }
 
 message CreateWorkRequest {
@@ -80,6 +143,7 @@ message CreateWorkRequest {
   optional bool meals_provided = 24;
   map<string, string> attributes = 25;
   optional string rate_unit = 28;
+  optional string hiring_mode = 29;
 }
 
 message CreateWorkResponse {
@@ -128,6 +192,10 @@ message WorkPosting {
   string updated_at = 28;
   map<string, string> attributes = 30;
   optional string rate_unit = 35;
+  optional int32 workers_selected = 36;
+  optional bool applications_open = 37;
+  optional string hiring_mode = 38;
+  optional string started_at = 39;
 }
 
 message Quotation {
@@ -191,6 +259,8 @@ message ListMyWorksResponse {
 message MyWorkApplication {
   WorkApplication application = 1;
   WorkPosting work = 2;
+  WorkAssignment assignment = 3;
+  repeated WorkPayment payments = 4;
 }
 
 message ListMyApplicationsRequest {
@@ -209,4 +279,341 @@ message WorkLifecycleRequest {
 
 message WorkLifecycleResponse {
   WorkPosting work = 1;
+}
+
+message WorkAssignment {
+  string id = 1;
+  string work_id = 2;
+  string application_id = 3;
+  string worker_id = 4;
+  string status = 5;
+  Quotation agreed_quotation = 6;
+  string assigned_at = 7;
+  optional string started_at = 8;
+  optional string completed_at = 9;
+  string payment_status = 10;
+  int32 full_days = 11;
+  int32 half_days = 12;
+  double days_worked = 13;
+  double payable_amount = 14;
+  string payable_currency = 15;
+  bool logs_frozen = 16;
+  string created_at = 17;
+  string updated_at = 18;
+  string assignment_type = 19;
+  AgreedPayment agreed_payment = 20;
+  string joined_at = 21;
+  optional string worker_profile_id = 22;
+  optional string contractor_profile_id = 23;
+  optional int32 committed_worker_count = 24;
+}
+
+message DailyLog {
+  string id = 1;
+  string work_id = 2;
+  string assignment_id = 3;
+  string worker_id = 4;
+  string work_date = 5;
+  string day_portion = 6;
+  optional string note = 7;
+  string status = 8;
+  string submitted_at = 9;
+  string updated_at = 10;
+}
+
+message WorkPayment {
+  string id = 1;
+  string work_id = 2;
+  string assignment_id = 3;
+  string worker_id = 4;
+  string method = 5;
+  double amount = 6;
+  string currency = 7;
+  optional string reference = 8;
+  string status = 9;
+  optional string receipt_status = 10;
+  optional string dispute_message = 11;
+  string recorded_at = 12;
+  optional string confirmed_at = 13;
+  optional string disputed_at = 14;
+}
+
+message AssignmentLifecycleRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+}
+
+message AssignmentLifecycleResponse {
+  WorkAssignment assignment = 1;
+}
+
+message UpsertDailyLogRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+  string work_date = 3;
+  string day_portion = 4;
+  optional string note = 5;
+}
+
+message UpsertDailyLogResponse {
+  DailyLog daily_log = 1;
+}
+
+message ListAssignmentDailyLogsRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+}
+
+message ListWorkDailyLogsRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message ListDailyLogsResponse {
+  repeated DailyLog daily_logs = 1;
+}
+
+message GetWorkSettlementRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message WorkerSettlement {
+  WorkAssignment assignment = 1;
+  repeated DailyLog logs = 2;
+  repeated WorkPayment payments = 3;
+  int32 full_days = 4;
+  int32 half_days = 5;
+  double days_worked = 6;
+  double payable_amount = 7;
+  string currency = 8;
+  string payment_status = 9;
+}
+
+message GetWorkSettlementResponse {
+  WorkPosting work = 1;
+  repeated WorkerSettlement workers = 2;
+}
+
+message RecordAssignmentPaymentRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string assignment_id = 3;
+  string method = 4;
+  optional double amount = 5;
+  optional string currency = 6;
+  optional string reference = 7;
+}
+
+message RecordAssignmentPaymentResponse {
+  WorkPayment payment = 1;
+}
+
+message ListAssignmentPaymentsRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+}
+
+message ListAssignmentPaymentsResponse {
+  repeated WorkPayment payments = 1;
+}
+
+message UpdateAssignmentPaymentRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+  string payment_id = 3;
+}
+
+message DisputeAssignmentPaymentRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+  string payment_id = 3;
+  optional string message = 4;
+}
+
+message AgreedPayment {
+  string rate_type = 1;
+  string rate_unit = 2;
+  int64 rate_minor = 3;
+  string currency = 4;
+  optional int64 fixed_amount_minor = 5;
+}
+
+message WorkerDayRecordItem {
+  string assignment_id = 1;
+  string worker_profile_id = 2;
+  string worker_name = 3;
+  optional string day_type = 4;
+  optional double payable_units = 5;
+  int64 agreed_rate_minor = 6;
+  int64 estimated_amount_minor = 7;
+}
+
+message GetWorkDayRecordsRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string work_date = 3;
+}
+
+message GetWorkDayRecordsResponse {
+  string work_id = 1;
+  string work_date = 2;
+  repeated WorkerDayRecordItem workers = 3;
+}
+
+message SaveWorkDayRecordInput {
+  string assignment_id = 1;
+  string day_type = 2;
+}
+
+message SaveWorkDayRecordsRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string work_date = 3;
+  repeated SaveWorkDayRecordInput records = 4;
+}
+
+message WorkerWorkSummary {
+  string assignment_id = 1;
+  string worker_profile_id = 2;
+  string worker_name = 3;
+  int32 full_days = 4;
+  int32 half_days = 5;
+  int32 not_worked_days = 6;
+  int32 unrecorded_days = 7;
+  double payable_days = 8;
+  int64 agreed_rate_minor = 9;
+  int64 calculated_amount_minor = 10;
+  string currency = 11;
+}
+
+message GetWorkerWorkSummaryRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message GetWorkerWorkSummaryResponse {
+  string work_id = 1;
+  repeated WorkerWorkSummary workers = 2;
+}
+
+message ContractorInfo {
+  string assignment_id = 1;
+  string contractor_profile_id = 2;
+  string contractor_name = 3;
+  int32 committed_worker_count = 4;
+}
+
+message ContractorWorkRecordItem {
+  string work_date = 1;
+  int32 deployed_worker_count = 2;
+  int32 shortfall = 3;
+}
+
+message GetContractorWorkRecordsRequest {
+  string user_id = 1;
+  string work_id = 2;
+  optional string work_date = 3;
+}
+
+message GetContractorWorkRecordsResponse {
+  string work_id = 1;
+  ContractorInfo contractor = 2;
+  repeated ContractorWorkRecordItem records = 3;
+}
+
+message SaveContractorWorkRecordRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string work_date = 3;
+  int32 deployed_worker_count = 4;
+}
+
+message GetContractorWorkSummaryRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message GetContractorWorkSummaryResponse {
+  string work_id = 1;
+  string assignment_id = 2;
+  string contractor_profile_id = 3;
+  string contractor_name = 4;
+  int32 committed_worker_count = 5;
+  int32 total_recorded_days = 6;
+  int32 total_deployed_worker_days = 7;
+  double average_deployed_workers = 8;
+  int32 total_shortfall = 9;
+  string rate_type = 10;
+  int64 rate_minor = 11;
+  double completed_quantity = 12;
+  int64 estimated_amount_minor = 13;
+  string currency = 14;
+}
+
+message PaymentTransaction {
+  string id = 1;
+  string payment_obligation_id = 2;
+  string work_id = 3;
+  string assignment_id = 4;
+  int64 amount_minor = 5;
+  string payment_method = 6;
+  optional string reference = 7;
+  string recorded_by = 8;
+  string paid_at = 9;
+  string created_at = 10;
+}
+
+message PaymentObligation {
+  string id = 1;
+  string work_id = 2;
+  string assignment_id = 3;
+  string payee_type = 4;
+  string payee_id = 5;
+  string payee_name = 6;
+  string currency = 7;
+  int64 payable_amount_minor = 8;
+  int64 paid_amount_minor = 9;
+  string status = 10;
+  string created_at = 11;
+  string updated_at = 12;
+}
+
+message WorkPaymentItem {
+  PaymentObligation obligation = 1;
+  string assignment_id = 2;
+  string payee_type = 3;
+  string payee_id = 4;
+  string payee_name = 5;
+  string rate_type = 6;
+  int64 payable_amount_minor = 7;
+  int64 paid_amount_minor = 8;
+  int64 remaining_amount_minor = 9;
+  string status = 10;
+  repeated PaymentTransaction transactions = 11;
+}
+
+message GetWorkPaymentsRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message GetWorkPaymentsResponse {
+  string work_id = 1;
+  string hiring_mode = 2;
+  int64 outstanding_minor = 3;
+  repeated WorkPaymentItem payments = 4;
+}
+
+message RecordPaymentRequest {
+  string user_id = 1;
+  string payment_id = 2;
+  int64 amount_minor = 3;
+  string payment_method = 4;
+  optional string reference = 5;
+  optional string paid_at = 6;
+}
+
+message RecordPaymentResponse {
+  PaymentTransaction transaction = 1;
 }

@@ -27,20 +27,27 @@ type WorkSegment struct {
 }
 
 const (
-	StatusDraft         = "draft"
-	StatusPublished     = "published"
-	StatusAssigned      = "assigned"
-	StatusInProgress    = "in_progress"
-	StatusWorkCompleted = "work_completed"
-	StatusClosed        = "closed"
-	StatusCancelled     = "cancelled"
+	StatusDraft          = "draft"
+	StatusOpen           = "open"
+	StatusInProgress     = "in_progress"
+	StatusCompleted      = "completed"
+	StatusPaymentPending = "payment_pending"
+	StatusClosed         = "closed"
+	StatusCancelled      = "cancelled"
+
+	// Legacy spellings kept so older documents and clients still match.
+	StatusPublished     = StatusOpen
+	StatusAssigned      = StatusOpen
+	StatusWorkCompleted = StatusPaymentPending
+
+	HiringModeIndividual = "INDIVIDUAL"
+	HiringModeContractor = "CONTRACTOR"
 )
 
 // ValidCreateStatus reports whether a client may set this status when posting work.
-// published is the open state used by the existing create, apply, and search APIs.
 func ValidCreateStatus(status string) bool {
-	switch status {
-	case StatusDraft, StatusPublished:
+	switch NormalizeWorkStatus(status) {
+	case StatusDraft, StatusOpen:
 		return true
 	default:
 		return false
@@ -48,12 +55,12 @@ func ValidCreateStatus(status string) bool {
 }
 
 func ValidStatus(status string) bool {
-	switch status {
+	switch NormalizeWorkStatus(status) {
 	case StatusDraft,
-		StatusPublished,
-		StatusAssigned,
+		StatusOpen,
 		StatusInProgress,
-		StatusWorkCompleted,
+		StatusCompleted,
+		StatusPaymentPending,
 		StatusClosed,
 		StatusCancelled:
 		return true
@@ -62,20 +69,53 @@ func ValidStatus(status string) bool {
 	}
 }
 
-// NormalizeWorkStatus maps stored values and the lifecycle names used by clients
-// onto the status values persisted with a work posting.
+func ValidHiringMode(mode string) bool {
+	switch NormalizeHiringMode(mode) {
+	case HiringModeIndividual, HiringModeContractor:
+		return true
+	default:
+		return false
+	}
+}
+
+func NormalizeHiringMode(mode string) string {
+	switch strings.ToUpper(strings.TrimSpace(mode)) {
+	case "", HiringModeIndividual, "INDIVIDUAL_WORKER", "WORKER":
+		return HiringModeIndividual
+	case HiringModeContractor, "SINGLE_CONTRACTOR":
+		return HiringModeContractor
+	default:
+		return strings.ToUpper(strings.TrimSpace(mode))
+	}
+}
+
+func IsOpenHiringStatus(status string) bool {
+	return NormalizeWorkStatus(status) == StatusOpen
+}
+
+func WorkRecordsLocked(status string) bool {
+	switch NormalizeWorkStatus(status) {
+	case StatusClosed, StatusCancelled:
+		return true
+	default:
+		return false
+	}
+}
+
+// NormalizeWorkStatus maps stored values and client lifecycle names onto the
+// canonical statuses persisted with a work posting.
 func NormalizeWorkStatus(status string) string {
 	switch strings.ToUpper(strings.TrimSpace(status)) {
 	case "DRAFT":
 		return StatusDraft
-	case "PUBLISHED", "OPEN":
-		return StatusPublished
-	case "ASSIGNED":
-		return StatusAssigned
+	case "PUBLISHED", "OPEN", "ASSIGNED":
+		return StatusOpen
 	case "IN_PROGRESS", "INPROGRESS":
 		return StatusInProgress
-	case "WORK_COMPLETED", "WORKCOMPLETED":
-		return StatusWorkCompleted
+	case "COMPLETED":
+		return StatusCompleted
+	case "WORK_COMPLETED", "WORKCOMPLETED", "PAYMENT_PENDING", "PAYMENTPENDING":
+		return StatusPaymentPending
 	case "CLOSED":
 		return StatusClosed
 	case "CANCELLED", "CANCELED":
@@ -86,24 +126,21 @@ func NormalizeWorkStatus(status string) string {
 }
 
 // CanTransition reports whether a work posting may move from one status to another.
-// Workers cannot move a work directly to closed; that step is owner confirmation only.
 func CanTransition(from string, to string) bool {
 	from = NormalizeWorkStatus(from)
 	to = NormalizeWorkStatus(to)
 	switch to {
-	case StatusAssigned:
-		return from == StatusPublished
-	case StatusPublished:
-		return from == StatusAssigned
 	case StatusInProgress:
-		return from == StatusAssigned || from == StatusPublished
-	case StatusWorkCompleted:
+		return from == StatusOpen
+	case StatusCompleted:
 		return from == StatusInProgress
+	case StatusPaymentPending:
+		return from == StatusInProgress || from == StatusCompleted
 	case StatusClosed:
-		return from == StatusWorkCompleted
+		return from == StatusPaymentPending || from == StatusCompleted
 	case StatusCancelled:
 		switch from {
-		case StatusDraft, StatusPublished, StatusAssigned, StatusInProgress:
+		case StatusDraft, StatusOpen, StatusInProgress:
 			return true
 		default:
 			return false
@@ -131,14 +168,14 @@ func StatusMatchValues(statuses ...string) []string {
 
 func statusAliases(status string) []string {
 	switch NormalizeWorkStatus(status) {
-	case StatusPublished:
-		return []string{StatusPublished, "PUBLISHED", "open", "OPEN"}
-	case StatusAssigned:
-		return []string{StatusAssigned, "ASSIGNED"}
+	case StatusOpen:
+		return []string{StatusOpen, "OPEN", "published", "PUBLISHED", "assigned", "ASSIGNED"}
 	case StatusInProgress:
 		return []string{StatusInProgress, "IN_PROGRESS", "inprogress", "INPROGRESS"}
-	case StatusWorkCompleted:
-		return []string{StatusWorkCompleted, "WORK_COMPLETED", "workcompleted", "WORKCOMPLETED"}
+	case StatusCompleted:
+		return []string{StatusCompleted, "COMPLETED"}
+	case StatusPaymentPending:
+		return []string{StatusPaymentPending, "PAYMENT_PENDING", "paymentpending", "work_completed", "WORK_COMPLETED", "workcompleted", "WORKCOMPLETED"}
 	case StatusCancelled:
 		return []string{StatusCancelled, "CANCELLED", "canceled", "CANCELED"}
 	case StatusDraft:
@@ -204,6 +241,7 @@ type CreateWorkRequest struct {
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
+	HiringMode            *string  `json:"hiring_mode"`
 
 	Attributes map[string]string `json:"attributes"`
 }
@@ -231,6 +269,8 @@ type WorkRecord struct {
 	Longitude *float64
 
 	WorkersNeeded     *int
+	WorkersSelected   int
+	ApplicationsOpen  bool
 	ExperienceLevel   *string
 	Skills            []string
 	ToolsProvided     *bool
@@ -248,7 +288,9 @@ type WorkRecord struct {
 	AccommodationProvided *bool
 	MealsProvided         *bool
 
+	HiringMode  string
 	Status      string
+	StartedAt   *time.Time
 	PublishedAt *time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -256,9 +298,10 @@ type WorkRecord struct {
 
 // WorkResponse is the JSON shape returned to clients.
 type WorkResponse struct {
-	ID     string `json:"id"`
-	UserID string `json:"user_id"`
-	Status string `json:"status"`
+	ID         string `json:"id"`
+	UserID     string `json:"user_id"`
+	Status     string `json:"status"`
+	HiringMode string `json:"hiring_mode"`
 
 	Title            *string `json:"title,omitempty"`
 	WorkTypeID       *string `json:"work_type_id,omitempty"`
@@ -276,6 +319,8 @@ type WorkResponse struct {
 	Longitude *float64 `json:"longitude,omitempty"`
 
 	WorkersNeeded     *int     `json:"workers_needed,omitempty"`
+	WorkersSelected   int      `json:"workers_selected"`
+	ApplicationsOpen  bool     `json:"applications_open"`
 	ExperienceLevel   *string  `json:"experience_level,omitempty"`
 	Skills            []string `json:"skills"`
 	ToolsProvided     *bool    `json:"tools_provided,omitempty"`
@@ -293,6 +338,7 @@ type WorkResponse struct {
 	AccommodationProvided *bool    `json:"accommodation_provided,omitempty"`
 	MealsProvided         *bool    `json:"meals_provided,omitempty"`
 
+	StartedAt   *string   `json:"started_at,omitempty"`
 	PublishedAt *string   `json:"published_at,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
@@ -302,9 +348,10 @@ type WorkResponse struct {
 
 func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 	resp := &WorkResponse{
-		ID:     record.ID,
-		UserID: record.UserID,
-		Status: record.Status,
+		ID:         record.ID,
+		UserID:     record.UserID,
+		Status:     record.Status,
+		HiringMode: NormalizeHiringMode(record.HiringMode),
 
 		Title:            record.Title,
 		WorkTypeID:       record.WorkTypeID,
@@ -322,6 +369,8 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 		Longitude: record.Longitude,
 
 		WorkersNeeded:     record.WorkersNeeded,
+		WorkersSelected:   record.WorkersSelected,
+		ApplicationsOpen:  record.ApplicationsOpen,
 		ExperienceLevel:   record.ExperienceLevel,
 		Skills:            record.Skills,
 		ToolsProvided:     record.ToolsProvided,
@@ -355,6 +404,11 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 	if record.StartDate != nil {
 		formatted := record.StartDate.Format("2006-01-02")
 		resp.StartDate = &formatted
+	}
+
+	if record.StartedAt != nil {
+		formatted := record.StartedAt.Format(time.RFC3339)
+		resp.StartedAt = &formatted
 	}
 
 	if record.PublishedAt != nil {

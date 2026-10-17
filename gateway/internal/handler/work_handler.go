@@ -52,6 +52,7 @@ type CreateWorkRequest struct {
 	PaymentNotes          *string  `json:"payment_notes"`
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
+	HiringMode            *string  `json:"hiring_mode"`
 
 	Attributes map[string]string `json:"attributes"`
 }
@@ -139,6 +140,7 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			AccommodationProvided: request.AccommodationProvided,
 			MealsProvided:         request.MealsProvided,
 			Attributes:            request.Attributes,
+			HiringMode:            request.HiringMode,
 		},
 	)
 
@@ -524,6 +526,266 @@ func (h *WorkHandler) CancelWork(c *gin.Context) {
 	h.updateWorkStatus(c, h.workClient.CancelWork, "failed to cancel work")
 }
 
+func (h *WorkHandler) CloseApplications(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.CloseApplications, "failed to close applications")
+}
+
+func (h *WorkHandler) CompleteJob(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.CompleteJob, "failed to complete job")
+}
+
+func (h *WorkHandler) CloseWork(c *gin.Context) {
+	h.updateWorkStatus(c, h.workClient.CloseWork, "failed to close work")
+}
+
+func (h *WorkHandler) StartAssignment(c *gin.Context) {
+	h.updateAssignment(c, h.workClient.StartAssignment, "failed to start assignment")
+}
+
+func (h *WorkHandler) CompleteAssignment(c *gin.Context) {
+	h.updateAssignment(c, h.workClient.CompleteAssignment, "failed to complete assignment")
+}
+
+func (h *WorkHandler) UpsertDailyLog(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req modelDailyLog
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.UpsertDailyLog(ctx, &workv1.UpsertDailyLogRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+		WorkDate:     c.Param("date"),
+		DayPortion:   req.DayPortion,
+		Note:         req.Note,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to save daily log")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+type modelDailyLog struct {
+	DayPortion string  `json:"day_portion"`
+	Note       *string `json:"note"`
+}
+
+func (h *WorkHandler) ListAssignmentDailyLogs(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.ListAssignmentDailyLogs(ctx, &workv1.ListAssignmentDailyLogsRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list daily logs")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) ListWorkDailyLogs(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.ListWorkDailyLogs(ctx, &workv1.ListWorkDailyLogsRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list daily logs")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) GetWorkSettlement(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.GetWorkSettlement(ctx, &workv1.GetWorkSettlementRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get settlement")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+type recordPaymentBody struct {
+	Method    string  `json:"method"`
+	Amount    float64 `json:"amount"`
+	Currency  string  `json:"currency"`
+	Reference *string `json:"reference"`
+}
+
+func (h *WorkHandler) RecordAssignmentPayment(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req recordPaymentBody
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	var amount *float64
+	if req.Amount > 0 {
+		amount = &req.Amount
+	}
+	var currency *string
+	if req.Currency != "" {
+		currency = &req.Currency
+	}
+	resp, err := h.workClient.RecordAssignmentPayment(ctx, &workv1.RecordAssignmentPaymentRequest{
+		UserId:       userID,
+		WorkId:       c.Param("workId"),
+		AssignmentId: c.Param("assignmentId"),
+		Method:       req.Method,
+		Amount:       amount,
+		Currency:     currency,
+		Reference:    req.Reference,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to record payment")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) ListAssignmentPayments(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.ListAssignmentPayments(ctx, &workv1.ListAssignmentPaymentsRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to list payments")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) ConfirmAssignmentPayment(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.ConfirmAssignmentPayment(ctx, &workv1.UpdateAssignmentPaymentRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+		PaymentId:    c.Param("paymentId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to confirm payment")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+type disputeBody struct {
+	Message *string `json:"message"`
+}
+
+func (h *WorkHandler) DisputeAssignmentPayment(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req disputeBody
+	_ = c.ShouldBindJSON(&req)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.DisputeAssignmentPayment(ctx, &workv1.DisputeAssignmentPaymentRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+		PaymentId:    c.Param("paymentId"),
+		Message:      req.Message,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to dispute payment")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) updateAssignment(
+	c *gin.Context,
+	fn func(ctx context.Context, in *workv1.AssignmentLifecycleRequest, opts ...grpc.CallOption) (*workv1.AssignmentLifecycleResponse, error),
+	fallback string,
+) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := fn(ctx, &workv1.AssignmentLifecycleRequest{
+		UserId:       userID,
+		AssignmentId: c.Param("assignmentId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, fallback)
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
 func (h *WorkHandler) updateWorkStatus(
 	c *gin.Context,
 	fn func(ctx context.Context, in *workv1.WorkLifecycleRequest, opts ...grpc.CallOption) (*workv1.WorkLifecycleResponse, error),
@@ -579,6 +841,224 @@ func (h *WorkHandler) updateApplication(
 	}
 
 	response.Success(c, http.StatusOK, updateResp)
+}
+
+func (h *WorkHandler) GetWorkDayRecords(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.GetWorkDayRecords(ctx, &workv1.GetWorkDayRecordsRequest{
+		UserId:   userID,
+		WorkId:   c.Param("workId"),
+		WorkDate: c.Query("date"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get work records")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) SaveWorkDayRecords(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req struct {
+		WorkDate string `json:"work_date"`
+		Records  []struct {
+			AssignmentID string `json:"assignment_id"`
+			DayType      string `json:"day_type"`
+		} `json:"records"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+	records := make([]*workv1.SaveWorkDayRecordInput, 0, len(req.Records))
+	for _, record := range req.Records {
+		records = append(records, &workv1.SaveWorkDayRecordInput{
+			AssignmentId: record.AssignmentID,
+			DayType:      record.DayType,
+		})
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.SaveWorkDayRecords(ctx, &workv1.SaveWorkDayRecordsRequest{
+		UserId:   userID,
+		WorkId:   c.Param("workId"),
+		WorkDate: req.WorkDate,
+		Records:  records,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to save work records")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) GetWorkerWorkSummary(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.GetWorkerWorkSummary(ctx, &workv1.GetWorkerWorkSummaryRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get worker work summary")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) GetContractorWorkRecords(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	var workDate *string
+	if raw := c.Query("date"); raw != "" {
+		workDate = &raw
+	}
+	resp, err := h.workClient.GetContractorWorkRecords(ctx, &workv1.GetContractorWorkRecordsRequest{
+		UserId:   userID,
+		WorkId:   c.Param("workId"),
+		WorkDate: workDate,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get contractor work records")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) SaveContractorWorkRecord(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req struct {
+		WorkDate            string `json:"work_date"`
+		DeployedWorkerCount int32  `json:"deployed_worker_count"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.SaveContractorWorkRecord(ctx, &workv1.SaveContractorWorkRecordRequest{
+		UserId:              userID,
+		WorkId:              c.Param("workId"),
+		WorkDate:            req.WorkDate,
+		DeployedWorkerCount: req.DeployedWorkerCount,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to save contractor work record")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) GetContractorWorkSummary(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.GetContractorWorkSummary(ctx, &workv1.GetContractorWorkSummaryRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get contractor work summary")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) GetWorkPayments(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.GetWorkPayments(ctx, &workv1.GetWorkPaymentsRequest{
+		UserId: userID,
+		WorkId: c.Param("workId"),
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to get work payments")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
+}
+
+func (h *WorkHandler) RecordObligationPayment(c *gin.Context) {
+	requestID := c.GetString(response.RequestIDContextKey)
+	userID, ok := gatewayUserID(c)
+	if !ok {
+		response.Unauthorized(c, "unauthorized", nil)
+		return
+	}
+	var req struct {
+		AmountMinor   int64   `json:"amount_minor"`
+		PaymentMethod string  `json:"payment_method"`
+		Reference     *string `json:"reference"`
+		PaidAt        *string `json:"paid_at"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "invalid request", nil)
+		return
+	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
+	resp, err := h.workClient.RecordPayment(ctx, &workv1.RecordPaymentRequest{
+		UserId:        userID,
+		PaymentId:     c.Param("paymentId"),
+		AmountMinor:   req.AmountMinor,
+		PaymentMethod: req.PaymentMethod,
+		Reference:     req.Reference,
+		PaidAt:        req.PaidAt,
+	})
+	if err != nil {
+		writeApplicationGRPCError(c, err, "failed to record payment")
+		return
+	}
+	response.Success(c, http.StatusOK, resp)
 }
 
 func gatewayUserID(c *gin.Context) (string, bool) {

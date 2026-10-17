@@ -311,9 +311,74 @@ func main() {
 	)
 
 	workRoutes.POST(
+		"/:workId/complete-job",
+		workHandler.CompleteJob,
+	)
+
+	workRoutes.POST(
+		"/:workId/close-applications",
+		workHandler.CloseApplications,
+	)
+
+	workRoutes.POST(
+		"/:workId/close",
+		workHandler.CloseWork,
+	)
+
+	workRoutes.POST(
 		"/:workId/cancel",
 		workHandler.CancelWork,
 	)
+
+	workRoutes.GET(
+		"/:workId/daily-logs",
+		workHandler.ListWorkDailyLogs,
+	)
+
+	workRoutes.GET(
+		"/:workId/settlement",
+		workHandler.GetWorkSettlement,
+	)
+
+	workRoutes.POST(
+		"/:workId/assignments/:assignmentId/payments",
+		workHandler.RecordAssignmentPayment,
+	)
+
+	workRoutes.GET("/:workId/work-records/summary", workHandler.GetWorkerWorkSummary)
+	workRoutes.GET("/:workId/work-records", workHandler.GetWorkDayRecords)
+	workRoutes.POST("/:workId/work-records", workHandler.SaveWorkDayRecords)
+	workRoutes.GET("/:workId/contractor-work-records/summary", workHandler.GetContractorWorkSummary)
+	workRoutes.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
+	workRoutes.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
+	workRoutes.GET("/:workId/payments", workHandler.GetWorkPayments)
+
+	worksRoutes := api.Group("/works")
+	worksRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	worksRoutes.POST("/:workId/start", workHandler.StartWork)
+	worksRoutes.POST("/:workId/complete", workHandler.CompleteWork)
+	worksRoutes.POST("/:workId/close", workHandler.CloseWork)
+	worksRoutes.GET("/:workId/work-records/summary", workHandler.GetWorkerWorkSummary)
+	worksRoutes.GET("/:workId/work-records", workHandler.GetWorkDayRecords)
+	worksRoutes.POST("/:workId/work-records", workHandler.SaveWorkDayRecords)
+	worksRoutes.GET("/:workId/contractor-work-records/summary", workHandler.GetContractorWorkSummary)
+	worksRoutes.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
+	worksRoutes.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
+	worksRoutes.GET("/:workId/payments", workHandler.GetWorkPayments)
+
+	obligationRoutes := api.Group("/payment-obligations")
+	obligationRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	obligationRoutes.POST("/:paymentId/record-payment", workHandler.RecordObligationPayment)
+
+	assignmentRoutes := api.Group("/work-assignments")
+	assignmentRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	assignmentRoutes.POST("/:assignmentId/start", workHandler.StartAssignment)
+	assignmentRoutes.POST("/:assignmentId/complete", workHandler.CompleteAssignment)
+	assignmentRoutes.PUT("/:assignmentId/daily-logs/:date", workHandler.UpsertDailyLog)
+	assignmentRoutes.GET("/:assignmentId/daily-logs", workHandler.ListAssignmentDailyLogs)
+	assignmentRoutes.GET("/:assignmentId/payments", workHandler.ListAssignmentPayments)
+	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/confirm", workHandler.ConfirmAssignmentPayment)
+	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/dispute", workHandler.DisputeAssignmentPayment)
 
 	searchRoutes :=
 		api.Group("/search")

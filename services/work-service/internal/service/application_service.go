@@ -6,26 +6,42 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/chandangowdacbkrewops/krewops-backend/services/work-service/internal/model"
 	"github.com/chandangowdacbkrewops/krewops-backend/services/work-service/internal/repository"
 )
 
 var (
-	ErrWorkerProfileNotCompleted  = errors.New("user has not completed worker profile")
-	ErrWorkNotFound               = errors.New("work posting not found")
-	ErrWorkNotPublished           = errors.New("work posting is not published")
-	ErrCannotApplyToOwnWork       = errors.New("cannot apply to your own work posting")
-	ErrDuplicateApplication       = repository.ErrDuplicateApplication
-	ErrApplicationNotFound        = errors.New("application not found")
-	ErrNotWorkOwner               = errors.New("only the work owner can perform this action")
-	ErrNotApplicationWorker       = errors.New("only the applicant can perform this action")
-	ErrInvalidApplicationStatus   = errors.New("application cannot be updated from its current status")
-	ErrApplicationAlreadyAccepted = repository.ErrApplicationAlreadyAccepted
-	ErrContractorRequired         = errors.New("only contractors can apply when more than one worker is required")
-	ErrInvalidWorkStatus          = errors.New("work cannot change to the requested status")
-	ErrNotAssignedWorker          = errors.New("only the assigned worker can perform this action")
-	ErrWorkNotReadyToStart        = errors.New("work cannot be started before the scheduled start date")
+	ErrWorkerProfileNotCompleted    = errors.New("user has not completed worker profile")
+	ErrWorkNotFound                 = errors.New("work posting not found")
+	ErrWorkNotPublished             = errors.New("work posting is not published")
+	ErrCannotApplyToOwnWork         = errors.New("cannot apply to your own work posting")
+	ErrDuplicateApplication         = repository.ErrDuplicateApplication
+	ErrApplicationNotFound          = errors.New("application not found")
+	ErrNotWorkOwner                 = errors.New("only the work owner can perform this action")
+	ErrNotApplicationWorker         = errors.New("only the applicant can perform this action")
+	ErrInvalidApplicationStatus     = errors.New("application cannot be updated from its current status")
+	ErrApplicationAlreadyAccepted   = repository.ErrApplicationAlreadyAccepted
+	ErrContractorRequired           = errors.New("only contractors can apply when more than one worker is required")
+	ErrInvalidWorkStatus            = errors.New("work cannot change to the requested status")
+	ErrNotAssignedWorker            = errors.New("only the assigned worker can perform this action")
+	ErrWorkNotReadyToStart          = errors.New("work cannot be started before the scheduled start date")
+	ErrApplicationsClosed           = errors.New("applications are closed for this work")
+	ErrNoWorkerSeats                = repository.ErrApplicationAlreadyAccepted
+	ErrAssignmentNotFound           = errors.New("assignment not found")
+	ErrInvalidAssignmentStatus      = errors.New("assignment cannot be updated from its current status")
+	ErrLogsFrozen                   = errors.New("work records cannot be changed after payment is settled or the work is closed")
+	ErrAssignmentsNotCompleted      = errors.New("all selected workers must complete their assignments first")
+	ErrPaymentsIncomplete           = errors.New("all payment obligations must be paid or waived before the work can be closed")
+	ErrInvalidPaymentMethod         = errors.New("payment method must be CASH, UPI, BANK_TRANSFER, or OTHER")
+	ErrNoActiveAssignment           = errors.New("at least one active assignment is required to start work")
+	ErrContractorAssignmentRequired = errors.New("exactly one active contractor assignment is required to start work")
+	ErrContractorAlreadyAssigned    = errors.New("only one active contractor can be assigned to this work")
+	ErrHiringModeMismatch           = errors.New("work hiring mode does not allow this assignment type")
+	ErrPaymentAdjustmentRequired    = errors.New("changing this record would alter a settled payment; an adjustment workflow is required")
+	ErrOverpayment                  = errors.New("recorded payment would exceed the remaining payable amount")
+	ErrIndividualWorkersNotAllowed  = errors.New("individual workers cannot be assigned when hiring mode is CONTRACTOR")
 )
 
 func (s *WorkService) ApplyToWork(
@@ -61,12 +77,8 @@ func (s *WorkService) ApplyToWork(
 	if work.UserID == userID {
 		return nil, ErrCannotApplyToOwnWork
 	}
-	if work.Status != model.StatusPublished {
+	if (work.Status != model.StatusOpen && work.Status != model.StatusInProgress) || !work.ApplicationsOpen {
 		return nil, ErrWorkNotPublished
-	}
-	if workersNeeded(work) > 1 && strings.ToLower(strings.TrimSpace(completedType)) != "contractor" {
-		log.Printf("apply to work rejected: user_id=%s work_id=%s reason=contractor_required worker_type=%s workers_needed=%d", userID, workID, completedType, workersNeeded(work))
-		return nil, ErrContractorRequired
 	}
 
 	quotation, err := normalizeQuotation(req.Quotation)
@@ -191,11 +203,40 @@ func (s *WorkService) ListMyApplications(
 		return nil, err
 	}
 
+	assignments, err := s.assignmentRepository.ListByWorkerID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	assignmentByWork := make(map[string]model.WorkAssignment, len(assignments))
+	for _, assignment := range assignments {
+		assignmentByWork[assignment.WorkID] = assignment
+	}
+
 	results := make([]model.MyWorkApplication, 0, len(applications))
 	for _, application := range applications {
 		item := model.MyWorkApplication{Application: application}
 		if work, ok := works[application.WorkID]; ok {
+			status := model.NormalizeWorkStatus(work.Status)
+			if status == model.StatusPaymentPending || status == model.StatusCompleted {
+				if updated, err := s.maybeCloseWorkIfSettled(ctx, work.ID); err != nil {
+					log.Printf("close settled work failed: user_id=%s work_id=%s error=%v", userID, work.ID, err)
+				} else if updated != nil {
+					work = *updated
+				}
+			}
 			item.Work = model.BuildWorkResponse(&work)
+		}
+		if assignment, ok := assignmentByWork[application.WorkID]; ok && assignment.ApplicationID == application.ID {
+			copied := assignment
+			if err := s.hydrateAssignmentForRead(ctx, &copied); err != nil {
+				return nil, err
+			}
+			item.Assignment = &copied
+			payments, err := s.legacyPaymentsForAssignment(ctx, assignment.ID)
+			if err != nil {
+				return nil, err
+			}
+			item.Payments = payments
 		}
 		results = append(results, item)
 	}
@@ -253,8 +294,8 @@ func (s *WorkService) CancelWorkApplication(
 		return nil, err
 	}
 	if application.Status == model.ApplicationStatusAccepted &&
-		work.Status != model.StatusAssigned &&
-		work.Status != model.StatusPublished {
+		work.Status != model.StatusOpen &&
+		work.Status != model.StatusInProgress {
 		return nil, ErrInvalidWorkStatus
 	}
 
@@ -275,9 +316,8 @@ func (s *WorkService) CancelWorkApplication(
 		return nil, err
 	}
 
-	if application.Status == model.ApplicationStatusAccepted && work.Status == model.StatusAssigned {
-		if _, err := s.transitionWorkStatus(ctx, workID, model.StatusAssigned, model.StatusPublished); err != nil {
-			log.Printf("cancel work application failed: user_id=%s work_id=%s application_id=%s stage=reopen_work error=%v", userID, workID, applicationID, err)
+	if application.Status == model.ApplicationStatusAccepted {
+		if err := s.cancelAssignmentForApplication(ctx, work, application); err != nil {
 			return nil, err
 		}
 	}
@@ -335,8 +375,18 @@ func (s *WorkService) AcceptWorkApplication(
 	if err != nil {
 		return nil, err
 	}
-	if work.Status != model.StatusPublished && work.Status != model.StatusAssigned {
+	if work.Status != model.StatusOpen && work.Status != model.StatusInProgress {
 		return nil, ErrInvalidWorkStatus
+	}
+	hiringMode := model.NormalizeHiringMode(work.HiringMode)
+	if hiringMode == model.HiringModeContractor {
+		existing, err := s.assignmentRepository.FindActiveContractorByWorkID(ctx, workID)
+		if err != nil {
+			return nil, err
+		}
+		if existing != nil {
+			return nil, ErrContractorAlreadyAssigned
+		}
 	}
 
 	application, err := s.requireApplicationOnWork(ctx, workID, applicationID)
@@ -344,30 +394,41 @@ func (s *WorkService) AcceptWorkApplication(
 		return nil, err
 	}
 	if application.Status == model.ApplicationStatusAccepted {
-		if err := s.markWorkAssigned(ctx, workID); err != nil {
-			return nil, err
-		}
 		return application, nil
+	}
+	if !work.ApplicationsOpen {
+		return nil, ErrApplicationsClosed
 	}
 	if application.Status != model.ApplicationStatusApplied &&
 		application.Status != model.ApplicationStatusShortlisted {
 		return nil, ErrInvalidApplicationStatus
 	}
 
-	updated, err := s.applicationRepository.AcceptAndRejectOthers(ctx, workID, applicationID)
+	claimed, err := s.workRepository.ClaimSeat(ctx, workID)
 	if err != nil {
-		if errors.Is(err, repository.ErrApplicationAlreadyAccepted) {
-			return nil, ErrApplicationAlreadyAccepted
-		}
+		return nil, err
+	}
+	if claimed == nil {
+		return nil, ErrNoWorkerSeats
+	}
+
+	updated, err := s.applicationRepository.AcceptOne(ctx, workID, applicationID)
+	if err != nil {
+		_ = s.workRepository.ReleaseSeat(ctx, workID)
 		log.Printf("accept work application failed: user_id=%s work_id=%s application_id=%s error=%v", userID, workID, applicationID, err)
 		return nil, err
 	}
 	if updated == nil {
+		_ = s.workRepository.ReleaseSeat(ctx, workID)
 		return nil, ErrInvalidApplicationStatus
 	}
 
-	if err := s.markWorkAssigned(ctx, workID); err != nil {
-		log.Printf("accept work application failed: user_id=%s work_id=%s application_id=%s stage=assign_work error=%v", userID, workID, applicationID, err)
+	assignment := buildAssignmentFromAcceptance(claimed, updated)
+	if _, err := s.assignmentRepository.Insert(ctx, assignment); err != nil {
+		if errors.Is(err, repository.ErrDuplicateAssignment) {
+			return updated, nil
+		}
+		log.Printf("accept work application failed: user_id=%s work_id=%s application_id=%s stage=assignment error=%v", userID, workID, applicationID, err)
 		return nil, err
 	}
 
@@ -512,4 +573,34 @@ func normalizeQuotation(quotation model.Quotation) (model.Quotation, error) {
 		EstimatedDurationHours: quotation.EstimatedDurationHours,
 		Message:                message,
 	}, nil
+}
+
+func buildAssignmentFromAcceptance(work *model.WorkRecord, application *model.WorkApplication) *model.WorkAssignment {
+	hiringMode := model.NormalizeHiringMode(work.HiringMode)
+	assignmentType := model.AssignmentTypeIndividual
+	if hiringMode == model.HiringModeContractor {
+		assignmentType = model.AssignmentTypeContractor
+	}
+	joinedAt := time.Now().UTC().Format("2006-01-02")
+	assignment := &model.WorkAssignment{
+		WorkID:         work.ID,
+		ApplicationID:  application.ID,
+		AssignmentType: assignmentType,
+		WorkerID:       application.WorkerID,
+		Status:         model.AssignmentStatusAssigned,
+		Quotation:      application.Quotation,
+		AgreedPayment:  model.AgreedPaymentFromQuotation(application.Quotation, hiringMode),
+		JoinedAt:       joinedAt,
+		PaymentStatus:  model.PaymentStatusDue,
+	}
+	if assignmentType == model.AssignmentTypeContractor {
+		assignment.ContractorProfileID = application.WorkerID
+		assignment.CommittedWorkerCount = workersNeeded(work)
+		if qty := model.CompletedQuantityFromAttributes(work.Attributes); qty > 0 {
+			assignment.CompletedQuantity = qty
+		}
+	} else {
+		assignment.WorkerProfileID = application.WorkerID
+	}
+	return assignment
 }

@@ -33,6 +33,27 @@ const (
 	WorkService_CompleteWork_FullMethodName             = "/work.v1.WorkService/CompleteWork"
 	WorkService_ConfirmWorkCompletion_FullMethodName    = "/work.v1.WorkService/ConfirmWorkCompletion"
 	WorkService_CancelWork_FullMethodName               = "/work.v1.WorkService/CancelWork"
+	WorkService_CloseApplications_FullMethodName        = "/work.v1.WorkService/CloseApplications"
+	WorkService_CompleteJob_FullMethodName              = "/work.v1.WorkService/CompleteJob"
+	WorkService_CloseWork_FullMethodName                = "/work.v1.WorkService/CloseWork"
+	WorkService_StartAssignment_FullMethodName          = "/work.v1.WorkService/StartAssignment"
+	WorkService_CompleteAssignment_FullMethodName       = "/work.v1.WorkService/CompleteAssignment"
+	WorkService_UpsertDailyLog_FullMethodName           = "/work.v1.WorkService/UpsertDailyLog"
+	WorkService_ListAssignmentDailyLogs_FullMethodName  = "/work.v1.WorkService/ListAssignmentDailyLogs"
+	WorkService_ListWorkDailyLogs_FullMethodName        = "/work.v1.WorkService/ListWorkDailyLogs"
+	WorkService_GetWorkSettlement_FullMethodName        = "/work.v1.WorkService/GetWorkSettlement"
+	WorkService_RecordAssignmentPayment_FullMethodName  = "/work.v1.WorkService/RecordAssignmentPayment"
+	WorkService_ListAssignmentPayments_FullMethodName   = "/work.v1.WorkService/ListAssignmentPayments"
+	WorkService_ConfirmAssignmentPayment_FullMethodName = "/work.v1.WorkService/ConfirmAssignmentPayment"
+	WorkService_DisputeAssignmentPayment_FullMethodName = "/work.v1.WorkService/DisputeAssignmentPayment"
+	WorkService_GetWorkDayRecords_FullMethodName        = "/work.v1.WorkService/GetWorkDayRecords"
+	WorkService_SaveWorkDayRecords_FullMethodName       = "/work.v1.WorkService/SaveWorkDayRecords"
+	WorkService_GetWorkerWorkSummary_FullMethodName     = "/work.v1.WorkService/GetWorkerWorkSummary"
+	WorkService_GetContractorWorkRecords_FullMethodName = "/work.v1.WorkService/GetContractorWorkRecords"
+	WorkService_SaveContractorWorkRecord_FullMethodName = "/work.v1.WorkService/SaveContractorWorkRecord"
+	WorkService_GetContractorWorkSummary_FullMethodName = "/work.v1.WorkService/GetContractorWorkSummary"
+	WorkService_GetWorkPayments_FullMethodName          = "/work.v1.WorkService/GetWorkPayments"
+	WorkService_RecordPayment_FullMethodName            = "/work.v1.WorkService/RecordPayment"
 )
 
 // WorkServiceClient is the client API for WorkService service.
@@ -53,6 +74,27 @@ type WorkServiceClient interface {
 	CompleteWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
 	ConfirmWorkCompletion(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
 	CancelWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	CloseApplications(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	CompleteJob(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	CloseWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error)
+	StartAssignment(ctx context.Context, in *AssignmentLifecycleRequest, opts ...grpc.CallOption) (*AssignmentLifecycleResponse, error)
+	CompleteAssignment(ctx context.Context, in *AssignmentLifecycleRequest, opts ...grpc.CallOption) (*AssignmentLifecycleResponse, error)
+	UpsertDailyLog(ctx context.Context, in *UpsertDailyLogRequest, opts ...grpc.CallOption) (*UpsertDailyLogResponse, error)
+	ListAssignmentDailyLogs(ctx context.Context, in *ListAssignmentDailyLogsRequest, opts ...grpc.CallOption) (*ListDailyLogsResponse, error)
+	ListWorkDailyLogs(ctx context.Context, in *ListWorkDailyLogsRequest, opts ...grpc.CallOption) (*ListDailyLogsResponse, error)
+	GetWorkSettlement(ctx context.Context, in *GetWorkSettlementRequest, opts ...grpc.CallOption) (*GetWorkSettlementResponse, error)
+	RecordAssignmentPayment(ctx context.Context, in *RecordAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error)
+	ListAssignmentPayments(ctx context.Context, in *ListAssignmentPaymentsRequest, opts ...grpc.CallOption) (*ListAssignmentPaymentsResponse, error)
+	ConfirmAssignmentPayment(ctx context.Context, in *UpdateAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error)
+	DisputeAssignmentPayment(ctx context.Context, in *DisputeAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error)
+	GetWorkDayRecords(ctx context.Context, in *GetWorkDayRecordsRequest, opts ...grpc.CallOption) (*GetWorkDayRecordsResponse, error)
+	SaveWorkDayRecords(ctx context.Context, in *SaveWorkDayRecordsRequest, opts ...grpc.CallOption) (*GetWorkDayRecordsResponse, error)
+	GetWorkerWorkSummary(ctx context.Context, in *GetWorkerWorkSummaryRequest, opts ...grpc.CallOption) (*GetWorkerWorkSummaryResponse, error)
+	GetContractorWorkRecords(ctx context.Context, in *GetContractorWorkRecordsRequest, opts ...grpc.CallOption) (*GetContractorWorkRecordsResponse, error)
+	SaveContractorWorkRecord(ctx context.Context, in *SaveContractorWorkRecordRequest, opts ...grpc.CallOption) (*GetContractorWorkRecordsResponse, error)
+	GetContractorWorkSummary(ctx context.Context, in *GetContractorWorkSummaryRequest, opts ...grpc.CallOption) (*GetContractorWorkSummaryResponse, error)
+	GetWorkPayments(ctx context.Context, in *GetWorkPaymentsRequest, opts ...grpc.CallOption) (*GetWorkPaymentsResponse, error)
+	RecordPayment(ctx context.Context, in *RecordPaymentRequest, opts ...grpc.CallOption) (*RecordPaymentResponse, error)
 }
 
 type workServiceClient struct {
@@ -203,6 +245,216 @@ func (c *workServiceClient) CancelWork(ctx context.Context, in *WorkLifecycleReq
 	return out, nil
 }
 
+func (c *workServiceClient) CloseApplications(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CloseApplications_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CompleteJob(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CompleteJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CloseWork(ctx context.Context, in *WorkLifecycleRequest, opts ...grpc.CallOption) (*WorkLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WorkLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CloseWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) StartAssignment(ctx context.Context, in *AssignmentLifecycleRequest, opts ...grpc.CallOption) (*AssignmentLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssignmentLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_StartAssignment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CompleteAssignment(ctx context.Context, in *AssignmentLifecycleRequest, opts ...grpc.CallOption) (*AssignmentLifecycleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssignmentLifecycleResponse)
+	err := c.cc.Invoke(ctx, WorkService_CompleteAssignment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) UpsertDailyLog(ctx context.Context, in *UpsertDailyLogRequest, opts ...grpc.CallOption) (*UpsertDailyLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertDailyLogResponse)
+	err := c.cc.Invoke(ctx, WorkService_UpsertDailyLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListAssignmentDailyLogs(ctx context.Context, in *ListAssignmentDailyLogsRequest, opts ...grpc.CallOption) (*ListDailyLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDailyLogsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListAssignmentDailyLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListWorkDailyLogs(ctx context.Context, in *ListWorkDailyLogsRequest, opts ...grpc.CallOption) (*ListDailyLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDailyLogsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListWorkDailyLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetWorkSettlement(ctx context.Context, in *GetWorkSettlementRequest, opts ...grpc.CallOption) (*GetWorkSettlementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkSettlementResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetWorkSettlement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) RecordAssignmentPayment(ctx context.Context, in *RecordAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecordAssignmentPaymentResponse)
+	err := c.cc.Invoke(ctx, WorkService_RecordAssignmentPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListAssignmentPayments(ctx context.Context, in *ListAssignmentPaymentsRequest, opts ...grpc.CallOption) (*ListAssignmentPaymentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAssignmentPaymentsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListAssignmentPayments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ConfirmAssignmentPayment(ctx context.Context, in *UpdateAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecordAssignmentPaymentResponse)
+	err := c.cc.Invoke(ctx, WorkService_ConfirmAssignmentPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) DisputeAssignmentPayment(ctx context.Context, in *DisputeAssignmentPaymentRequest, opts ...grpc.CallOption) (*RecordAssignmentPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecordAssignmentPaymentResponse)
+	err := c.cc.Invoke(ctx, WorkService_DisputeAssignmentPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetWorkDayRecords(ctx context.Context, in *GetWorkDayRecordsRequest, opts ...grpc.CallOption) (*GetWorkDayRecordsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkDayRecordsResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetWorkDayRecords_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) SaveWorkDayRecords(ctx context.Context, in *SaveWorkDayRecordsRequest, opts ...grpc.CallOption) (*GetWorkDayRecordsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkDayRecordsResponse)
+	err := c.cc.Invoke(ctx, WorkService_SaveWorkDayRecords_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetWorkerWorkSummary(ctx context.Context, in *GetWorkerWorkSummaryRequest, opts ...grpc.CallOption) (*GetWorkerWorkSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkerWorkSummaryResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetWorkerWorkSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetContractorWorkRecords(ctx context.Context, in *GetContractorWorkRecordsRequest, opts ...grpc.CallOption) (*GetContractorWorkRecordsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractorWorkRecordsResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetContractorWorkRecords_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) SaveContractorWorkRecord(ctx context.Context, in *SaveContractorWorkRecordRequest, opts ...grpc.CallOption) (*GetContractorWorkRecordsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractorWorkRecordsResponse)
+	err := c.cc.Invoke(ctx, WorkService_SaveContractorWorkRecord_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetContractorWorkSummary(ctx context.Context, in *GetContractorWorkSummaryRequest, opts ...grpc.CallOption) (*GetContractorWorkSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractorWorkSummaryResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetContractorWorkSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetWorkPayments(ctx context.Context, in *GetWorkPaymentsRequest, opts ...grpc.CallOption) (*GetWorkPaymentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkPaymentsResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetWorkPayments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) RecordPayment(ctx context.Context, in *RecordPaymentRequest, opts ...grpc.CallOption) (*RecordPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecordPaymentResponse)
+	err := c.cc.Invoke(ctx, WorkService_RecordPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkServiceServer is the server API for WorkService service.
 // All implementations must embed UnimplementedWorkServiceServer
 // for forward compatibility.
@@ -221,6 +473,27 @@ type WorkServiceServer interface {
 	CompleteWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
 	ConfirmWorkCompletion(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
 	CancelWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	CloseApplications(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	CompleteJob(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	CloseWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error)
+	StartAssignment(context.Context, *AssignmentLifecycleRequest) (*AssignmentLifecycleResponse, error)
+	CompleteAssignment(context.Context, *AssignmentLifecycleRequest) (*AssignmentLifecycleResponse, error)
+	UpsertDailyLog(context.Context, *UpsertDailyLogRequest) (*UpsertDailyLogResponse, error)
+	ListAssignmentDailyLogs(context.Context, *ListAssignmentDailyLogsRequest) (*ListDailyLogsResponse, error)
+	ListWorkDailyLogs(context.Context, *ListWorkDailyLogsRequest) (*ListDailyLogsResponse, error)
+	GetWorkSettlement(context.Context, *GetWorkSettlementRequest) (*GetWorkSettlementResponse, error)
+	RecordAssignmentPayment(context.Context, *RecordAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error)
+	ListAssignmentPayments(context.Context, *ListAssignmentPaymentsRequest) (*ListAssignmentPaymentsResponse, error)
+	ConfirmAssignmentPayment(context.Context, *UpdateAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error)
+	DisputeAssignmentPayment(context.Context, *DisputeAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error)
+	GetWorkDayRecords(context.Context, *GetWorkDayRecordsRequest) (*GetWorkDayRecordsResponse, error)
+	SaveWorkDayRecords(context.Context, *SaveWorkDayRecordsRequest) (*GetWorkDayRecordsResponse, error)
+	GetWorkerWorkSummary(context.Context, *GetWorkerWorkSummaryRequest) (*GetWorkerWorkSummaryResponse, error)
+	GetContractorWorkRecords(context.Context, *GetContractorWorkRecordsRequest) (*GetContractorWorkRecordsResponse, error)
+	SaveContractorWorkRecord(context.Context, *SaveContractorWorkRecordRequest) (*GetContractorWorkRecordsResponse, error)
+	GetContractorWorkSummary(context.Context, *GetContractorWorkSummaryRequest) (*GetContractorWorkSummaryResponse, error)
+	GetWorkPayments(context.Context, *GetWorkPaymentsRequest) (*GetWorkPaymentsResponse, error)
+	RecordPayment(context.Context, *RecordPaymentRequest) (*RecordPaymentResponse, error)
 	mustEmbedUnimplementedWorkServiceServer()
 }
 
@@ -272,6 +545,69 @@ func (UnimplementedWorkServiceServer) ConfirmWorkCompletion(context.Context, *Wo
 }
 func (UnimplementedWorkServiceServer) CancelWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelWork not implemented")
+}
+func (UnimplementedWorkServiceServer) CloseApplications(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseApplications not implemented")
+}
+func (UnimplementedWorkServiceServer) CompleteJob(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteJob not implemented")
+}
+func (UnimplementedWorkServiceServer) CloseWork(context.Context, *WorkLifecycleRequest) (*WorkLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseWork not implemented")
+}
+func (UnimplementedWorkServiceServer) StartAssignment(context.Context, *AssignmentLifecycleRequest) (*AssignmentLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartAssignment not implemented")
+}
+func (UnimplementedWorkServiceServer) CompleteAssignment(context.Context, *AssignmentLifecycleRequest) (*AssignmentLifecycleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteAssignment not implemented")
+}
+func (UnimplementedWorkServiceServer) UpsertDailyLog(context.Context, *UpsertDailyLogRequest) (*UpsertDailyLogResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertDailyLog not implemented")
+}
+func (UnimplementedWorkServiceServer) ListAssignmentDailyLogs(context.Context, *ListAssignmentDailyLogsRequest) (*ListDailyLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAssignmentDailyLogs not implemented")
+}
+func (UnimplementedWorkServiceServer) ListWorkDailyLogs(context.Context, *ListWorkDailyLogsRequest) (*ListDailyLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkDailyLogs not implemented")
+}
+func (UnimplementedWorkServiceServer) GetWorkSettlement(context.Context, *GetWorkSettlementRequest) (*GetWorkSettlementResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkSettlement not implemented")
+}
+func (UnimplementedWorkServiceServer) RecordAssignmentPayment(context.Context, *RecordAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecordAssignmentPayment not implemented")
+}
+func (UnimplementedWorkServiceServer) ListAssignmentPayments(context.Context, *ListAssignmentPaymentsRequest) (*ListAssignmentPaymentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAssignmentPayments not implemented")
+}
+func (UnimplementedWorkServiceServer) ConfirmAssignmentPayment(context.Context, *UpdateAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmAssignmentPayment not implemented")
+}
+func (UnimplementedWorkServiceServer) DisputeAssignmentPayment(context.Context, *DisputeAssignmentPaymentRequest) (*RecordAssignmentPaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisputeAssignmentPayment not implemented")
+}
+func (UnimplementedWorkServiceServer) GetWorkDayRecords(context.Context, *GetWorkDayRecordsRequest) (*GetWorkDayRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkDayRecords not implemented")
+}
+func (UnimplementedWorkServiceServer) SaveWorkDayRecords(context.Context, *SaveWorkDayRecordsRequest) (*GetWorkDayRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveWorkDayRecords not implemented")
+}
+func (UnimplementedWorkServiceServer) GetWorkerWorkSummary(context.Context, *GetWorkerWorkSummaryRequest) (*GetWorkerWorkSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkerWorkSummary not implemented")
+}
+func (UnimplementedWorkServiceServer) GetContractorWorkRecords(context.Context, *GetContractorWorkRecordsRequest) (*GetContractorWorkRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContractorWorkRecords not implemented")
+}
+func (UnimplementedWorkServiceServer) SaveContractorWorkRecord(context.Context, *SaveContractorWorkRecordRequest) (*GetContractorWorkRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveContractorWorkRecord not implemented")
+}
+func (UnimplementedWorkServiceServer) GetContractorWorkSummary(context.Context, *GetContractorWorkSummaryRequest) (*GetContractorWorkSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContractorWorkSummary not implemented")
+}
+func (UnimplementedWorkServiceServer) GetWorkPayments(context.Context, *GetWorkPaymentsRequest) (*GetWorkPaymentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkPayments not implemented")
+}
+func (UnimplementedWorkServiceServer) RecordPayment(context.Context, *RecordPaymentRequest) (*RecordPaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecordPayment not implemented")
 }
 func (UnimplementedWorkServiceServer) mustEmbedUnimplementedWorkServiceServer() {}
 func (UnimplementedWorkServiceServer) testEmbeddedByValue()                     {}
@@ -546,6 +882,384 @@ func _WorkService_CancelWork_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkService_CloseApplications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CloseApplications(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CloseApplications_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CloseApplications(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CompleteJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CompleteJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CompleteJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CompleteJob(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CloseWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CloseWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CloseWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CloseWork(ctx, req.(*WorkLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_StartAssignment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignmentLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).StartAssignment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_StartAssignment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).StartAssignment(ctx, req.(*AssignmentLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CompleteAssignment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignmentLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CompleteAssignment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CompleteAssignment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CompleteAssignment(ctx, req.(*AssignmentLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_UpsertDailyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertDailyLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).UpsertDailyLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_UpsertDailyLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).UpsertDailyLog(ctx, req.(*UpsertDailyLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListAssignmentDailyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAssignmentDailyLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListAssignmentDailyLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListAssignmentDailyLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListAssignmentDailyLogs(ctx, req.(*ListAssignmentDailyLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListWorkDailyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkDailyLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListWorkDailyLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListWorkDailyLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListWorkDailyLogs(ctx, req.(*ListWorkDailyLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetWorkSettlement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkSettlementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetWorkSettlement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetWorkSettlement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetWorkSettlement(ctx, req.(*GetWorkSettlementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_RecordAssignmentPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordAssignmentPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).RecordAssignmentPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_RecordAssignmentPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).RecordAssignmentPayment(ctx, req.(*RecordAssignmentPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListAssignmentPayments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAssignmentPaymentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListAssignmentPayments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListAssignmentPayments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListAssignmentPayments(ctx, req.(*ListAssignmentPaymentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ConfirmAssignmentPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAssignmentPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ConfirmAssignmentPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ConfirmAssignmentPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ConfirmAssignmentPayment(ctx, req.(*UpdateAssignmentPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_DisputeAssignmentPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisputeAssignmentPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).DisputeAssignmentPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_DisputeAssignmentPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).DisputeAssignmentPayment(ctx, req.(*DisputeAssignmentPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetWorkDayRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkDayRecordsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetWorkDayRecords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetWorkDayRecords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetWorkDayRecords(ctx, req.(*GetWorkDayRecordsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_SaveWorkDayRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveWorkDayRecordsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).SaveWorkDayRecords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_SaveWorkDayRecords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).SaveWorkDayRecords(ctx, req.(*SaveWorkDayRecordsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetWorkerWorkSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkerWorkSummaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetWorkerWorkSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetWorkerWorkSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetWorkerWorkSummary(ctx, req.(*GetWorkerWorkSummaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetContractorWorkRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractorWorkRecordsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetContractorWorkRecords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetContractorWorkRecords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetContractorWorkRecords(ctx, req.(*GetContractorWorkRecordsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_SaveContractorWorkRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveContractorWorkRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).SaveContractorWorkRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_SaveContractorWorkRecord_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).SaveContractorWorkRecord(ctx, req.(*SaveContractorWorkRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetContractorWorkSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractorWorkSummaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetContractorWorkSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetContractorWorkSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetContractorWorkSummary(ctx, req.(*GetContractorWorkSummaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetWorkPayments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkPaymentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetWorkPayments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetWorkPayments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetWorkPayments(ctx, req.(*GetWorkPaymentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_RecordPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).RecordPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_RecordPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).RecordPayment(ctx, req.(*RecordPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkService_ServiceDesc is the grpc.ServiceDesc for WorkService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -608,6 +1322,90 @@ var WorkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelWork",
 			Handler:    _WorkService_CancelWork_Handler,
+		},
+		{
+			MethodName: "CloseApplications",
+			Handler:    _WorkService_CloseApplications_Handler,
+		},
+		{
+			MethodName: "CompleteJob",
+			Handler:    _WorkService_CompleteJob_Handler,
+		},
+		{
+			MethodName: "CloseWork",
+			Handler:    _WorkService_CloseWork_Handler,
+		},
+		{
+			MethodName: "StartAssignment",
+			Handler:    _WorkService_StartAssignment_Handler,
+		},
+		{
+			MethodName: "CompleteAssignment",
+			Handler:    _WorkService_CompleteAssignment_Handler,
+		},
+		{
+			MethodName: "UpsertDailyLog",
+			Handler:    _WorkService_UpsertDailyLog_Handler,
+		},
+		{
+			MethodName: "ListAssignmentDailyLogs",
+			Handler:    _WorkService_ListAssignmentDailyLogs_Handler,
+		},
+		{
+			MethodName: "ListWorkDailyLogs",
+			Handler:    _WorkService_ListWorkDailyLogs_Handler,
+		},
+		{
+			MethodName: "GetWorkSettlement",
+			Handler:    _WorkService_GetWorkSettlement_Handler,
+		},
+		{
+			MethodName: "RecordAssignmentPayment",
+			Handler:    _WorkService_RecordAssignmentPayment_Handler,
+		},
+		{
+			MethodName: "ListAssignmentPayments",
+			Handler:    _WorkService_ListAssignmentPayments_Handler,
+		},
+		{
+			MethodName: "ConfirmAssignmentPayment",
+			Handler:    _WorkService_ConfirmAssignmentPayment_Handler,
+		},
+		{
+			MethodName: "DisputeAssignmentPayment",
+			Handler:    _WorkService_DisputeAssignmentPayment_Handler,
+		},
+		{
+			MethodName: "GetWorkDayRecords",
+			Handler:    _WorkService_GetWorkDayRecords_Handler,
+		},
+		{
+			MethodName: "SaveWorkDayRecords",
+			Handler:    _WorkService_SaveWorkDayRecords_Handler,
+		},
+		{
+			MethodName: "GetWorkerWorkSummary",
+			Handler:    _WorkService_GetWorkerWorkSummary_Handler,
+		},
+		{
+			MethodName: "GetContractorWorkRecords",
+			Handler:    _WorkService_GetContractorWorkRecords_Handler,
+		},
+		{
+			MethodName: "SaveContractorWorkRecord",
+			Handler:    _WorkService_SaveContractorWorkRecord_Handler,
+		},
+		{
+			MethodName: "GetContractorWorkSummary",
+			Handler:    _WorkService_GetContractorWorkSummary_Handler,
+		},
+		{
+			MethodName: "GetWorkPayments",
+			Handler:    _WorkService_GetWorkPayments_Handler,
+		},
+		{
+			MethodName: "RecordPayment",
+			Handler:    _WorkService_RecordPayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

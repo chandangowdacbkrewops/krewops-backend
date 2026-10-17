@@ -35,6 +35,9 @@ type workDocument struct {
 	Longitude *float64 `bson:"longitude,omitempty"`
 
 	WorkersNeeded     *int     `bson:"workers_needed,omitempty"`
+	WorkersSelected   int      `bson:"workers_selected"`
+	ApplicationsOpen  *bool    `bson:"applications_open,omitempty"`
+	HiringMode        string   `bson:"hiring_mode,omitempty"`
 	ExperienceLevel   *string  `bson:"experience_level,omitempty"`
 	Skills            []string `bson:"skills"`
 	ToolsProvided     *bool    `bson:"tools_provided,omitempty"`
@@ -56,6 +59,7 @@ type workDocument struct {
 	Attributes map[string]string `bson:"attributes"`
 
 	Status      string     `bson:"status"`
+	StartedAt   *time.Time `bson:"started_at,omitempty"`
 	PublishedAt *time.Time `bson:"published_at,omitempty"`
 	CreatedAt   time.Time  `bson:"created_at"`
 	UpdatedAt   time.Time  `bson:"updated_at"`
@@ -123,6 +127,9 @@ func (r *WorkRepository) InsertWork(
 		Latitude:              record.Latitude,
 		Longitude:             record.Longitude,
 		WorkersNeeded:         record.WorkersNeeded,
+		WorkersSelected:       record.WorkersSelected,
+		ApplicationsOpen:      boolPtr(record.ApplicationsOpen),
+		HiringMode:            model.NormalizeHiringMode(record.HiringMode),
 		ExperienceLevel:       record.ExperienceLevel,
 		Skills:                record.Skills,
 		ToolsProvided:         record.ToolsProvided,
@@ -139,6 +146,7 @@ func (r *WorkRepository) InsertWork(
 		MealsProvided:         record.MealsProvided,
 		Attributes:            record.Attributes,
 		Status:                record.Status,
+		StartedAt:             record.StartedAt,
 		PublishedAt:           record.PublishedAt,
 		CreatedAt:             record.CreatedAt,
 		UpdatedAt:             record.UpdatedAt,
@@ -174,7 +182,7 @@ func (r *WorkRepository) ListByUserID(
 ) ([]model.WorkRecord, error) {
 	filter := bson.M{"user_id": userID}
 	if status != nil && *status != "" {
-		filter["status"] = *status
+		filter["status"] = bson.M{"$in": model.StatusMatchValues(*status)}
 	}
 
 	cursor, err := r.collection.Find(
@@ -207,8 +215,15 @@ func (r *WorkRepository) UpdateStatus(
 	id string,
 	from []string,
 	to string,
+	extra ...bson.M,
 ) (*model.WorkRecord, error) {
 	now := time.Now().UTC()
+	set := bson.M{"status": to, "updated_at": now}
+	if len(extra) > 0 {
+		for key, value := range extra[0] {
+			set[key] = value
+		}
+	}
 	var doc workDocument
 	err := r.collection.FindOneAndUpdate(
 		ctx,
@@ -216,7 +231,7 @@ func (r *WorkRepository) UpdateStatus(
 			"_id":    id,
 			"status": bson.M{"$in": model.StatusMatchValues(from...)},
 		},
-		bson.M{"$set": bson.M{"status": to, "updated_at": now}},
+		bson.M{"$set": set},
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
 	).Decode(&doc)
 	if errors.Is(err, mongo.ErrNoDocuments) {
@@ -286,6 +301,9 @@ func (d workDocument) toRecord() *model.WorkRecord {
 		Latitude:              d.Latitude,
 		Longitude:             d.Longitude,
 		WorkersNeeded:         d.WorkersNeeded,
+		WorkersSelected:       d.WorkersSelected,
+		ApplicationsOpen:      applicationsOpenFromDoc(d),
+		HiringMode:            model.NormalizeHiringMode(d.HiringMode),
 		ExperienceLevel:       d.ExperienceLevel,
 		Skills:                skills,
 		ToolsProvided:         d.ToolsProvided,
@@ -301,10 +319,165 @@ func (d workDocument) toRecord() *model.WorkRecord {
 		AccommodationProvided: d.AccommodationProvided,
 		MealsProvided:         d.MealsProvided,
 		Status:                model.NormalizeWorkStatus(d.Status),
+		StartedAt:             d.StartedAt,
 		PublishedAt:           d.PublishedAt,
 		CreatedAt:             d.CreatedAt,
 		UpdatedAt:             d.UpdatedAt,
 	}
+}
+
+func (r *WorkRepository) ClaimSeat(
+	ctx context.Context,
+	id string,
+) (*model.WorkRecord, error) {
+	now := time.Now().UTC()
+	filter := bson.M{
+		"_id": id,
+		"status": bson.M{"$in": model.StatusMatchValues(
+			model.StatusOpen,
+			model.StatusInProgress,
+		)},
+		"$and": bson.A{
+			bson.M{"$or": bson.A{
+				bson.M{"applications_open": true},
+				bson.M{
+					"applications_open": bson.M{"$exists": false},
+					"status":            bson.M{"$in": model.StatusMatchValues(model.StatusOpen)},
+				},
+			}},
+			bson.M{"$expr": bson.M{"$lt": bson.A{
+				bson.M{"$ifNull": bson.A{"$workers_selected", 0}},
+				seatCapExpr(),
+			}}},
+		},
+	}
+
+	var doc workDocument
+	err := r.collection.FindOneAndUpdate(
+		ctx,
+		filter,
+		bson.M{
+			"$inc": bson.M{"workers_selected": 1},
+			"$set": bson.M{"updated_at": now},
+		},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	record := doc.toRecord()
+	if record.WorkersSelected >= seatCapFromRecord(record) {
+		closed := false
+		set := bson.M{
+			"applications_open": closed,
+			"updated_at":        now,
+		}
+		err := r.collection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": id},
+			bson.M{"$set": set},
+			options.FindOneAndUpdate().SetReturnDocument(options.After),
+		).Decode(&doc)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, err
+		}
+		if err == nil {
+			return doc.toRecord(), nil
+		}
+	}
+
+	return record, nil
+}
+
+func (r *WorkRepository) CloseApplications(
+	ctx context.Context,
+	id string,
+) (*model.WorkRecord, error) {
+	now := time.Now().UTC()
+	closed := false
+	var doc workDocument
+	set := bson.M{
+		"applications_open": closed,
+		"updated_at":        now,
+	}
+
+	err := r.collection.FindOneAndUpdate(
+		ctx,
+		bson.M{
+			"_id": id,
+			"status": bson.M{"$in": model.StatusMatchValues(
+				model.StatusOpen,
+				model.StatusInProgress,
+			)},
+			"$expr": bson.M{"$gte": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, 1}},
+		},
+		bson.M{"$set": set},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return doc.toRecord(), nil
+}
+
+func (r *WorkRepository) ReleaseSeat(
+	ctx context.Context,
+	id string,
+) error {
+	now := time.Now().UTC()
+	_, err := r.collection.UpdateByID(ctx, id, bson.A{
+		bson.M{"$set": bson.M{
+			"workers_selected": bson.M{"$max": bson.A{
+				0,
+				bson.M{"$subtract": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, 1}},
+			}},
+			"updated_at": now,
+		}},
+	})
+	return err
+}
+
+func applicationsOpenFromDoc(d workDocument) bool {
+	if d.ApplicationsOpen != nil {
+		return *d.ApplicationsOpen
+	}
+	return model.NormalizeWorkStatus(d.Status) == model.StatusOpen
+}
+
+func workersNeededFromRecord(record *model.WorkRecord) int {
+	if record == nil || record.WorkersNeeded == nil || *record.WorkersNeeded < 1 {
+		return 1
+	}
+	return *record.WorkersNeeded
+}
+
+func seatCapFromRecord(record *model.WorkRecord) int {
+	if record != nil && model.NormalizeHiringMode(record.HiringMode) == model.HiringModeContractor {
+		return 1
+	}
+	return workersNeededFromRecord(record)
+}
+
+func seatCapExpr() bson.M {
+	return bson.M{"$cond": bson.A{
+		bson.M{"$eq": bson.A{
+			bson.M{"$toUpper": bson.M{"$ifNull": bson.A{"$hiring_mode", model.HiringModeIndividual}}},
+			model.HiringModeContractor,
+		}},
+		1,
+		bson.M{"$ifNull": bson.A{"$workers_needed", 1}},
+	}}
+}
+
+func boolPtr(value bool) *bool {
+	return &value
 }
 
 func applyLegacyRate(basis, unit, paymentType *string) *string {

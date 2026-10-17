@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -73,4 +74,35 @@ func (r *WorkOwnerRepository) FindCompletedWorkerType(
 	}
 
 	return workerType, nil
+}
+
+func (r *WorkOwnerRepository) FindDisplayNames(
+	ctx context.Context,
+	userIDs []string,
+) (map[string]string, error) {
+	names := make(map[string]string, len(userIDs))
+	if len(userIDs) == 0 {
+		return names, nil
+	}
+
+	rows, err := r.db.Query(ctx, `
+		SELECT user_id,
+			TRIM(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')))
+		FROM profiles
+		WHERE user_id = ANY($1)
+	`, userIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var userID string
+		var name string
+		if err := rows.Scan(&userID, &name); err != nil {
+			return nil, err
+		}
+		names[userID] = strings.TrimSpace(name)
+	}
+	return names, rows.Err()
 }

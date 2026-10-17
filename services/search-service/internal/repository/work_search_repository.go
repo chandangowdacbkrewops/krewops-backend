@@ -69,7 +69,7 @@ func (r *WorkSearchRepository) SearchWork(
 	ctx context.Context,
 	filters model.WorkSearchFilters,
 ) (*model.WorkSearchResponse, error) {
-	filter := bson.M{"status": "published"}
+	filter := bson.M{"status": bson.M{"$in": []string{"published", "PUBLISHED", "open", "OPEN"}}}
 
 	if v := trimmed(filters.WorkTypeID); v != "" {
 		filter["work_type_id"] = v

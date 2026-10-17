@@ -15,19 +15,29 @@ import (
 var ErrOnboardingNotCompleted = errors.New("user has not completed onboarding")
 
 type WorkService struct {
-	workRepository          *repository.WorkRepository
-	applicationRepository   *repository.ApplicationRepository
-	workOwnerRepository     *repository.WorkOwnerRepository
-	workTypeRepository      *repository.WorkTypeRepository
-	workCategoryRepository  *repository.WorkCategoryRepository
-	workSegmentRepository   *repository.WorkSegmentRepository
-	workTypeFieldRepository *repository.WorkTypeFieldRepository
-	rateTypeRepository      *repository.RateTypeRepository
+	workRepository             *repository.WorkRepository
+	applicationRepository      *repository.ApplicationRepository
+	assignmentRepository       *repository.AssignmentRepository
+	dailyLogRepository         *repository.DailyLogRepository
+	paymentRepository          *repository.PaymentRepository
+	contractorRecordRepository *repository.ContractorRecordRepository
+	obligationRepository       *repository.ObligationRepository
+	workOwnerRepository        *repository.WorkOwnerRepository
+	workTypeRepository         *repository.WorkTypeRepository
+	workCategoryRepository     *repository.WorkCategoryRepository
+	workSegmentRepository      *repository.WorkSegmentRepository
+	workTypeFieldRepository    *repository.WorkTypeFieldRepository
+	rateTypeRepository         *repository.RateTypeRepository
 }
 
 func NewWorkService(
 	workRepository *repository.WorkRepository,
 	applicationRepository *repository.ApplicationRepository,
+	assignmentRepository *repository.AssignmentRepository,
+	dailyLogRepository *repository.DailyLogRepository,
+	paymentRepository *repository.PaymentRepository,
+	contractorRecordRepository *repository.ContractorRecordRepository,
+	obligationRepository *repository.ObligationRepository,
 	workOwnerRepository *repository.WorkOwnerRepository,
 	workTypeRepository *repository.WorkTypeRepository,
 	workCategoryRepository *repository.WorkCategoryRepository,
@@ -36,14 +46,19 @@ func NewWorkService(
 	rateTypeRepository *repository.RateTypeRepository,
 ) *WorkService {
 	return &WorkService{
-		workRepository:          workRepository,
-		applicationRepository:   applicationRepository,
-		workOwnerRepository:     workOwnerRepository,
-		workTypeRepository:      workTypeRepository,
-		workCategoryRepository:  workCategoryRepository,
-		workSegmentRepository:   workSegmentRepository,
-		workTypeFieldRepository: workTypeFieldRepository,
-		rateTypeRepository:      rateTypeRepository,
+		workRepository:             workRepository,
+		applicationRepository:      applicationRepository,
+		assignmentRepository:       assignmentRepository,
+		dailyLogRepository:         dailyLogRepository,
+		paymentRepository:          paymentRepository,
+		contractorRecordRepository: contractorRecordRepository,
+		obligationRepository:       obligationRepository,
+		workOwnerRepository:        workOwnerRepository,
+		workTypeRepository:         workTypeRepository,
+		workCategoryRepository:     workCategoryRepository,
+		workSegmentRepository:      workSegmentRepository,
+		workTypeFieldRepository:    workTypeFieldRepository,
+		rateTypeRepository:         rateTypeRepository,
 	}
 }
 
@@ -65,13 +80,21 @@ func (s *WorkService) CreateWork(
 	}
 	log.Printf("create work onboarding check passed: user_id=%s", userID)
 
-	status := model.StatusPublished
+	status := model.StatusOpen
 	if req.Status != nil && strings.TrimSpace(*req.Status) != "" {
-		status = strings.ToLower(strings.TrimSpace(*req.Status))
+		status = model.NormalizeWorkStatus(*req.Status)
 	}
 	if !model.ValidCreateStatus(status) {
 		log.Printf("create work rejected: user_id=%s stage=status_validation status=%s", userID, status)
-		return nil, fmt.Errorf("status must be draft or published")
+		return nil, fmt.Errorf("status must be draft, open, or published")
+	}
+
+	hiringMode := model.HiringModeIndividual
+	if req.HiringMode != nil && strings.TrimSpace(*req.HiringMode) != "" {
+		hiringMode = model.NormalizeHiringMode(*req.HiringMode)
+		if !model.ValidHiringMode(hiringMode) {
+			return nil, fmt.Errorf("hiring_mode must be INDIVIDUAL or CONTRACTOR")
+		}
 	}
 
 	startDate, err := parseOptionalDate(req.StartDate)
@@ -80,7 +103,7 @@ func (s *WorkService) CreateWork(
 		return nil, err
 	}
 
-	if status == model.StatusPublished {
+	if status == model.StatusOpen {
 		if err := validateForPublish(req, startDate); err != nil {
 			log.Printf("create work rejected: user_id=%s stage=publish_validation error=%v", userID, err)
 			return nil, err
@@ -188,7 +211,7 @@ func (s *WorkService) CreateWork(
 	}
 
 	var publishedAt *time.Time
-	if status == model.StatusPublished {
+	if status == model.StatusOpen {
 		now := time.Now().UTC()
 		publishedAt = &now
 	}
@@ -229,8 +252,11 @@ func (s *WorkService) CreateWork(
 		AccommodationProvided: req.AccommodationProvided,
 		MealsProvided:         req.MealsProvided,
 
-		Status:      status,
-		PublishedAt: publishedAt,
+		WorkersSelected:  0,
+		ApplicationsOpen: status == model.StatusOpen,
+		HiringMode:       hiringMode,
+		Status:           status,
+		PublishedAt:      publishedAt,
 	}
 
 	saved, err := s.workRepository.InsertWork(ctx, record)
@@ -254,7 +280,7 @@ func (s *WorkService) ListMyWorks(
 	if status != nil && strings.TrimSpace(*status) != "" {
 		normalized := model.NormalizeWorkStatus(*status)
 		if !model.ValidStatus(normalized) {
-			return nil, fmt.Errorf("status must be draft, published, assigned, in_progress, work_completed, closed, or cancelled")
+			return nil, fmt.Errorf("status must be draft, open, in_progress, completed, payment_pending, closed, or cancelled")
 		}
 		statusFilter = &normalized
 	}
@@ -267,6 +293,14 @@ func (s *WorkService) ListMyWorks(
 
 	results := make([]*model.WorkResponse, 0, len(records))
 	for i := range records {
+		status := model.NormalizeWorkStatus(records[i].Status)
+		if status == model.StatusPaymentPending || status == model.StatusCompleted {
+			if updated, err := s.maybeCloseWorkIfSettled(ctx, records[i].ID); err != nil {
+				log.Printf("close settled work failed: user_id=%s work_id=%s error=%v", userID, records[i].ID, err)
+			} else if updated != nil {
+				records[i] = *updated
+			}
+		}
 		results = append(results, model.BuildWorkResponse(&records[i]))
 	}
 
@@ -474,7 +508,7 @@ func validateAttributes(status string, fields []model.WorkTypeField, attributes 
 		}
 	}
 
-	if status != model.StatusPublished {
+	if status != model.StatusOpen {
 		return nil
 	}
 

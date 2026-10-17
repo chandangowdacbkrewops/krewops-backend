@@ -65,6 +65,31 @@ func main() {
 		log.Fatal("failed to ensure work application indexes: ", err)
 	}
 
+	assignmentRepository := repository.NewAssignmentRepository(mongoDB)
+	if err := assignmentRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work assignment indexes: ", err)
+	}
+
+	dailyLogRepository := repository.NewDailyLogRepository(mongoDB)
+	if err := dailyLogRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work daily log indexes: ", err)
+	}
+
+	paymentRepository := repository.NewPaymentRepository(mongoDB)
+	if err := paymentRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work payment indexes: ", err)
+	}
+
+	contractorRecordRepository := repository.NewContractorRecordRepository(mongoDB)
+	if err := contractorRecordRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure contractor work record indexes: ", err)
+	}
+
+	obligationRepository := repository.NewObligationRepository(mongoDB)
+	if err := obligationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure payment obligation indexes: ", err)
+	}
+
 	workOwnerRepository := repository.NewWorkOwnerRepository(db)
 	workTypeRepository := repository.NewWorkTypeRepository(db)
 	workCategoryRepository := repository.NewWorkCategoryRepository(db)
@@ -79,6 +104,11 @@ func main() {
 	workService := service.NewWorkService(
 		workRepository,
 		applicationRepository,
+		assignmentRepository,
+		dailyLogRepository,
+		paymentRepository,
+		contractorRecordRepository,
+		obligationRepository,
 		workOwnerRepository,
 		workTypeRepository,
 		workCategoryRepository,
