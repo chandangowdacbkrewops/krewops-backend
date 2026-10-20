@@ -36,6 +36,7 @@ type workSearchDocument struct {
 	Longitude *float64 `bson:"longitude,omitempty"`
 
 	WorkersNeeded   *int     `bson:"workers_needed,omitempty"`
+	WorkersSelected int      `bson:"workers_selected"`
 	ExperienceLevel *string  `bson:"experience_level,omitempty"`
 	Skills          []string `bson:"skills"`
 
@@ -165,6 +166,8 @@ func (r *WorkSearchRepository) SearchWork(
 			Latitude:         doc.Latitude,
 			Longitude:        doc.Longitude,
 			WorkersNeeded:    doc.WorkersNeeded,
+			WorkersSelected:  doc.WorkersSelected,
+			RemainingWorkers: remainingWorkers(doc.WorkersNeeded, doc.WorkersSelected),
 			ExperienceLevel:  doc.ExperienceLevel,
 			Skills:           doc.Skills,
 			StartDate:        doc.StartDate,
@@ -240,4 +243,16 @@ func mapLegacyPaymentType(paymentType *string) (string, string, bool) {
 	default:
 		return "", "", false
 	}
+}
+
+func remainingWorkers(needed *int, selected int) int {
+	required := 1
+	if needed != nil && *needed > 0 {
+		required = *needed
+	}
+	remaining := required - selected
+	if remaining < 0 {
+		return 0
+	}
+	return remaining
 }

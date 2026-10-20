@@ -123,7 +123,8 @@ func (s *WorkServer) ApplyToWork(
 		req.UserId,
 		req.WorkId,
 		model.ApplyToWorkRequest{
-			Quotation: quotationFromProto(req.Quotation),
+			Quotation:          quotationFromProto(req.Quotation),
+			OfferedWorkerCount: int(req.OfferedWorkerCount),
 		},
 	)
 	if err != nil {
@@ -717,6 +718,7 @@ func isValidationError(err error) bool {
 		"payment_notes",
 		"attributes",
 		"quotation",
+		"offered_worker_count",
 		"work_id",
 		"application_id",
 		"day_portion",
@@ -799,6 +801,7 @@ func toProtoWorkPosting(resp *model.WorkResponse) *workv1.WorkPosting {
 		ApplicationsOpen:      boolPtr(resp.ApplicationsOpen),
 		HiringMode:            stringPtr(resp.HiringMode),
 		StartedAt:             resp.StartedAt,
+		RemainingWorkers:      int32Ptr(int32(resp.RemainingWorkers)),
 	}
 }
 
@@ -836,7 +839,8 @@ func mapApplicationError(err error, fallback string) error {
 		return status.Error(codes.NotFound, err.Error())
 	case errors.Is(err, service.ErrDuplicateApplication),
 		errors.Is(err, service.ErrApplicationAlreadyAccepted),
-		errors.Is(err, service.ErrNoWorkerSeats):
+		errors.Is(err, service.ErrNoWorkerSeats),
+		errors.Is(err, service.ErrOfferedWorkersExceedRemaining):
 		return status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
@@ -896,8 +900,11 @@ func toProtoWorkApplication(application *model.WorkApplication) *workv1.WorkAppl
 			EstimatedDurationHours: application.Quotation.EstimatedDurationHours,
 			Message:                application.Quotation.Message,
 		},
-		AppliedAt: application.AppliedAt.Format("2006-01-02T15:04:05Z07:00"),
-		UpdatedAt: application.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		AppliedAt:          application.AppliedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt:          application.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		OfferedWorkerCount: int32(application.OfferedWorkerCount),
+		ApplicantType:      application.ApplicantType,
+		AssignmentId:       application.AssignmentID,
 	}
 }
 
@@ -943,6 +950,7 @@ func toProtoAssignment(assignment *model.WorkAssignment) *workv1.WorkAssignment 
 		WorkerProfileId:      stringPtr(assignment.WorkerProfileID),
 		ContractorProfileId:  stringPtr(assignment.ContractorProfileID),
 		CommittedWorkerCount: int32Ptr(int32(assignment.CommittedWorkerCount)),
+		AssignedWorkerCount:  int32Ptr(int32(assignment.AssignedWorkerCount)),
 	}
 }
 

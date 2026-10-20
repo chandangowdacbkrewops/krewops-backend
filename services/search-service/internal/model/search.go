@@ -68,9 +68,11 @@ type WorkSearchResult struct {
 	Latitude  *float64
 	Longitude *float64
 
-	WorkersNeeded   *int
-	ExperienceLevel *string
-	Skills          []string
+	WorkersNeeded    *int
+	WorkersSelected  int
+	RemainingWorkers int
+	ExperienceLevel  *string
+	Skills           []string
 
 	StartDate     *time.Time
 	DurationValue *int

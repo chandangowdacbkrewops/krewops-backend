@@ -17,12 +17,9 @@ func (s *WorkService) GetWorkDayRecords(
 	workID string,
 	workDate string,
 ) (*model.WorkDayRecordsResponse, error) {
-	work, viewerAssignment, err := s.requireWorkViewer(ctx, userID, workID)
+	_, viewerAssignment, err := s.requireWorkViewer(ctx, userID, workID)
 	if err != nil {
 		return nil, err
-	}
-	if model.NormalizeHiringMode(work.HiringMode) != model.HiringModeIndividual {
-		return nil, ErrHiringModeMismatch
 	}
 	if strings.TrimSpace(workDate) == "" {
 		latest, err := s.dailyLogRepository.LatestWorkDate(ctx, workID)
@@ -58,10 +55,7 @@ func (s *WorkService) GetWorkDayRecords(
 	}
 
 	items := make([]model.WorkerDayRecordItem, 0, len(assignments))
-	for _, assignment := range assignments {
-		if model.NormalizeAssignmentType(assignment.AssignmentType) == model.AssignmentTypeContractor {
-			continue
-		}
+	for _, assignment := range model.IndividualRecordAssignments(assignments) {
 		if viewerAssignment != nil && viewerAssignment.ID != assignment.ID {
 			continue
 		}
@@ -107,9 +101,6 @@ func (s *WorkService) SaveWorkDayRecords(
 	if model.WorkRecordsLocked(work.Status) {
 		return nil, ErrInvalidWorkStatus
 	}
-	if model.NormalizeHiringMode(work.HiringMode) != model.HiringModeIndividual {
-		return nil, ErrHiringModeMismatch
-	}
 	parsed, err := parseWorkDate(req.WorkDate)
 	if err != nil {
 		return nil, err
@@ -126,14 +117,15 @@ func (s *WorkService) SaveWorkDayRecords(
 	for _, assignment := range assignments {
 		byID[assignment.ID] = assignment
 	}
+	contractorAssignment := model.PickContractorAssignment(assignments)
 
 	for _, input := range req.Records {
 		assignment, ok := byID[strings.TrimSpace(input.AssignmentID)]
 		if !ok || !model.IsActiveAssignment(assignment.Status) {
 			return nil, fmt.Errorf("assignment_id is invalid")
 		}
-		if model.NormalizeAssignmentType(assignment.AssignmentType) != model.AssignmentTypeIndividual {
-			return nil, ErrHiringModeMismatch
+		if contractorAssignment != nil && contractorAssignment.ID == assignment.ID {
+			return nil, fmt.Errorf("assignment_id is not an individual assignment")
 		}
 		if err := model.DateOnOrAfterJoined(parsed, assignment.JoinedAt); err != nil {
 			return nil, err
@@ -180,9 +172,6 @@ func (s *WorkService) GetWorkerWorkSummary(
 	if err != nil {
 		return nil, err
 	}
-	if model.NormalizeHiringMode(work.HiringMode) != model.HiringModeIndividual {
-		return nil, ErrHiringModeMismatch
-	}
 	assignments, err := s.assignmentRepository.ListActiveByWorkID(ctx, workID)
 	if err != nil {
 		return nil, err
@@ -193,10 +182,7 @@ func (s *WorkService) GetWorkerWorkSummary(
 	}
 
 	summaries := make([]model.WorkerWorkSummary, 0, len(assignments))
-	for _, assignment := range assignments {
-		if model.NormalizeAssignmentType(assignment.AssignmentType) == model.AssignmentTypeContractor {
-			continue
-		}
+	for _, assignment := range model.IndividualRecordAssignments(assignments) {
 		if viewerAssignment != nil && viewerAssignment.ID != assignment.ID {
 			continue
 		}
@@ -233,11 +219,16 @@ func (s *WorkService) GetContractorWorkRecords(
 	workID string,
 	workDate string,
 ) (*model.ContractorWorkRecordsResponse, error) {
-	work, assignment, err := s.requireContractorWork(ctx, userID, workID)
+	if _, err := s.requireWorkOwner(ctx, userID, workID); err != nil {
+		return nil, err
+	}
+	assignment, err := s.assignmentRepository.FindActiveContractorByWorkID(ctx, workID)
 	if err != nil {
 		return nil, err
 	}
-	_ = work
+	if assignment == nil {
+		return &model.ContractorWorkRecordsResponse{WorkID: workID}, nil
+	}
 
 	var records []model.ContractorWorkRecord
 	if strings.TrimSpace(workDate) != "" {
@@ -1123,9 +1114,6 @@ func (s *WorkService) requireContractorWork(
 	work, err := s.requireWorkOwner(ctx, userID, workID)
 	if err != nil {
 		return nil, nil, err
-	}
-	if model.NormalizeHiringMode(work.HiringMode) != model.HiringModeContractor {
-		return nil, nil, ErrHiringModeMismatch
 	}
 	assignment, err := s.assignmentRepository.FindActiveContractorByWorkID(ctx, workID)
 	if err != nil {

@@ -9,6 +9,9 @@ const (
 	ApplicationStatusRejected    = "REJECTED"
 	ApplicationStatusWithdrawn   = "WITHDRAWN"
 	ApplicationStatusCancelled   = "CANCELLED"
+
+	ApplicantTypeIndividual = "individual"
+	ApplicantTypeContractor = "contractor"
 )
 
 func ValidApplicationStatus(status string) bool {
@@ -35,17 +38,21 @@ type Quotation struct {
 }
 
 type ApplyToWorkRequest struct {
-	Quotation Quotation `json:"quotation"`
+	Quotation          Quotation `json:"quotation"`
+	OfferedWorkerCount int       `json:"offered_worker_count"`
 }
 
 type WorkApplication struct {
-	ID        string    `json:"id"`
-	WorkID    string    `json:"work_id"`
-	WorkerID  string    `json:"worker_id"`
-	Status    string    `json:"status"`
-	Quotation Quotation `json:"quotation"`
-	AppliedAt time.Time `json:"applied_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID                 string    `json:"id"`
+	WorkID             string    `json:"work_id"`
+	WorkerID           string    `json:"worker_id"`
+	Status             string    `json:"status"`
+	Quotation          Quotation `json:"quotation"`
+	ApplicantType      string    `json:"applicant_type,omitempty"`
+	OfferedWorkerCount int       `json:"offered_worker_count,omitempty"`
+	AssignmentID       string    `json:"assignment_id,omitempty"`
+	AppliedAt          time.Time `json:"applied_at"`
+	UpdatedAt          time.Time `json:"updated_at"`
 }
 
 type MyWorkApplication struct {

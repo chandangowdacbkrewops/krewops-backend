@@ -70,6 +70,8 @@ message WorkSummary {
   optional string published_at = 22;
   string created_at = 23;
   optional string rate_unit = 28;
+  optional int32 workers_selected = 29;
+  optional int32 remaining_workers = 30;
 }
 
 message SearchWorkResponse {

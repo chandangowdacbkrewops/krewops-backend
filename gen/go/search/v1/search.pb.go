@@ -191,6 +191,8 @@ type WorkSummary struct {
 	PublishedAt      *string                `protobuf:"bytes,22,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
 	CreatedAt        string                 `protobuf:"bytes,23,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	RateUnit         *string                `protobuf:"bytes,28,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
+	WorkersSelected  *int32                 `protobuf:"varint,29,opt,name=workers_selected,json=workersSelected,proto3,oneof" json:"workers_selected,omitempty"`
+	RemainingWorkers *int32                 `protobuf:"varint,30,opt,name=remaining_workers,json=remainingWorkers,proto3,oneof" json:"remaining_workers,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -419,6 +421,20 @@ func (x *WorkSummary) GetRateUnit() string {
 		return *x.RateUnit
 	}
 	return ""
+}
+
+func (x *WorkSummary) GetWorkersSelected() int32 {
+	if x != nil && x.WorkersSelected != nil {
+		return *x.WorkersSelected
+	}
+	return 0
+}
+
+func (x *WorkSummary) GetRemainingWorkers() int32 {
+	if x != nil && x.RemainingWorkers != nil {
+		return *x.RemainingWorkers
+	}
+	return 0
 }
 
 type SearchWorkResponse struct {
@@ -959,8 +975,7 @@ const file_search_search_proto_rawDesc = "" +
 	"\n" +
 	"_page_sizeB\f\n" +
 	"\n" +
-	"_rate_unit\"\xfb\n" +
-	"\n" +
+	"_rate_unit\"\x88\f\n" +
 	"\vWorkSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
@@ -996,7 +1011,9 @@ const file_search_search_proto_rawDesc = "" +
 	"\fpublished_at\x18\x16 \x01(\tH\x15R\vpublishedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x17 \x01(\tR\tcreatedAt\x12 \n" +
-	"\trate_unit\x18\x1c \x01(\tH\x16R\brateUnit\x88\x01\x01B\b\n" +
+	"\trate_unit\x18\x1c \x01(\tH\x16R\brateUnit\x88\x01\x01\x12.\n" +
+	"\x10workers_selected\x18\x1d \x01(\x05H\x17R\x0fworkersSelected\x88\x01\x01\x120\n" +
+	"\x11remaining_workers\x18\x1e \x01(\x05H\x18R\x10remainingWorkers\x88\x01\x01B\b\n" +
 	"\x06_titleB\x0f\n" +
 	"\r_work_type_idB\x11\n" +
 	"\x0f_work_type_nameB\x13\n" +
@@ -1022,7 +1039,9 @@ const file_search_search_proto_rawDesc = "" +
 	"\f_budget_rateB\x0f\n" +
 	"\r_published_atB\f\n" +
 	"\n" +
-	"_rate_unit\"\x8d\x01\n" +
+	"_rate_unitB\x13\n" +
+	"\x11_workers_selectedB\x14\n" +
+	"\x12_remaining_workers\"\x8d\x01\n" +
 	"\x12SearchWorkResponse\x120\n" +
 	"\aresults\x18\x01 \x03(\v2\x16.search.v1.WorkSummaryR\aresults\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\x12\x12\n" +

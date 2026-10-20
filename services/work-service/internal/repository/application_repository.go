@@ -26,13 +26,15 @@ type quotationDocument struct {
 }
 
 type applicationDocument struct {
-	ID        string            `bson:"_id"`
-	WorkID    string            `bson:"work_id"`
-	WorkerID  string            `bson:"worker_id"`
-	Status    string            `bson:"status"`
-	Quotation quotationDocument `bson:"quotation"`
-	AppliedAt time.Time         `bson:"applied_at"`
-	UpdatedAt time.Time         `bson:"updated_at"`
+	ID                 string            `bson:"_id"`
+	WorkID             string            `bson:"work_id"`
+	WorkerID           string            `bson:"worker_id"`
+	Status             string            `bson:"status"`
+	Quotation          quotationDocument `bson:"quotation"`
+	ApplicantType      string            `bson:"applicant_type,omitempty"`
+	OfferedWorkerCount int               `bson:"offered_worker_count,omitempty"`
+	AppliedAt          time.Time         `bson:"applied_at"`
+	UpdatedAt          time.Time         `bson:"updated_at"`
 }
 
 type ApplicationRepository struct {
@@ -247,8 +249,10 @@ func toApplicationDocument(record *model.WorkApplication) applicationDocument {
 			EstimatedDurationHours: record.Quotation.EstimatedDurationHours,
 			Message:                record.Quotation.Message,
 		},
-		AppliedAt: record.AppliedAt,
-		UpdatedAt: record.UpdatedAt,
+		ApplicantType:      record.ApplicantType,
+		OfferedWorkerCount: record.OfferedWorkerCount,
+		AppliedAt:          record.AppliedAt,
+		UpdatedAt:          record.UpdatedAt,
 	}
 }
 
@@ -266,8 +270,10 @@ func (d applicationDocument) toRecord() *model.WorkApplication {
 			EstimatedDurationHours: d.Quotation.EstimatedDurationHours,
 			Message:                d.Quotation.Message,
 		},
-		AppliedAt: d.AppliedAt,
-		UpdatedAt: d.UpdatedAt,
+		ApplicantType:      d.ApplicantType,
+		OfferedWorkerCount: d.OfferedWorkerCount,
+		AppliedAt:          d.AppliedAt,
+		UpdatedAt:          d.UpdatedAt,
 	}
 }
 

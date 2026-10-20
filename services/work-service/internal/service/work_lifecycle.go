@@ -47,23 +47,12 @@ func (s *WorkService) StartWork(
 }
 
 func validateStartAssignments(work *model.WorkRecord, assignments []model.WorkAssignment) error {
-	hiringMode := model.NormalizeHiringMode(work.HiringMode)
 	active := 0
-	contractors := 0
 	for _, assignment := range assignments {
 		if !model.IsActiveAssignment(assignment.Status) {
 			continue
 		}
 		active++
-		if model.NormalizeAssignmentType(assignment.AssignmentType) == model.AssignmentTypeContractor {
-			contractors++
-		}
-	}
-	if hiringMode == model.HiringModeContractor {
-		if contractors != 1 || active != 1 {
-			return ErrContractorAssignmentRequired
-		}
-		return nil
 	}
 	if active < 1 {
 		return ErrNoActiveAssignment
@@ -320,7 +309,7 @@ func (s *WorkService) cancelAssignmentForApplication(
 		); err != nil {
 			return err
 		}
-		if err := s.workRepository.ReleaseSeat(ctx, work.ID); err != nil {
+		if err := s.workRepository.ReleaseSeats(ctx, work.ID, model.AssignmentHeadcount(*assignment)); err != nil {
 			return err
 		}
 	}

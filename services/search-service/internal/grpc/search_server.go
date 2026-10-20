@@ -109,6 +109,8 @@ func toWorkSummary(item model.WorkSearchResult) *searchv1.WorkSummary {
 		Latitude:         item.Latitude,
 		Longitude:        item.Longitude,
 		WorkersNeeded:    intPtrToInt32Ptr(item.WorkersNeeded),
+		WorkersSelected:  int32Ptr(int32(item.WorkersSelected)),
+		RemainingWorkers: int32Ptr(int32(item.RemainingWorkers)),
 		ExperienceLevel:  item.ExperienceLevel,
 		Skills:           item.Skills,
 		DurationValue:    intPtrToInt32Ptr(item.DurationValue),
@@ -175,4 +177,8 @@ func intPtrToInt32Ptr(value *int) *int32 {
 	}
 	converted := int32(*value)
 	return &converted
+}
+
+func int32Ptr(value int32) *int32 {
+	return &value
 }

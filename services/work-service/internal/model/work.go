@@ -102,6 +102,13 @@ func WorkRecordsLocked(status string) bool {
 	}
 }
 
+func WorkersNeededCount(needed *int) int {
+	if needed == nil || *needed < 1 {
+		return 1
+	}
+	return *needed
+}
+
 // NormalizeWorkStatus maps stored values and client lifecycle names onto the
 // canonical statuses persisted with a work posting.
 func NormalizeWorkStatus(status string) string {
@@ -320,6 +327,7 @@ type WorkResponse struct {
 
 	WorkersNeeded     *int     `json:"workers_needed,omitempty"`
 	WorkersSelected   int      `json:"workers_selected"`
+	RemainingWorkers  int      `json:"remaining_workers"`
 	ApplicationsOpen  bool     `json:"applications_open"`
 	ExperienceLevel   *string  `json:"experience_level,omitempty"`
 	Skills            []string `json:"skills"`
@@ -370,6 +378,7 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 
 		WorkersNeeded:     record.WorkersNeeded,
 		WorkersSelected:   record.WorkersSelected,
+		RemainingWorkers:  RemainingWorkers(WorkersNeededCount(record.WorkersNeeded), record.WorkersSelected),
 		ApplicationsOpen:  record.ApplicationsOpen,
 		ExperienceLevel:   record.ExperienceLevel,
 		Skills:            record.Skills,

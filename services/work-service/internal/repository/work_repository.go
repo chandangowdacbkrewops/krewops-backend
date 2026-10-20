@@ -330,6 +330,17 @@ func (r *WorkRepository) ClaimSeat(
 	ctx context.Context,
 	id string,
 ) (*model.WorkRecord, error) {
+	return r.ClaimSeats(ctx, id, 1)
+}
+
+func (r *WorkRepository) ClaimSeats(
+	ctx context.Context,
+	id string,
+	count int,
+) (*model.WorkRecord, error) {
+	if count < 1 {
+		count = 1
+	}
 	now := time.Now().UTC()
 	filter := bson.M{
 		"_id": id,
@@ -345,8 +356,8 @@ func (r *WorkRepository) ClaimSeat(
 					"status":            bson.M{"$in": model.StatusMatchValues(model.StatusOpen)},
 				},
 			}},
-			bson.M{"$expr": bson.M{"$lt": bson.A{
-				bson.M{"$ifNull": bson.A{"$workers_selected", 0}},
+			bson.M{"$expr": bson.M{"$lte": bson.A{
+				bson.M{"$add": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, count}},
 				seatCapExpr(),
 			}}},
 		},
@@ -357,7 +368,7 @@ func (r *WorkRepository) ClaimSeat(
 		ctx,
 		filter,
 		bson.M{
-			"$inc": bson.M{"workers_selected": 1},
+			"$inc": bson.M{"workers_selected": count},
 			"$set": bson.M{"updated_at": now},
 		},
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
@@ -431,12 +442,35 @@ func (r *WorkRepository) ReleaseSeat(
 	ctx context.Context,
 	id string,
 ) error {
+	return r.ReleaseSeats(ctx, id, 1)
+}
+
+func (r *WorkRepository) ReleaseSeats(
+	ctx context.Context,
+	id string,
+	count int,
+) error {
+	if count < 1 {
+		count = 1
+	}
 	now := time.Now().UTC()
+	openStatuses := model.StatusMatchValues(model.StatusOpen, model.StatusInProgress)
 	_, err := r.collection.UpdateByID(ctx, id, bson.A{
 		bson.M{"$set": bson.M{
 			"workers_selected": bson.M{"$max": bson.A{
 				0,
-				bson.M{"$subtract": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, 1}},
+				bson.M{"$subtract": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, count}},
+			}},
+			"applications_open": bson.M{"$cond": bson.A{
+				bson.M{"$in": bson.A{"$status", openStatuses}},
+				bson.M{"$lt": bson.A{
+					bson.M{"$max": bson.A{
+						0,
+						bson.M{"$subtract": bson.A{bson.M{"$ifNull": bson.A{"$workers_selected", 0}}, count}},
+					}},
+					seatCapExpr(),
+				}},
+				bson.M{"$ifNull": bson.A{"$applications_open", true}},
 			}},
 			"updated_at": now,
 		}},
@@ -459,21 +493,11 @@ func workersNeededFromRecord(record *model.WorkRecord) int {
 }
 
 func seatCapFromRecord(record *model.WorkRecord) int {
-	if record != nil && model.NormalizeHiringMode(record.HiringMode) == model.HiringModeContractor {
-		return 1
-	}
 	return workersNeededFromRecord(record)
 }
 
-func seatCapExpr() bson.M {
-	return bson.M{"$cond": bson.A{
-		bson.M{"$eq": bson.A{
-			bson.M{"$toUpper": bson.M{"$ifNull": bson.A{"$hiring_mode", model.HiringModeIndividual}}},
-			model.HiringModeContractor,
-		}},
-		1,
-		bson.M{"$ifNull": bson.A{"$workers_needed", 1}},
-	}}
+func seatCapExpr() any {
+	return bson.M{"$ifNull": bson.A{"$workers_needed", 1}}
 }
 
 func boolPtr(value bool) *bool {

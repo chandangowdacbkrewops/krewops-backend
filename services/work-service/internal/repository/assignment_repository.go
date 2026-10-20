@@ -36,6 +36,7 @@ type assignmentDocument struct {
 	AgreedPayment        agreedPaymentDocument `bson:"agreed_payment"`
 	JoinedAt             string                `bson:"joined_at,omitempty"`
 	CommittedWorkerCount int                   `bson:"committed_worker_count,omitempty"`
+	AssignedWorkerCount  int                   `bson:"assigned_worker_count,omitempty"`
 	CompletedQuantity    float64               `bson:"completed_quantity,omitempty"`
 	AssignedAt           time.Time             `bson:"assigned_at"`
 	StartedAt            *time.Time            `bson:"started_at,omitempty"`
@@ -60,27 +61,11 @@ func NewAssignmentRepository(db *mongo.Database) *AssignmentRepository {
 }
 
 func (r *AssignmentRepository) EnsureIndexes(ctx context.Context) error {
+	_ = r.collection.Indexes().DropOne(ctx, "uniq_active_contractor_per_work")
 	_, err := r.collection.Indexes().CreateMany(ctx, []mongo.IndexModel{
 		{
 			Keys:    bson.D{{Key: "work_id", Value: 1}, {Key: "worker_id", Value: 1}},
 			Options: options.Index().SetUnique(true),
-		},
-		{
-			Keys: bson.D{{Key: "work_id", Value: 1}, {Key: "assignment_type", Value: 1}},
-			Options: options.Index().
-				SetUnique(true).
-				SetPartialFilterExpression(bson.M{
-					"assignment_type": model.AssignmentTypeContractor,
-					"status": bson.M{"$in": []string{
-						model.AssignmentStatusAssigned,
-						model.AssignmentStatusInProgress,
-						model.AssignmentStatusSubmitted,
-						model.AssignmentStatusApproved,
-						"STARTED",
-						"COMPLETED",
-					}},
-				}).
-				SetName("uniq_active_contractor_per_work"),
 		},
 		{Keys: bson.D{{Key: "work_id", Value: 1}, {Key: "status", Value: 1}}},
 		{Keys: bson.D{{Key: "worker_id", Value: 1}}},
@@ -164,19 +149,11 @@ func (r *AssignmentRepository) FindActiveContractorByWorkID(
 	ctx context.Context,
 	workID string,
 ) (*model.WorkAssignment, error) {
-	var doc assignmentDocument
-	err := r.collection.FindOne(ctx, bson.M{
-		"work_id":         workID,
-		"assignment_type": model.AssignmentTypeContractor,
-		"status":          bson.M{"$ne": model.AssignmentStatusCancelled},
-	}).Decode(&doc)
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return nil, nil
-	}
+	assignments, err := r.ListActiveByWorkID(ctx, workID)
 	if err != nil {
 		return nil, err
 	}
-	return doc.toRecord(), nil
+	return model.PickContractorAssignment(assignments), nil
 }
 
 func (r *AssignmentRepository) CountActiveByWorkIDAndType(
@@ -347,6 +324,7 @@ func toAssignmentDocument(record *model.WorkAssignment) assignmentDocument {
 		},
 		JoinedAt:             record.JoinedAt,
 		CommittedWorkerCount: record.CommittedWorkerCount,
+		AssignedWorkerCount:  record.AssignedWorkerCount,
 		CompletedQuantity:    record.CompletedQuantity,
 		AssignedAt:           record.AssignedAt,
 		StartedAt:            record.StartedAt,
@@ -408,6 +386,7 @@ func (d assignmentDocument) toRecord() *model.WorkAssignment {
 		AgreedPayment:        payment,
 		JoinedAt:             joinedAt,
 		CommittedWorkerCount: d.CommittedWorkerCount,
+		AssignedWorkerCount:  assignedWorkerCount(d),
 		CompletedQuantity:    d.CompletedQuantity,
 		AssignedAt:           d.AssignedAt,
 		StartedAt:            d.StartedAt,
@@ -422,4 +401,17 @@ func (d assignmentDocument) toRecord() *model.WorkAssignment {
 		CreatedAt:            d.CreatedAt,
 		UpdatedAt:            d.UpdatedAt,
 	}
+}
+
+func assignedWorkerCount(d assignmentDocument) int {
+	if d.AssignedWorkerCount > 0 {
+		return d.AssignedWorkerCount
+	}
+	if d.CommittedWorkerCount > 0 && model.NormalizeAssignmentType(d.AssignmentType) == model.AssignmentTypeContractor {
+		return d.CommittedWorkerCount
+	}
+	if model.NormalizeAssignmentType(d.AssignmentType) == model.AssignmentTypeContractor {
+		return 1
+	}
+	return 1
 }

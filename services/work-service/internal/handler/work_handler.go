@@ -393,7 +393,8 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrDuplicateApplication),
 		errors.Is(err, service.ErrApplicationAlreadyAccepted),
-		errors.Is(err, service.ErrNoWorkerSeats):
+		errors.Is(err, service.ErrNoWorkerSeats),
+		errors.Is(err, service.ErrOfferedWorkersExceedRemaining):
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
@@ -566,6 +567,7 @@ func isValidationError(err error) bool {
 		"city",
 		"state",
 		"workers_needed",
+		"offered_worker_count",
 		"tools_provided",
 		"materials_provided",
 		"start_date",

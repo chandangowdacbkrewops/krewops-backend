@@ -196,6 +196,7 @@ message WorkPosting {
   optional bool applications_open = 37;
   optional string hiring_mode = 38;
   optional string started_at = 39;
+  optional int32 remaining_workers = 40;
 }
 
 message Quotation {
@@ -215,12 +216,16 @@ message WorkApplication {
   Quotation quotation = 5;
   string applied_at = 6;
   string updated_at = 7;
+  int32 offered_worker_count = 8;
+  string applicant_type = 9;
+  string assignment_id = 10;
 }
 
 message ApplyToWorkRequest {
   string user_id = 1;
   string work_id = 2;
   Quotation quotation = 3;
+  int32 offered_worker_count = 4;
 }
 
 message ApplyToWorkResponse {
@@ -306,6 +311,7 @@ message WorkAssignment {
   optional string worker_profile_id = 22;
   optional string contractor_profile_id = 23;
   optional int32 committed_worker_count = 24;
+  optional int32 assigned_worker_count = 25;
 }
 
 message DailyLog {

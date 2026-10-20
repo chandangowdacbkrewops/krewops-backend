@@ -71,8 +71,93 @@ func NormalizeAssignmentType(value string) string {
 	}
 }
 
+func PickContractorAssignment(assignments []WorkAssignment) *WorkAssignment {
+	var best *WorkAssignment
+	for i := range assignments {
+		assignment := &assignments[i]
+		if !IsActiveAssignment(assignment.Status) {
+			continue
+		}
+		if NormalizeAssignmentType(assignment.AssignmentType) != AssignmentTypeContractor {
+			continue
+		}
+		if best == nil || AssignmentHeadcount(*assignment) > AssignmentHeadcount(*best) {
+			best = assignment
+		}
+	}
+	return best
+}
+
+func IndividualRecordAssignments(assignments []WorkAssignment) []WorkAssignment {
+	contractor := PickContractorAssignment(assignments)
+	items := make([]WorkAssignment, 0, len(assignments))
+	for i := range assignments {
+		assignment := assignments[i]
+		if !IsActiveAssignment(assignment.Status) {
+			continue
+		}
+		if contractor != nil && &assignments[i] == contractor {
+			continue
+		}
+		items = append(items, assignment)
+	}
+	return items
+}
+
 func IsActiveAssignment(status string) bool {
 	return NormalizeAssignmentStatus(status) != AssignmentStatusCancelled
+}
+
+func AssignmentHeadcount(assignment WorkAssignment) int {
+	if !IsActiveAssignment(assignment.Status) {
+		return 0
+	}
+	if NormalizeAssignmentType(assignment.AssignmentType) == AssignmentTypeContractor {
+		if assignment.AssignedWorkerCount > 0 {
+			return assignment.AssignedWorkerCount
+		}
+		if assignment.CommittedWorkerCount > 0 {
+			return assignment.CommittedWorkerCount
+		}
+	}
+	return 1
+}
+
+func TotalAssignedWorkers(assignments []WorkAssignment) int {
+	total := 0
+	for _, assignment := range assignments {
+		total += AssignmentHeadcount(assignment)
+	}
+	return total
+}
+
+func RemainingWorkers(needed int, assigned int) int {
+	if needed < 1 {
+		needed = 1
+	}
+	remaining := needed - assigned
+	if remaining < 0 {
+		return 0
+	}
+	return remaining
+}
+
+func ApplicationSeatCount(application WorkApplication) int {
+	if NormalizeApplicantType(application.ApplicantType) == ApplicantTypeContractor {
+		if application.OfferedWorkerCount > 0 {
+			return application.OfferedWorkerCount
+		}
+	}
+	return 1
+}
+
+func NormalizeApplicantType(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case ApplicantTypeContractor:
+		return ApplicantTypeContractor
+	default:
+		return ApplicantTypeIndividual
+	}
 }
 
 type AgreedPayment struct {
@@ -99,6 +184,7 @@ type WorkAssignment struct {
 
 	JoinedAt             string  `json:"joined_at,omitempty"`
 	CommittedWorkerCount int     `json:"committed_worker_count,omitempty"`
+	AssignedWorkerCount  int     `json:"assigned_worker_count,omitempty"`
 	CompletedQuantity    float64 `json:"completed_quantity,omitempty"`
 
 	AssignedAt  time.Time  `json:"assigned_at"`

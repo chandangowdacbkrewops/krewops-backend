@@ -213,7 +213,8 @@ func stringValue(value *string) string {
 }
 
 type ApplyToWorkRequest struct {
-	Quotation Quotation `json:"quotation"`
+	Quotation          Quotation `json:"quotation"`
+	OfferedWorkerCount int       `json:"offered_worker_count"`
 }
 
 type Quotation struct {
@@ -260,8 +261,9 @@ func (h *WorkHandler) ApplyToWork(c *gin.Context) {
 	ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
 
 	applyResp, err := h.workClient.ApplyToWork(ctx, &workv1.ApplyToWorkRequest{
-		UserId: userID,
-		WorkId: c.Param("workId"),
+		UserId:             userID,
+		WorkId:             c.Param("workId"),
+		OfferedWorkerCount: int32(request.OfferedWorkerCount),
 		Quotation: &workv1.Quotation{
 			Amount:                 request.Quotation.Amount,
 			Currency:               request.Quotation.Currency,
@@ -320,7 +322,7 @@ func (h *WorkHandler) ListWorkApplications(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, listResp)
+	response.Success(c, http.StatusOK, listWorkApplicationsJSON(listResp))
 }
 
 // ListMyApplications godoc
@@ -862,7 +864,7 @@ func (h *WorkHandler) GetWorkDayRecords(c *gin.Context) {
 		writeApplicationGRPCError(c, err, "failed to get work records")
 		return
 	}
-	response.Success(c, http.StatusOK, resp)
+	response.Success(c, http.StatusOK, workDayRecordsJSON(resp))
 }
 
 func (h *WorkHandler) SaveWorkDayRecords(c *gin.Context) {
@@ -903,7 +905,7 @@ func (h *WorkHandler) SaveWorkDayRecords(c *gin.Context) {
 		writeApplicationGRPCError(c, err, "failed to save work records")
 		return
 	}
-	response.Success(c, http.StatusOK, resp)
+	response.Success(c, http.StatusOK, workDayRecordsJSON(resp))
 }
 
 func (h *WorkHandler) GetWorkerWorkSummary(c *gin.Context) {
@@ -1059,6 +1061,69 @@ func (h *WorkHandler) RecordObligationPayment(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, resp)
+}
+
+func workDayRecordsJSON(resp *workv1.GetWorkDayRecordsResponse) gin.H {
+	if resp == nil {
+		return gin.H{"work_id": "", "work_date": "", "workers": []gin.H{}}
+	}
+	workers := make([]gin.H, 0, len(resp.GetWorkers()))
+	for _, worker := range resp.GetWorkers() {
+		item := gin.H{
+			"assignment_id":          worker.GetAssignmentId(),
+			"worker_profile_id":      worker.GetWorkerProfileId(),
+			"worker_name":            worker.GetWorkerName(),
+			"agreed_rate_minor":      worker.GetAgreedRateMinor(),
+			"estimated_amount_minor": worker.GetEstimatedAmountMinor(),
+		}
+		if worker.DayType != nil {
+			item["day_type"] = worker.GetDayType()
+			item["payable_units"] = worker.GetPayableUnits()
+		} else {
+			item["day_type"] = nil
+			item["payable_units"] = nil
+		}
+		workers = append(workers, item)
+	}
+	return gin.H{
+		"work_id":   resp.GetWorkId(),
+		"work_date": resp.GetWorkDate(),
+		"workers":   workers,
+	}
+}
+
+func listWorkApplicationsJSON(resp *workv1.ListWorkApplicationsResponse) gin.H {
+	if resp == nil {
+		return gin.H{"applications": []gin.H{}}
+	}
+	applications := make([]gin.H, 0, len(resp.GetApplications()))
+	for _, application := range resp.GetApplications() {
+		item := gin.H{
+			"id":                   application.GetId(),
+			"work_id":              application.GetWorkId(),
+			"worker_id":            application.GetWorkerId(),
+			"status":               application.GetStatus(),
+			"applied_at":           application.GetAppliedAt(),
+			"updated_at":           application.GetUpdatedAt(),
+			"offered_worker_count": application.GetOfferedWorkerCount(),
+			"applicant_type":       application.GetApplicantType(),
+		}
+		if assignmentID := application.GetAssignmentId(); assignmentID != "" {
+			item["assignment_id"] = assignmentID
+		}
+		if quotation := application.GetQuotation(); quotation != nil {
+			item["quotation"] = gin.H{
+				"amount":                   quotation.GetAmount(),
+				"currency":                 quotation.GetCurrency(),
+				"rate_basis":               quotation.GetRateBasis(),
+				"rate_unit":                quotation.GetRateUnit(),
+				"estimated_duration_hours": quotation.GetEstimatedDurationHours(),
+				"message":                  quotation.GetMessage(),
+			}
+		}
+		applications = append(applications, item)
+	}
+	return gin.H{"applications": applications}
 }
 
 func gatewayUserID(c *gin.Context) (string, bool) {

@@ -374,6 +374,7 @@ type WorkPosting struct {
 	ApplicationsOpen      *bool                  `protobuf:"varint,37,opt,name=applications_open,json=applicationsOpen,proto3,oneof" json:"applications_open,omitempty"`
 	HiringMode            *string                `protobuf:"bytes,38,opt,name=hiring_mode,json=hiringMode,proto3,oneof" json:"hiring_mode,omitempty"`
 	StartedAt             *string                `protobuf:"bytes,39,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	RemainingWorkers      *int32                 `protobuf:"varint,40,opt,name=remaining_workers,json=remainingWorkers,proto3,oneof" json:"remaining_workers,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -681,6 +682,13 @@ func (x *WorkPosting) GetStartedAt() string {
 	return ""
 }
 
+func (x *WorkPosting) GetRemainingWorkers() int32 {
+	if x != nil && x.RemainingWorkers != nil {
+		return *x.RemainingWorkers
+	}
+	return 0
+}
+
 type Quotation struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	Amount                 float64                `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -766,16 +774,19 @@ func (x *Quotation) GetRateUnit() string {
 }
 
 type WorkApplication struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
-	WorkerId      string                 `protobuf:"bytes,3,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
-	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	Quotation     *Quotation             `protobuf:"bytes,5,opt,name=quotation,proto3" json:"quotation,omitempty"`
-	AppliedAt     string                 `protobuf:"bytes,6,opt,name=applied_at,json=appliedAt,proto3" json:"applied_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId             string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkerId           string                 `protobuf:"bytes,3,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Status             string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	Quotation          *Quotation             `protobuf:"bytes,5,opt,name=quotation,proto3" json:"quotation,omitempty"`
+	AppliedAt          string                 `protobuf:"bytes,6,opt,name=applied_at,json=appliedAt,proto3" json:"applied_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	OfferedWorkerCount int32                  `protobuf:"varint,8,opt,name=offered_worker_count,json=offeredWorkerCount,proto3" json:"offered_worker_count,omitempty"`
+	ApplicantType      string                 `protobuf:"bytes,9,opt,name=applicant_type,json=applicantType,proto3" json:"applicant_type,omitempty"`
+	AssignmentId       string                 `protobuf:"bytes,10,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *WorkApplication) Reset() {
@@ -857,13 +868,35 @@ func (x *WorkApplication) GetUpdatedAt() string {
 	return ""
 }
 
+func (x *WorkApplication) GetOfferedWorkerCount() int32 {
+	if x != nil {
+		return x.OfferedWorkerCount
+	}
+	return 0
+}
+
+func (x *WorkApplication) GetApplicantType() string {
+	if x != nil {
+		return x.ApplicantType
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
 type ApplyToWorkRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
-	Quotation     *Quotation             `protobuf:"bytes,3,opt,name=quotation,proto3" json:"quotation,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	UserId             string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId             string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	Quotation          *Quotation             `protobuf:"bytes,3,opt,name=quotation,proto3" json:"quotation,omitempty"`
+	OfferedWorkerCount int32                  `protobuf:"varint,4,opt,name=offered_worker_count,json=offeredWorkerCount,proto3" json:"offered_worker_count,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApplyToWorkRequest) Reset() {
@@ -915,6 +948,13 @@ func (x *ApplyToWorkRequest) GetQuotation() *Quotation {
 		return x.Quotation
 	}
 	return nil
+}
+
+func (x *ApplyToWorkRequest) GetOfferedWorkerCount() int32 {
+	if x != nil {
+		return x.OfferedWorkerCount
+	}
+	return 0
 }
 
 type ApplyToWorkResponse struct {
@@ -1551,6 +1591,7 @@ type WorkAssignment struct {
 	WorkerProfileId      *string                `protobuf:"bytes,22,opt,name=worker_profile_id,json=workerProfileId,proto3,oneof" json:"worker_profile_id,omitempty"`
 	ContractorProfileId  *string                `protobuf:"bytes,23,opt,name=contractor_profile_id,json=contractorProfileId,proto3,oneof" json:"contractor_profile_id,omitempty"`
 	CommittedWorkerCount *int32                 `protobuf:"varint,24,opt,name=committed_worker_count,json=committedWorkerCount,proto3,oneof" json:"committed_worker_count,omitempty"`
+	AssignedWorkerCount  *int32                 `protobuf:"varint,25,opt,name=assigned_worker_count,json=assignedWorkerCount,proto3,oneof" json:"assigned_worker_count,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -1749,6 +1790,13 @@ func (x *WorkAssignment) GetContractorProfileId() string {
 func (x *WorkAssignment) GetCommittedWorkerCount() int32 {
 	if x != nil && x.CommittedWorkerCount != nil {
 		return *x.CommittedWorkerCount
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetAssignedWorkerCount() int32 {
+	if x != nil && x.AssignedWorkerCount != nil {
+		return *x.AssignedWorkerCount
 	}
 	return 0
 }
@@ -4802,7 +4850,7 @@ const file_work_work_proto_rawDesc = "" +
 	"_rate_unitB\x0e\n" +
 	"\f_hiring_mode\">\n" +
 	"\x12CreateWorkResponse\x12(\n" +
-	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xf1\x10\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xb9\x11\n" +
 	"\vWorkPosting\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
@@ -4854,7 +4902,8 @@ const file_work_work_proto_rawDesc = "" +
 	"\vhiring_mode\x18& \x01(\tH\x1eR\n" +
 	"hiringMode\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"started_at\x18' \x01(\tH\x1fR\tstartedAt\x88\x01\x01\x1a=\n" +
+	"started_at\x18' \x01(\tH\x1fR\tstartedAt\x88\x01\x01\x120\n" +
+	"\x11remaining_workers\x18( \x01(\x05H R\x10remainingWorkers\x88\x01\x01\x1a=\n" +
 	"\x0fAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
@@ -4892,7 +4941,8 @@ const file_work_work_proto_rawDesc = "" +
 	"\x11_workers_selectedB\x14\n" +
 	"\x12_applications_openB\x0e\n" +
 	"\f_hiring_modeB\r\n" +
-	"\v_started_at\"\x95\x02\n" +
+	"\v_started_atB\x14\n" +
+	"\x12_remaining_workers\"\x95\x02\n" +
 	"\tQuotation\x12\x16\n" +
 	"\x06amount\x18\x01 \x01(\x01R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x12\x1d\n" +
@@ -4905,7 +4955,7 @@ const file_work_work_proto_rawDesc = "" +
 	"\n" +
 	"\b_messageB\f\n" +
 	"\n" +
-	"_rate_unit\"\xdf\x01\n" +
+	"_rate_unit\"\xdd\x02\n" +
 	"\x0fWorkApplication\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
@@ -4915,11 +4965,16 @@ const file_work_work_proto_rawDesc = "" +
 	"\n" +
 	"applied_at\x18\x06 \x01(\tR\tappliedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"x\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x120\n" +
+	"\x14offered_worker_count\x18\b \x01(\x05R\x12offeredWorkerCount\x12%\n" +
+	"\x0eapplicant_type\x18\t \x01(\tR\rapplicantType\x12#\n" +
+	"\rassignment_id\x18\n" +
+	" \x01(\tR\fassignmentId\"\xaa\x01\n" +
 	"\x12ApplyToWorkRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\x120\n" +
-	"\tquotation\x18\x03 \x01(\v2\x12.work.v1.QuotationR\tquotation\"Q\n" +
+	"\tquotation\x18\x03 \x01(\v2\x12.work.v1.QuotationR\tquotation\x120\n" +
+	"\x14offered_worker_count\x18\x04 \x01(\x05R\x12offeredWorkerCount\"Q\n" +
 	"\x13ApplyToWorkResponse\x12:\n" +
 	"\vapplication\x18\x01 \x01(\v2\x18.work.v1.WorkApplicationR\vapplication\"w\n" +
 	"\x1bListWorkApplicationsRequest\x12\x17\n" +
@@ -4958,7 +5013,7 @@ const file_work_work_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\"A\n" +
 	"\x15WorkLifecycleResponse\x12(\n" +
-	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\x89\b\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xdc\b\n" +
 	"\x0eWorkAssignment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\x12%\n" +
@@ -4990,12 +5045,14 @@ const file_work_work_proto_rawDesc = "" +
 	"\tjoined_at\x18\x15 \x01(\tR\bjoinedAt\x12/\n" +
 	"\x11worker_profile_id\x18\x16 \x01(\tH\x02R\x0fworkerProfileId\x88\x01\x01\x127\n" +
 	"\x15contractor_profile_id\x18\x17 \x01(\tH\x03R\x13contractorProfileId\x88\x01\x01\x129\n" +
-	"\x16committed_worker_count\x18\x18 \x01(\x05H\x04R\x14committedWorkerCount\x88\x01\x01B\r\n" +
+	"\x16committed_worker_count\x18\x18 \x01(\x05H\x04R\x14committedWorkerCount\x88\x01\x01\x127\n" +
+	"\x15assigned_worker_count\x18\x19 \x01(\x05H\x05R\x13assignedWorkerCount\x88\x01\x01B\r\n" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\x14\n" +
 	"\x12_worker_profile_idB\x18\n" +
 	"\x16_contractor_profile_idB\x19\n" +
-	"\x17_committed_worker_count\"\xaf\x02\n" +
+	"\x17_committed_worker_countB\x18\n" +
+	"\x16_assigned_worker_count\"\xaf\x02\n" +
 	"\bDailyLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +

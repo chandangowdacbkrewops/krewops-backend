@@ -32,21 +32,58 @@ func TestStartRequiresAtLeastOneAssignment(t *testing.T) {
 	}
 }
 
-func TestContractorStartRequiresExactlyOne(t *testing.T) {
+func TestMixedCrewCanStart(t *testing.T) {
 	work := &model.WorkRecord{HiringMode: model.HiringModeContractor, Status: model.StatusOpen}
-	if err := validateStartAssignments(work, nil); err != ErrContractorAssignmentRequired {
+	if err := validateStartAssignments(work, nil); err != ErrNoActiveAssignment {
 		t.Fatalf("got %v", err)
 	}
 	if err := validateStartAssignments(work, []model.WorkAssignment{
-		{Status: model.AssignmentStatusAssigned, AssignmentType: model.AssignmentTypeContractor},
-		{Status: model.AssignmentStatusAssigned, AssignmentType: model.AssignmentTypeContractor},
-	}); err != ErrContractorAssignmentRequired {
-		t.Fatalf("second contractor should be rejected: %v", err)
-	}
-	if err := validateStartAssignments(work, []model.WorkAssignment{
-		{Status: model.AssignmentStatusAssigned, AssignmentType: model.AssignmentTypeContractor},
+		{Status: model.AssignmentStatusAssigned, AssignmentType: model.AssignmentTypeContractor, AssignedWorkerCount: 6},
+		{Status: model.AssignmentStatusAssigned, AssignmentType: model.AssignmentTypeIndividual},
 	}); err != nil {
-		t.Fatalf("one contractor should start: %v", err)
+		t.Fatalf("mixed contractor and individual assignments should start: %v", err)
+	}
+}
+
+func TestMixedCrewRecordsFollowAssignmentType(t *testing.T) {
+	assignments := []model.WorkAssignment{
+		{
+			ID:             "individual-1",
+			Status:         model.AssignmentStatusAssigned,
+			AssignmentType: model.AssignmentTypeIndividual,
+		},
+		{
+			ID:                  "contractor-1",
+			Status:              model.AssignmentStatusAssigned,
+			AssignmentType:      model.AssignmentTypeContractor,
+			AssignedWorkerCount: 6,
+		},
+	}
+	individuals := model.IndividualRecordAssignments(assignments)
+	if len(individuals) != 1 || individuals[0].ID != "individual-1" {
+		t.Fatalf("individual assignments belong on the daily worker list, got %#v", individuals)
+	}
+	contractor := model.PickContractorAssignment(assignments)
+	if contractor == nil || contractor.ID != "contractor-1" {
+		t.Fatal("contractor assignments belong on contractor day records")
+	}
+}
+
+func TestBuildAssignmentCopiesOfferedCount(t *testing.T) {
+	needed := 10
+	work := &model.WorkRecord{ID: "work-1", WorkersNeeded: &needed}
+	application := &model.WorkApplication{
+		ID:                 "app-1",
+		WorkerID:           "contractor-1",
+		ApplicantType:      model.ApplicantTypeContractor,
+		OfferedWorkerCount: 6,
+	}
+	assignment := buildAssignmentFromAcceptance(work, application)
+	if assignment.AssignmentType != model.AssignmentTypeContractor {
+		t.Fatalf("type = %s", assignment.AssignmentType)
+	}
+	if assignment.AssignedWorkerCount != 6 || assignment.CommittedWorkerCount != 6 {
+		t.Fatalf("assigned=%d committed=%d", assignment.AssignedWorkerCount, assignment.CommittedWorkerCount)
 	}
 }
 
