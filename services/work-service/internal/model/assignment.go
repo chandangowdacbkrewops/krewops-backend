@@ -172,6 +172,7 @@ type WorkAssignment struct {
 	ID             string `json:"id"`
 	WorkID         string `json:"work_id"`
 	ApplicationID  string `json:"application_id"`
+	InvitationID   string `json:"invitation_id,omitempty"`
 	AssignmentType string `json:"assignment_type"`
 
 	WorkerID            string `json:"worker_id"`

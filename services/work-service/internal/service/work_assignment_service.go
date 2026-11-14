@@ -219,10 +219,7 @@ func (s *WorkService) GetContractorWorkRecords(
 	workID string,
 	workDate string,
 ) (*model.ContractorWorkRecordsResponse, error) {
-	if _, err := s.requireWorkOwner(ctx, userID, workID); err != nil {
-		return nil, err
-	}
-	assignment, err := s.assignmentRepository.FindActiveContractorByWorkID(ctx, workID)
+	assignment, err := s.requireContractorWorkViewer(ctx, userID, workID)
 	if err != nil {
 		return nil, err
 	}
@@ -439,6 +436,7 @@ func (s *WorkService) GetWorkPayments(
 			PaidAmountMinor:      obligation.PaidAmountMinor,
 			RemainingAmountMinor: remaining,
 			Status:               obligation.Status,
+			ReceiptStatus:        model.AggregateReceiptStatus(transactions),
 			Transactions:         transactions,
 		})
 	}
@@ -799,18 +797,39 @@ func (s *WorkService) updatePaymentReceipt(
 
 	var receipt *model.WorkPayment
 	if txn != nil {
-		if txn.ReceiptStatus == receiptStatus {
-			receipt = transactionToLegacyPayment(txn, assignment.PayeeID())
-		} else {
-			updated, err := s.obligationRepository.UpdateTransactionReceipt(ctx, txn.ID, receiptStatus, dispute)
+		targets := []model.PaymentTransaction{*txn}
+		if receiptStatus == model.PaymentReceiptConfirmed && txn.PaymentObligationID != "" {
+			listed, err := s.obligationRepository.ListTransactionsByObligationID(ctx, txn.PaymentObligationID)
+			if err != nil {
+				return nil, err
+			}
+			if len(listed) > 0 {
+				targets = listed
+			}
+		}
+		var updatedTxn *model.PaymentTransaction
+		for i := range targets {
+			current := targets[i]
+			if current.ReceiptStatus == model.PaymentReceiptDisputed && receiptStatus == model.PaymentReceiptConfirmed {
+				continue
+			}
+			if current.ReceiptStatus == receiptStatus {
+				updatedTxn = &current
+				continue
+			}
+			updated, err := s.obligationRepository.UpdateTransactionReceipt(ctx, current.ID, receiptStatus, dispute)
 			if err != nil {
 				return nil, err
 			}
 			if updated == nil {
 				return nil, ErrAssignmentNotFound
 			}
-			receipt = transactionToLegacyPayment(updated, assignment.PayeeID())
+			updatedTxn = updated
 		}
+		if updatedTxn == nil {
+			return nil, ErrAssignmentNotFound
+		}
+		receipt = transactionToLegacyPayment(updatedTxn, assignment.PayeeID())
 	} else {
 		if legacy == nil {
 			return nil, ErrAssignmentNotFound
@@ -1123,6 +1142,39 @@ func (s *WorkService) requireContractorWork(
 		return nil, nil, ErrContractorAssignmentRequired
 	}
 	return work, assignment, nil
+}
+
+// requireContractorWorkViewer authorizes either the work owner (who can see
+// the contractor's records to review deployment) or the active contractor
+// themselves (who can see only their own logged records). It returns the
+// active contractor assignment for workID, which may be nil if no
+// contractor assignment exists yet.
+func (s *WorkService) requireContractorWorkViewer(
+	ctx context.Context,
+	userID string,
+	workID string,
+) (*model.WorkAssignment, error) {
+	if strings.TrimSpace(workID) == "" {
+		return nil, fmt.Errorf("work_id is required")
+	}
+	work, err := s.workRepository.FindByID(ctx, workID)
+	if err != nil {
+		return nil, err
+	}
+	if work == nil {
+		return nil, ErrWorkNotFound
+	}
+	assignment, err := s.assignmentRepository.FindActiveContractorByWorkID(ctx, workID)
+	if err != nil {
+		return nil, err
+	}
+	if work.UserID == userID {
+		return assignment, nil
+	}
+	if assignment != nil && assignment.PayeeID() == userID {
+		return assignment, nil
+	}
+	return nil, ErrNotAssignedWorker
 }
 
 func (s *WorkService) ensurePaymentObligations(

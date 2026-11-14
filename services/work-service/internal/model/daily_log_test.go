@@ -77,6 +77,20 @@ func TestDateOnOrAfterJoined(t *testing.T) {
 	}
 }
 
+func TestAggregateReceiptStatus(t *testing.T) {
+	if AggregateReceiptStatus(nil) != PaymentReceiptNone {
+		t.Fatal("no transactions should not count as confirmed")
+	}
+	pending := []PaymentTransaction{{ReceiptStatus: PaymentReceiptNone}, {ReceiptStatus: PaymentReceiptConfirmed}}
+	if AggregateReceiptStatus(pending) != PaymentReceiptNone {
+		t.Fatal("a pending receipt should keep the payment unconfirmed")
+	}
+	confirmed := []PaymentTransaction{{ReceiptStatus: PaymentReceiptConfirmed}, {ReceiptStatus: PaymentReceiptConfirmed}}
+	if AggregateReceiptStatus(confirmed) != PaymentReceiptConfirmed {
+		t.Fatal("every confirmed transaction should confirm the payment")
+	}
+}
+
 func TestPaymentMethodNormalization(t *testing.T) {
 	if !ValidPaymentMethod("cash") || NormalizePaymentMethod("ONLINE") != PaymentMethodOther {
 		t.Fatal("expected cash and online/other mapping")

@@ -43,6 +43,12 @@ var (
 	ErrPaymentAdjustmentRequired     = errors.New("changing this record would alter a settled payment; an adjustment workflow is required")
 	ErrOverpayment                   = errors.New("recorded payment would exceed the remaining payable amount")
 	ErrIndividualWorkersNotAllowed   = errors.New("individual workers cannot be assigned when hiring mode is CONTRACTOR")
+	ErrInvitationOnlyWork            = errors.New("this work accepts invitations only")
+	ErrInvitationNotFound            = errors.New("invitation not found")
+	ErrNotInvitationWorker           = errors.New("only the invited worker can perform this action")
+	ErrInvalidInvitationStatus       = errors.New("invitation cannot be updated from its current status")
+	ErrInvitationExpired             = errors.New("invitation has expired")
+	ErrWorkerAlreadyAssigned         = errors.New("worker is already assigned to this work")
 )
 
 func (s *WorkService) ApplyToWork(
@@ -77,6 +83,9 @@ func (s *WorkService) ApplyToWork(
 	}
 	if work.UserID == userID {
 		return nil, ErrCannotApplyToOwnWork
+	}
+	if model.IsInvitationOnly(work.Visibility) {
+		return nil, ErrInvitationOnlyWork
 	}
 	if (work.Status != model.StatusOpen && work.Status != model.StatusInProgress) || !work.ApplicationsOpen {
 		return nil, ErrWorkNotPublished

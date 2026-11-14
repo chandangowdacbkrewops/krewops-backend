@@ -27,6 +27,7 @@ type assignmentDocument struct {
 	ID                   string                `bson:"_id"`
 	WorkID               string                `bson:"work_id"`
 	ApplicationID        string                `bson:"application_id"`
+	InvitationID         string                `bson:"invitation_id,omitempty"`
 	AssignmentType       string                `bson:"assignment_type"`
 	WorkerID             string                `bson:"worker_id"`
 	WorkerProfileID      string                `bson:"worker_profile_id,omitempty"`
@@ -124,6 +125,25 @@ func (r *AssignmentRepository) FindByWorkIDAndWorkerID(
 		"work_id":   workID,
 		"worker_id": workerID,
 		"status":    bson.M{"$ne": model.AssignmentStatusCancelled},
+	}).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return doc.toRecord(), nil
+}
+
+func (r *AssignmentRepository) FindAnyByWorkIDAndWorkerID(
+	ctx context.Context,
+	workID string,
+	workerID string,
+) (*model.WorkAssignment, error) {
+	var doc assignmentDocument
+	err := r.collection.FindOne(ctx, bson.M{
+		"work_id":   workID,
+		"worker_id": workerID,
 	}).Decode(&doc)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil
@@ -302,6 +322,7 @@ func toAssignmentDocument(record *model.WorkAssignment) assignmentDocument {
 		ID:                  record.ID,
 		WorkID:              record.WorkID,
 		ApplicationID:       record.ApplicationID,
+		InvitationID:        record.InvitationID,
 		AssignmentType:      assignmentType,
 		WorkerID:            record.WorkerID,
 		WorkerProfileID:     record.WorkerProfileID,
@@ -377,6 +398,7 @@ func (d assignmentDocument) toRecord() *model.WorkAssignment {
 		ID:                   d.ID,
 		WorkID:               d.WorkID,
 		ApplicationID:        d.ApplicationID,
+		InvitationID:         d.InvitationID,
 		AssignmentType:       assignmentType,
 		WorkerID:             d.WorkerID,
 		WorkerProfileID:      workerProfileID,

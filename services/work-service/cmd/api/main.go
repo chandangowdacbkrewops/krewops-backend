@@ -65,6 +65,11 @@ func main() {
 		log.Fatal("failed to ensure work application indexes: ", err)
 	}
 
+	invitationRepository := repository.NewInvitationRepository(mongoDB)
+	if err := invitationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work invitation indexes: ", err)
+	}
+
 	assignmentRepository := repository.NewAssignmentRepository(mongoDB)
 	if err := assignmentRepository.EnsureIndexes(ctx); err != nil {
 		log.Fatal("failed to ensure work assignment indexes: ", err)
@@ -115,6 +120,7 @@ func main() {
 		workSegmentRepository,
 		workTypeFieldRepository,
 		rateTypeRepository,
+		invitationRepository,
 	)
 
 	// -------------------------

@@ -59,6 +59,7 @@ type workDocument struct {
 	Attributes map[string]string `bson:"attributes"`
 
 	Status      string     `bson:"status"`
+	Visibility  string     `bson:"visibility,omitempty"`
 	StartedAt   *time.Time `bson:"started_at,omitempty"`
 	PublishedAt *time.Time `bson:"published_at,omitempty"`
 	CreatedAt   time.Time  `bson:"created_at"`
@@ -146,6 +147,7 @@ func (r *WorkRepository) InsertWork(
 		MealsProvided:         record.MealsProvided,
 		Attributes:            record.Attributes,
 		Status:                record.Status,
+		Visibility:            model.NormalizeVisibility(record.Visibility),
 		StartedAt:             record.StartedAt,
 		PublishedAt:           record.PublishedAt,
 		CreatedAt:             record.CreatedAt,
@@ -319,6 +321,7 @@ func (d workDocument) toRecord() *model.WorkRecord {
 		AccommodationProvided: d.AccommodationProvided,
 		MealsProvided:         d.MealsProvided,
 		Status:                model.NormalizeWorkStatus(d.Status),
+		Visibility:            model.NormalizeVisibility(d.Visibility),
 		StartedAt:             d.StartedAt,
 		PublishedAt:           d.PublishedAt,
 		CreatedAt:             d.CreatedAt,

@@ -42,7 +42,25 @@ const (
 
 	HiringModeIndividual = "INDIVIDUAL"
 	HiringModeContractor = "CONTRACTOR"
+
+	VisibilityPublic         = "public"
+	VisibilityInvitationOnly = "invitation_only"
 )
+
+func NormalizeVisibility(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "", VisibilityPublic:
+		return VisibilityPublic
+	case VisibilityInvitationOnly, "private", "invitation-only":
+		return VisibilityInvitationOnly
+	default:
+		return ""
+	}
+}
+
+func IsInvitationOnly(value string) bool {
+	return NormalizeVisibility(value) == VisibilityInvitationOnly
+}
 
 // ValidCreateStatus reports whether a client may set this status when posting work.
 func ValidCreateStatus(status string) bool {
@@ -249,6 +267,7 @@ type CreateWorkRequest struct {
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
 	HiringMode            *string  `json:"hiring_mode"`
+	Visibility            *string  `json:"visibility,omitempty"`
 
 	Attributes map[string]string `json:"attributes"`
 }
@@ -296,6 +315,7 @@ type WorkRecord struct {
 	MealsProvided         *bool
 
 	HiringMode  string
+	Visibility  string
 	Status      string
 	StartedAt   *time.Time
 	PublishedAt *time.Time
@@ -309,6 +329,7 @@ type WorkResponse struct {
 	UserID     string `json:"user_id"`
 	Status     string `json:"status"`
 	HiringMode string `json:"hiring_mode"`
+	Visibility string `json:"visibility"`
 
 	Title            *string `json:"title,omitempty"`
 	WorkTypeID       *string `json:"work_type_id,omitempty"`
@@ -360,6 +381,7 @@ func BuildWorkResponse(record *WorkRecord) *WorkResponse {
 		UserID:     record.UserID,
 		Status:     record.Status,
 		HiringMode: NormalizeHiringMode(record.HiringMode),
+		Visibility: NormalizeVisibility(record.Visibility),
 
 		Title:            record.Title,
 		WorkTypeID:       record.WorkTypeID,

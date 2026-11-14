@@ -19,41 +19,48 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	WorkService_CreateWork_FullMethodName               = "/work.v1.WorkService/CreateWork"
-	WorkService_ListMyWorks_FullMethodName              = "/work.v1.WorkService/ListMyWorks"
-	WorkService_ApplyToWork_FullMethodName              = "/work.v1.WorkService/ApplyToWork"
-	WorkService_ListMyApplications_FullMethodName       = "/work.v1.WorkService/ListMyApplications"
-	WorkService_ListWorkApplications_FullMethodName     = "/work.v1.WorkService/ListWorkApplications"
-	WorkService_ShortlistWorkApplication_FullMethodName = "/work.v1.WorkService/ShortlistWorkApplication"
-	WorkService_AcceptWorkApplication_FullMethodName    = "/work.v1.WorkService/AcceptWorkApplication"
-	WorkService_RejectWorkApplication_FullMethodName    = "/work.v1.WorkService/RejectWorkApplication"
-	WorkService_WithdrawWorkApplication_FullMethodName  = "/work.v1.WorkService/WithdrawWorkApplication"
-	WorkService_CancelWorkApplication_FullMethodName    = "/work.v1.WorkService/CancelWorkApplication"
-	WorkService_StartWork_FullMethodName                = "/work.v1.WorkService/StartWork"
-	WorkService_CompleteWork_FullMethodName             = "/work.v1.WorkService/CompleteWork"
-	WorkService_ConfirmWorkCompletion_FullMethodName    = "/work.v1.WorkService/ConfirmWorkCompletion"
-	WorkService_CancelWork_FullMethodName               = "/work.v1.WorkService/CancelWork"
-	WorkService_CloseApplications_FullMethodName        = "/work.v1.WorkService/CloseApplications"
-	WorkService_CompleteJob_FullMethodName              = "/work.v1.WorkService/CompleteJob"
-	WorkService_CloseWork_FullMethodName                = "/work.v1.WorkService/CloseWork"
-	WorkService_StartAssignment_FullMethodName          = "/work.v1.WorkService/StartAssignment"
-	WorkService_CompleteAssignment_FullMethodName       = "/work.v1.WorkService/CompleteAssignment"
-	WorkService_UpsertDailyLog_FullMethodName           = "/work.v1.WorkService/UpsertDailyLog"
-	WorkService_ListAssignmentDailyLogs_FullMethodName  = "/work.v1.WorkService/ListAssignmentDailyLogs"
-	WorkService_ListWorkDailyLogs_FullMethodName        = "/work.v1.WorkService/ListWorkDailyLogs"
-	WorkService_GetWorkSettlement_FullMethodName        = "/work.v1.WorkService/GetWorkSettlement"
-	WorkService_RecordAssignmentPayment_FullMethodName  = "/work.v1.WorkService/RecordAssignmentPayment"
-	WorkService_ListAssignmentPayments_FullMethodName   = "/work.v1.WorkService/ListAssignmentPayments"
-	WorkService_ConfirmAssignmentPayment_FullMethodName = "/work.v1.WorkService/ConfirmAssignmentPayment"
-	WorkService_DisputeAssignmentPayment_FullMethodName = "/work.v1.WorkService/DisputeAssignmentPayment"
-	WorkService_GetWorkDayRecords_FullMethodName        = "/work.v1.WorkService/GetWorkDayRecords"
-	WorkService_SaveWorkDayRecords_FullMethodName       = "/work.v1.WorkService/SaveWorkDayRecords"
-	WorkService_GetWorkerWorkSummary_FullMethodName     = "/work.v1.WorkService/GetWorkerWorkSummary"
-	WorkService_GetContractorWorkRecords_FullMethodName = "/work.v1.WorkService/GetContractorWorkRecords"
-	WorkService_SaveContractorWorkRecord_FullMethodName = "/work.v1.WorkService/SaveContractorWorkRecord"
-	WorkService_GetContractorWorkSummary_FullMethodName = "/work.v1.WorkService/GetContractorWorkSummary"
-	WorkService_GetWorkPayments_FullMethodName          = "/work.v1.WorkService/GetWorkPayments"
-	WorkService_RecordPayment_FullMethodName            = "/work.v1.WorkService/RecordPayment"
+	WorkService_CreateWork_FullMethodName                   = "/work.v1.WorkService/CreateWork"
+	WorkService_ListMyWorks_FullMethodName                  = "/work.v1.WorkService/ListMyWorks"
+	WorkService_ApplyToWork_FullMethodName                  = "/work.v1.WorkService/ApplyToWork"
+	WorkService_ListMyApplications_FullMethodName           = "/work.v1.WorkService/ListMyApplications"
+	WorkService_ListWorkApplications_FullMethodName         = "/work.v1.WorkService/ListWorkApplications"
+	WorkService_ShortlistWorkApplication_FullMethodName     = "/work.v1.WorkService/ShortlistWorkApplication"
+	WorkService_AcceptWorkApplication_FullMethodName        = "/work.v1.WorkService/AcceptWorkApplication"
+	WorkService_RejectWorkApplication_FullMethodName        = "/work.v1.WorkService/RejectWorkApplication"
+	WorkService_WithdrawWorkApplication_FullMethodName      = "/work.v1.WorkService/WithdrawWorkApplication"
+	WorkService_CancelWorkApplication_FullMethodName        = "/work.v1.WorkService/CancelWorkApplication"
+	WorkService_StartWork_FullMethodName                    = "/work.v1.WorkService/StartWork"
+	WorkService_CompleteWork_FullMethodName                 = "/work.v1.WorkService/CompleteWork"
+	WorkService_ConfirmWorkCompletion_FullMethodName        = "/work.v1.WorkService/ConfirmWorkCompletion"
+	WorkService_CancelWork_FullMethodName                   = "/work.v1.WorkService/CancelWork"
+	WorkService_CloseApplications_FullMethodName            = "/work.v1.WorkService/CloseApplications"
+	WorkService_CompleteJob_FullMethodName                  = "/work.v1.WorkService/CompleteJob"
+	WorkService_CloseWork_FullMethodName                    = "/work.v1.WorkService/CloseWork"
+	WorkService_StartAssignment_FullMethodName              = "/work.v1.WorkService/StartAssignment"
+	WorkService_CompleteAssignment_FullMethodName           = "/work.v1.WorkService/CompleteAssignment"
+	WorkService_UpsertDailyLog_FullMethodName               = "/work.v1.WorkService/UpsertDailyLog"
+	WorkService_ListAssignmentDailyLogs_FullMethodName      = "/work.v1.WorkService/ListAssignmentDailyLogs"
+	WorkService_ListWorkDailyLogs_FullMethodName            = "/work.v1.WorkService/ListWorkDailyLogs"
+	WorkService_GetWorkSettlement_FullMethodName            = "/work.v1.WorkService/GetWorkSettlement"
+	WorkService_RecordAssignmentPayment_FullMethodName      = "/work.v1.WorkService/RecordAssignmentPayment"
+	WorkService_ListAssignmentPayments_FullMethodName       = "/work.v1.WorkService/ListAssignmentPayments"
+	WorkService_ConfirmAssignmentPayment_FullMethodName     = "/work.v1.WorkService/ConfirmAssignmentPayment"
+	WorkService_DisputeAssignmentPayment_FullMethodName     = "/work.v1.WorkService/DisputeAssignmentPayment"
+	WorkService_GetWorkDayRecords_FullMethodName            = "/work.v1.WorkService/GetWorkDayRecords"
+	WorkService_SaveWorkDayRecords_FullMethodName           = "/work.v1.WorkService/SaveWorkDayRecords"
+	WorkService_GetWorkerWorkSummary_FullMethodName         = "/work.v1.WorkService/GetWorkerWorkSummary"
+	WorkService_GetContractorWorkRecords_FullMethodName     = "/work.v1.WorkService/GetContractorWorkRecords"
+	WorkService_SaveContractorWorkRecord_FullMethodName     = "/work.v1.WorkService/SaveContractorWorkRecord"
+	WorkService_GetContractorWorkSummary_FullMethodName     = "/work.v1.WorkService/GetContractorWorkSummary"
+	WorkService_GetWorkPayments_FullMethodName              = "/work.v1.WorkService/GetWorkPayments"
+	WorkService_RecordPayment_FullMethodName                = "/work.v1.WorkService/RecordPayment"
+	WorkService_ListEligibleRecruitmentWorks_FullMethodName = "/work.v1.WorkService/ListEligibleRecruitmentWorks"
+	WorkService_CreateWorkInvitations_FullMethodName        = "/work.v1.WorkService/CreateWorkInvitations"
+	WorkService_ListWorkInvitations_FullMethodName          = "/work.v1.WorkService/ListWorkInvitations"
+	WorkService_ListMyInvitations_FullMethodName            = "/work.v1.WorkService/ListMyInvitations"
+	WorkService_AcceptWorkInvitation_FullMethodName         = "/work.v1.WorkService/AcceptWorkInvitation"
+	WorkService_DeclineWorkInvitation_FullMethodName        = "/work.v1.WorkService/DeclineWorkInvitation"
+	WorkService_CancelWorkInvitation_FullMethodName         = "/work.v1.WorkService/CancelWorkInvitation"
 )
 
 // WorkServiceClient is the client API for WorkService service.
@@ -95,6 +102,13 @@ type WorkServiceClient interface {
 	GetContractorWorkSummary(ctx context.Context, in *GetContractorWorkSummaryRequest, opts ...grpc.CallOption) (*GetContractorWorkSummaryResponse, error)
 	GetWorkPayments(ctx context.Context, in *GetWorkPaymentsRequest, opts ...grpc.CallOption) (*GetWorkPaymentsResponse, error)
 	RecordPayment(ctx context.Context, in *RecordPaymentRequest, opts ...grpc.CallOption) (*RecordPaymentResponse, error)
+	ListEligibleRecruitmentWorks(ctx context.Context, in *ListEligibleRecruitmentWorksRequest, opts ...grpc.CallOption) (*ListEligibleRecruitmentWorksResponse, error)
+	CreateWorkInvitations(ctx context.Context, in *CreateWorkInvitationsRequest, opts ...grpc.CallOption) (*CreateWorkInvitationsResponse, error)
+	ListWorkInvitations(ctx context.Context, in *ListWorkInvitationsRequest, opts ...grpc.CallOption) (*ListWorkInvitationsResponse, error)
+	ListMyInvitations(ctx context.Context, in *ListMyInvitationsRequest, opts ...grpc.CallOption) (*ListMyInvitationsResponse, error)
+	AcceptWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
+	DeclineWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
+	CancelWorkInvitation(ctx context.Context, in *CancelWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
 }
 
 type workServiceClient struct {
@@ -455,6 +469,76 @@ func (c *workServiceClient) RecordPayment(ctx context.Context, in *RecordPayment
 	return out, nil
 }
 
+func (c *workServiceClient) ListEligibleRecruitmentWorks(ctx context.Context, in *ListEligibleRecruitmentWorksRequest, opts ...grpc.CallOption) (*ListEligibleRecruitmentWorksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListEligibleRecruitmentWorksResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListEligibleRecruitmentWorks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CreateWorkInvitations(ctx context.Context, in *CreateWorkInvitationsRequest, opts ...grpc.CallOption) (*CreateWorkInvitationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWorkInvitationsResponse)
+	err := c.cc.Invoke(ctx, WorkService_CreateWorkInvitations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListWorkInvitations(ctx context.Context, in *ListWorkInvitationsRequest, opts ...grpc.CallOption) (*ListWorkInvitationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkInvitationsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListWorkInvitations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListMyInvitations(ctx context.Context, in *ListMyInvitationsRequest, opts ...grpc.CallOption) (*ListMyInvitationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyInvitationsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListMyInvitations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) AcceptWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespondWorkInvitationResponse)
+	err := c.cc.Invoke(ctx, WorkService_AcceptWorkInvitation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) DeclineWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespondWorkInvitationResponse)
+	err := c.cc.Invoke(ctx, WorkService_DeclineWorkInvitation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) CancelWorkInvitation(ctx context.Context, in *CancelWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespondWorkInvitationResponse)
+	err := c.cc.Invoke(ctx, WorkService_CancelWorkInvitation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkServiceServer is the server API for WorkService service.
 // All implementations must embed UnimplementedWorkServiceServer
 // for forward compatibility.
@@ -494,6 +578,13 @@ type WorkServiceServer interface {
 	GetContractorWorkSummary(context.Context, *GetContractorWorkSummaryRequest) (*GetContractorWorkSummaryResponse, error)
 	GetWorkPayments(context.Context, *GetWorkPaymentsRequest) (*GetWorkPaymentsResponse, error)
 	RecordPayment(context.Context, *RecordPaymentRequest) (*RecordPaymentResponse, error)
+	ListEligibleRecruitmentWorks(context.Context, *ListEligibleRecruitmentWorksRequest) (*ListEligibleRecruitmentWorksResponse, error)
+	CreateWorkInvitations(context.Context, *CreateWorkInvitationsRequest) (*CreateWorkInvitationsResponse, error)
+	ListWorkInvitations(context.Context, *ListWorkInvitationsRequest) (*ListWorkInvitationsResponse, error)
+	ListMyInvitations(context.Context, *ListMyInvitationsRequest) (*ListMyInvitationsResponse, error)
+	AcceptWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
+	DeclineWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
+	CancelWorkInvitation(context.Context, *CancelWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
 	mustEmbedUnimplementedWorkServiceServer()
 }
 
@@ -608,6 +699,27 @@ func (UnimplementedWorkServiceServer) GetWorkPayments(context.Context, *GetWorkP
 }
 func (UnimplementedWorkServiceServer) RecordPayment(context.Context, *RecordPaymentRequest) (*RecordPaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RecordPayment not implemented")
+}
+func (UnimplementedWorkServiceServer) ListEligibleRecruitmentWorks(context.Context, *ListEligibleRecruitmentWorksRequest) (*ListEligibleRecruitmentWorksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEligibleRecruitmentWorks not implemented")
+}
+func (UnimplementedWorkServiceServer) CreateWorkInvitations(context.Context, *CreateWorkInvitationsRequest) (*CreateWorkInvitationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateWorkInvitations not implemented")
+}
+func (UnimplementedWorkServiceServer) ListWorkInvitations(context.Context, *ListWorkInvitationsRequest) (*ListWorkInvitationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkInvitations not implemented")
+}
+func (UnimplementedWorkServiceServer) ListMyInvitations(context.Context, *ListMyInvitationsRequest) (*ListMyInvitationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMyInvitations not implemented")
+}
+func (UnimplementedWorkServiceServer) AcceptWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptWorkInvitation not implemented")
+}
+func (UnimplementedWorkServiceServer) DeclineWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeclineWorkInvitation not implemented")
+}
+func (UnimplementedWorkServiceServer) CancelWorkInvitation(context.Context, *CancelWorkInvitationRequest) (*RespondWorkInvitationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelWorkInvitation not implemented")
 }
 func (UnimplementedWorkServiceServer) mustEmbedUnimplementedWorkServiceServer() {}
 func (UnimplementedWorkServiceServer) testEmbeddedByValue()                     {}
@@ -1260,6 +1372,132 @@ func _WorkService_RecordPayment_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkService_ListEligibleRecruitmentWorks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEligibleRecruitmentWorksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListEligibleRecruitmentWorks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListEligibleRecruitmentWorks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListEligibleRecruitmentWorks(ctx, req.(*ListEligibleRecruitmentWorksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CreateWorkInvitations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWorkInvitationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CreateWorkInvitations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CreateWorkInvitations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CreateWorkInvitations(ctx, req.(*CreateWorkInvitationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListWorkInvitations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkInvitationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListWorkInvitations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListWorkInvitations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListWorkInvitations(ctx, req.(*ListWorkInvitationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListMyInvitations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyInvitationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListMyInvitations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListMyInvitations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListMyInvitations(ctx, req.(*ListMyInvitationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_AcceptWorkInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RespondWorkInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).AcceptWorkInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_AcceptWorkInvitation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).AcceptWorkInvitation(ctx, req.(*RespondWorkInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_DeclineWorkInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RespondWorkInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).DeclineWorkInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_DeclineWorkInvitation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).DeclineWorkInvitation(ctx, req.(*RespondWorkInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_CancelWorkInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelWorkInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CancelWorkInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CancelWorkInvitation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CancelWorkInvitation(ctx, req.(*CancelWorkInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkService_ServiceDesc is the grpc.ServiceDesc for WorkService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1406,6 +1644,34 @@ var WorkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RecordPayment",
 			Handler:    _WorkService_RecordPayment_Handler,
+		},
+		{
+			MethodName: "ListEligibleRecruitmentWorks",
+			Handler:    _WorkService_ListEligibleRecruitmentWorks_Handler,
+		},
+		{
+			MethodName: "CreateWorkInvitations",
+			Handler:    _WorkService_CreateWorkInvitations_Handler,
+		},
+		{
+			MethodName: "ListWorkInvitations",
+			Handler:    _WorkService_ListWorkInvitations_Handler,
+		},
+		{
+			MethodName: "ListMyInvitations",
+			Handler:    _WorkService_ListMyInvitations_Handler,
+		},
+		{
+			MethodName: "AcceptWorkInvitation",
+			Handler:    _WorkService_AcceptWorkInvitation_Handler,
+		},
+		{
+			MethodName: "DeclineWorkInvitation",
+			Handler:    _WorkService_DeclineWorkInvitation_Handler,
+		},
+		{
+			MethodName: "CancelWorkInvitation",
+			Handler:    _WorkService_CancelWorkInvitation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

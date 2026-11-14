@@ -260,6 +260,26 @@ func main() {
 		workHandler.ListMyApplications,
 	)
 
+	workRoutes.GET(
+		"/recruitment/eligible",
+		workHandler.ListEligibleRecruitmentWorks,
+	)
+
+	workRoutes.GET(
+		"/invitations",
+		workHandler.ListMyInvitations,
+	)
+
+	workRoutes.POST(
+		"/invitations/:invitationId/accept",
+		workHandler.AcceptWorkInvitation,
+	)
+
+	workRoutes.POST(
+		"/invitations/:invitationId/decline",
+		workHandler.DeclineWorkInvitation,
+	)
+
 	workRoutes.POST(
 		"/:workId/applications",
 		workHandler.ApplyToWork,
@@ -293,6 +313,21 @@ func main() {
 	workRoutes.POST(
 		"/:workId/applications/:applicationId/cancel",
 		workHandler.CancelWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/invitations",
+		workHandler.CreateWorkInvitations,
+	)
+
+	workRoutes.GET(
+		"/:workId/invitations",
+		workHandler.ListWorkInvitations,
+	)
+
+	workRoutes.POST(
+		"/:workId/invitations/:invitationId/cancel",
+		workHandler.CancelWorkInvitation,
 	)
 
 	workRoutes.POST(

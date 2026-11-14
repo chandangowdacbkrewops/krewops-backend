@@ -149,6 +149,9 @@ func (s *WorkService) CloseWork(
 		return nil, err
 	}
 	if work.Status == model.StatusClosed {
+		if err := s.cancelPendingInvitations(ctx, workID); err != nil {
+			return nil, err
+		}
 		return model.BuildWorkResponse(work), nil
 	}
 	if work.Status != model.StatusPaymentPending && work.Status != model.StatusCompleted {
@@ -167,6 +170,9 @@ func (s *WorkService) CloseWork(
 	if err != nil {
 		return nil, err
 	}
+	if err := s.cancelPendingInvitations(ctx, workID); err != nil {
+		return nil, err
+	}
 	return model.BuildWorkResponse(updated), nil
 }
 
@@ -180,6 +186,9 @@ func (s *WorkService) CancelWork(
 		return nil, err
 	}
 	if work.Status == model.StatusCancelled {
+		if err := s.cancelPendingInvitations(ctx, workID); err != nil {
+			return nil, err
+		}
 		return model.BuildWorkResponse(work), nil
 	}
 	if !model.CanTransition(work.Status, model.StatusCancelled) {
@@ -189,6 +198,9 @@ func (s *WorkService) CancelWork(
 	updated, err := s.transitionWorkStatus(ctx, workID, work.Status, model.StatusCancelled, nil, work.Status)
 	if err != nil {
 		log.Printf("cancel work failed: user_id=%s work_id=%s error=%v", userID, workID, err)
+		return nil, err
+	}
+	if err := s.cancelPendingInvitations(ctx, workID); err != nil {
 		return nil, err
 	}
 

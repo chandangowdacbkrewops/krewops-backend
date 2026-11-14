@@ -28,6 +28,7 @@ type WorkService struct {
 	workSegmentRepository      *repository.WorkSegmentRepository
 	workTypeFieldRepository    *repository.WorkTypeFieldRepository
 	rateTypeRepository         *repository.RateTypeRepository
+	invitationRepository       *repository.InvitationRepository
 }
 
 func NewWorkService(
@@ -44,6 +45,7 @@ func NewWorkService(
 	workSegmentRepository *repository.WorkSegmentRepository,
 	workTypeFieldRepository *repository.WorkTypeFieldRepository,
 	rateTypeRepository *repository.RateTypeRepository,
+	invitationRepository *repository.InvitationRepository,
 ) *WorkService {
 	return &WorkService{
 		workRepository:             workRepository,
@@ -59,6 +61,7 @@ func NewWorkService(
 		workSegmentRepository:      workSegmentRepository,
 		workTypeFieldRepository:    workTypeFieldRepository,
 		rateTypeRepository:         rateTypeRepository,
+		invitationRepository:       invitationRepository,
 	}
 }
 
@@ -94,6 +97,14 @@ func (s *WorkService) CreateWork(
 		hiringMode = model.NormalizeHiringMode(*req.HiringMode)
 		if !model.ValidHiringMode(hiringMode) {
 			return nil, fmt.Errorf("hiring_mode must be INDIVIDUAL or CONTRACTOR")
+		}
+	}
+
+	visibility := model.VisibilityPublic
+	if req.Visibility != nil && strings.TrimSpace(*req.Visibility) != "" {
+		visibility = model.NormalizeVisibility(*req.Visibility)
+		if visibility == "" {
+			return nil, fmt.Errorf("visibility must be public or invitation_only")
 		}
 	}
 
@@ -255,6 +266,7 @@ func (s *WorkService) CreateWork(
 		WorkersSelected:  0,
 		ApplicationsOpen: status == model.StatusOpen,
 		HiringMode:       hiringMode,
+		Visibility:       visibility,
 		Status:           status,
 		PublishedAt:      publishedAt,
 	}

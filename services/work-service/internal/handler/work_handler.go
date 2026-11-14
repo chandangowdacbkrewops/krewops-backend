@@ -385,19 +385,25 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		errors.Is(err, service.ErrNotWorkOwner),
 		errors.Is(err, service.ErrNotApplicationWorker),
 		errors.Is(err, service.ErrNotAssignedWorker),
+		errors.Is(err, service.ErrNotInvitationWorker),
 		errors.Is(err, service.ErrContractorRequired):
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotFound),
 		errors.Is(err, service.ErrApplicationNotFound),
-		errors.Is(err, service.ErrAssignmentNotFound):
+		errors.Is(err, service.ErrAssignmentNotFound),
+		errors.Is(err, service.ErrInvitationNotFound):
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrDuplicateApplication),
 		errors.Is(err, service.ErrApplicationAlreadyAccepted),
 		errors.Is(err, service.ErrNoWorkerSeats),
-		errors.Is(err, service.ErrOfferedWorkersExceedRemaining):
+		errors.Is(err, service.ErrOfferedWorkersExceedRemaining),
+		errors.Is(err, service.ErrWorkerAlreadyAssigned):
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
+		errors.Is(err, service.ErrInvalidInvitationStatus),
+		errors.Is(err, service.ErrInvitationExpired),
+		errors.Is(err, service.ErrInvitationOnlyWork),
 		errors.Is(err, service.ErrInvalidWorkStatus),
 		errors.Is(err, service.ErrWorkNotReadyToStart),
 		errors.Is(err, service.ErrApplicationsClosed),
@@ -591,6 +597,11 @@ func isValidationError(err error) bool {
 		"paid_at",
 		"hiring_mode",
 		"payment_id",
+		"visibility",
+		"worker_ids",
+		"worker_id",
+		"invitation_id",
+		"offered_payment",
 	}
 	for _, prefix := range validationPrefixes {
 		if strings.HasPrefix(msg, prefix) {

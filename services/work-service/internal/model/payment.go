@@ -166,7 +166,28 @@ type WorkPaymentItem struct {
 	PaidAmountMinor      int64                `json:"paid_amount_minor"`
 	RemainingAmountMinor int64                `json:"remaining_amount_minor"`
 	Status               string               `json:"status"`
+	ReceiptStatus        string               `json:"receipt_status,omitempty"`
 	Transactions         []PaymentTransaction `json:"transactions"`
+}
+
+func AggregateReceiptStatus(transactions []PaymentTransaction) string {
+	if len(transactions) == 0 {
+		return PaymentReceiptNone
+	}
+	disputed := false
+	for _, txn := range transactions {
+		switch txn.ReceiptStatus {
+		case PaymentReceiptDisputed:
+			disputed = true
+		case PaymentReceiptConfirmed:
+		default:
+			return PaymentReceiptNone
+		}
+	}
+	if disputed {
+		return PaymentReceiptDisputed
+	}
+	return PaymentReceiptConfirmed
 }
 
 type WorkPaymentsResponse struct {

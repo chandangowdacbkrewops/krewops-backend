@@ -53,6 +53,7 @@ type CreateWorkRequest struct {
 	AccommodationProvided *bool    `json:"accommodation_provided"`
 	MealsProvided         *bool    `json:"meals_provided"`
 	HiringMode            *string  `json:"hiring_mode"`
+	Visibility            *string  `json:"visibility"`
 
 	Attributes map[string]string `json:"attributes"`
 }
@@ -141,6 +142,7 @@ func (h *WorkHandler) CreateWork(c *gin.Context) {
 			MealsProvided:         request.MealsProvided,
 			Attributes:            request.Attributes,
 			HiringMode:            request.HiringMode,
+			Visibility:            request.Visibility,
 		},
 	)
 

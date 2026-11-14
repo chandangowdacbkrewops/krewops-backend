@@ -111,6 +111,27 @@ service WorkService {
 
   rpc RecordPayment(RecordPaymentRequest)
       returns (RecordPaymentResponse);
+
+  rpc ListEligibleRecruitmentWorks(ListEligibleRecruitmentWorksRequest)
+      returns (ListEligibleRecruitmentWorksResponse);
+
+  rpc CreateWorkInvitations(CreateWorkInvitationsRequest)
+      returns (CreateWorkInvitationsResponse);
+
+  rpc ListWorkInvitations(ListWorkInvitationsRequest)
+      returns (ListWorkInvitationsResponse);
+
+  rpc ListMyInvitations(ListMyInvitationsRequest)
+      returns (ListMyInvitationsResponse);
+
+  rpc AcceptWorkInvitation(RespondWorkInvitationRequest)
+      returns (RespondWorkInvitationResponse);
+
+  rpc DeclineWorkInvitation(RespondWorkInvitationRequest)
+      returns (RespondWorkInvitationResponse);
+
+  rpc CancelWorkInvitation(CancelWorkInvitationRequest)
+      returns (RespondWorkInvitationResponse);
 }
 
 message CreateWorkRequest {
@@ -144,6 +165,7 @@ message CreateWorkRequest {
   map<string, string> attributes = 25;
   optional string rate_unit = 28;
   optional string hiring_mode = 29;
+  optional string visibility = 30;
 }
 
 message CreateWorkResponse {
@@ -197,6 +219,7 @@ message WorkPosting {
   optional string hiring_mode = 38;
   optional string started_at = 39;
   optional int32 remaining_workers = 40;
+  optional string visibility = 41;
 }
 
 message Quotation {
@@ -312,6 +335,7 @@ message WorkAssignment {
   optional string contractor_profile_id = 23;
   optional int32 committed_worker_count = 24;
   optional int32 assigned_worker_count = 25;
+  optional string invitation_id = 26;
 }
 
 message DailyLog {
@@ -568,6 +592,8 @@ message PaymentTransaction {
   string recorded_by = 8;
   string paid_at = 9;
   string created_at = 10;
+  optional string receipt_status = 11;
+  optional string confirmed_at = 12;
 }
 
 message PaymentObligation {
@@ -597,6 +623,7 @@ message WorkPaymentItem {
   int64 remaining_amount_minor = 9;
   string status = 10;
   repeated PaymentTransaction transactions = 11;
+  optional string receipt_status = 12;
 }
 
 message GetWorkPaymentsRequest {
@@ -609,6 +636,100 @@ message GetWorkPaymentsResponse {
   string hiring_mode = 2;
   int64 outstanding_minor = 3;
   repeated WorkPaymentItem payments = 4;
+}
+
+message OfferedPayment {
+  double amount = 1;
+  string currency = 2;
+  string rate_basis = 3;
+  optional string rate_unit = 4;
+  optional string notes = 5;
+}
+
+message WorkInvitation {
+  string id = 1;
+  string work_id = 2;
+  string owner_id = 3;
+  string worker_id = 4;
+  string status = 5;
+  string applicant_type = 6;
+  int32 seat_count = 7;
+  OfferedPayment offered_payment = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string expires_at = 11;
+  optional string responded_at = 12;
+  optional string assignment_id = 13;
+  optional string owner_name = 14;
+  WorkPosting work = 15;
+  optional string worker_name = 16;
+}
+
+message InvitationCreateResult {
+  string worker_id = 1;
+  string outcome = 2;
+  string reason = 3;
+  WorkInvitation invitation = 4;
+}
+
+message EligibleRecruitmentWork {
+  WorkPosting work = 1;
+  bool eligible = 2;
+  string reason = 3;
+  int32 seat_count = 4;
+}
+
+message ListEligibleRecruitmentWorksRequest {
+  string user_id = 1;
+  string worker_id = 2;
+}
+
+message ListEligibleRecruitmentWorksResponse {
+  repeated EligibleRecruitmentWork works = 1;
+}
+
+message CreateWorkInvitationsRequest {
+  string user_id = 1;
+  string work_id = 2;
+  repeated string worker_ids = 3;
+  OfferedPayment offered_payment = 4;
+}
+
+message CreateWorkInvitationsResponse {
+  repeated InvitationCreateResult results = 1;
+}
+
+message ListWorkInvitationsRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message ListWorkInvitationsResponse {
+  repeated WorkInvitation invitations = 1;
+}
+
+message ListMyInvitationsRequest {
+  string user_id = 1;
+  optional string status = 2;
+}
+
+message ListMyInvitationsResponse {
+  repeated WorkInvitation invitations = 1;
+}
+
+message RespondWorkInvitationRequest {
+  string user_id = 1;
+  string invitation_id = 2;
+}
+
+message RespondWorkInvitationResponse {
+  WorkInvitation invitation = 1;
+}
+
+message CancelWorkInvitationRequest {
+  string user_id = 1;
+  string work_id = 2;
+  string invitation_id = 3;
 }
 
 message RecordPaymentRequest {

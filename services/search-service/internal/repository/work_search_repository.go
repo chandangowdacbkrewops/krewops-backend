@@ -70,7 +70,17 @@ func (r *WorkSearchRepository) SearchWork(
 	ctx context.Context,
 	filters model.WorkSearchFilters,
 ) (*model.WorkSearchResponse, error) {
-	filter := bson.M{"status": bson.M{"$in": []string{"published", "PUBLISHED", "open", "OPEN"}}}
+	filter := bson.M{
+		"status": bson.M{"$in": []string{"published", "PUBLISHED", "open", "OPEN"}},
+		"$and": []bson.M{{
+			"$or": []bson.M{
+				{"visibility": bson.M{"$exists": false}},
+				{"visibility": ""},
+				{"visibility": nil},
+				{"visibility": bson.M{"$in": []string{"public", "PUBLIC", "Public"}}},
+			},
+		}},
+	}
 
 	if v := trimmed(filters.WorkTypeID); v != "" {
 		filter["work_type_id"] = v
