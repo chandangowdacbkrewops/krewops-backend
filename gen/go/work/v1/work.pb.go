@@ -27,6 +27,8 @@ type CreateWorkRequest struct {
 	Status                *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	Title                 *string                `protobuf:"bytes,3,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	WorkTypeId            *string                `protobuf:"bytes,4,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
+	WorkCategoryId        *string                `protobuf:"bytes,26,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
+	WorkSegmentId         *string                `protobuf:"bytes,27,opt,name=work_segment_id,json=workSegmentId,proto3,oneof" json:"work_segment_id,omitempty"`
 	Description           *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Address               *string                `protobuf:"bytes,6,opt,name=address,proto3,oneof" json:"address,omitempty"`
 	City                  *string                `protobuf:"bytes,7,opt,name=city,proto3,oneof" json:"city,omitempty"`
@@ -42,11 +44,15 @@ type CreateWorkRequest struct {
 	DurationValue         *int32                 `protobuf:"varint,17,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
 	DurationUnit          *string                `protobuf:"bytes,18,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
 	ShiftTiming           *string                `protobuf:"bytes,19,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
-	PaymentType           *string                `protobuf:"bytes,20,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
+	RateBasis             *string                `protobuf:"bytes,20,opt,name=rate_basis,json=rateBasis,proto3,oneof" json:"rate_basis,omitempty"`
 	BudgetRate            *float64               `protobuf:"fixed64,21,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
 	PaymentNotes          *string                `protobuf:"bytes,22,opt,name=payment_notes,json=paymentNotes,proto3,oneof" json:"payment_notes,omitempty"`
 	AccommodationProvided *bool                  `protobuf:"varint,23,opt,name=accommodation_provided,json=accommodationProvided,proto3,oneof" json:"accommodation_provided,omitempty"`
 	MealsProvided         *bool                  `protobuf:"varint,24,opt,name=meals_provided,json=mealsProvided,proto3,oneof" json:"meals_provided,omitempty"`
+	Attributes            map[string]string      `protobuf:"bytes,25,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	RateUnit              *string                `protobuf:"bytes,28,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
+	HiringMode            *string                `protobuf:"bytes,29,opt,name=hiring_mode,json=hiringMode,proto3,oneof" json:"hiring_mode,omitempty"`
+	Visibility            *string                `protobuf:"bytes,30,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -105,6 +111,20 @@ func (x *CreateWorkRequest) GetTitle() string {
 func (x *CreateWorkRequest) GetWorkTypeId() string {
 	if x != nil && x.WorkTypeId != nil {
 		return *x.WorkTypeId
+	}
+	return ""
+}
+
+func (x *CreateWorkRequest) GetWorkCategoryId() string {
+	if x != nil && x.WorkCategoryId != nil {
+		return *x.WorkCategoryId
+	}
+	return ""
+}
+
+func (x *CreateWorkRequest) GetWorkSegmentId() string {
+	if x != nil && x.WorkSegmentId != nil {
+		return *x.WorkSegmentId
 	}
 	return ""
 }
@@ -214,9 +234,9 @@ func (x *CreateWorkRequest) GetShiftTiming() string {
 	return ""
 }
 
-func (x *CreateWorkRequest) GetPaymentType() string {
-	if x != nil && x.PaymentType != nil {
-		return *x.PaymentType
+func (x *CreateWorkRequest) GetRateBasis() string {
+	if x != nil && x.RateBasis != nil {
+		return *x.RateBasis
 	}
 	return ""
 }
@@ -247,6 +267,34 @@ func (x *CreateWorkRequest) GetMealsProvided() bool {
 		return *x.MealsProvided
 	}
 	return false
+}
+
+func (x *CreateWorkRequest) GetAttributes() map[string]string {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+func (x *CreateWorkRequest) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
+}
+
+func (x *CreateWorkRequest) GetHiringMode() string {
+	if x != nil && x.HiringMode != nil {
+		return *x.HiringMode
+	}
+	return ""
+}
+
+func (x *CreateWorkRequest) GetVisibility() string {
+	if x != nil && x.Visibility != nil {
+		return *x.Visibility
+	}
+	return ""
 }
 
 type CreateWorkResponse struct {
@@ -300,6 +348,11 @@ type WorkPosting struct {
 	Status                string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
 	Title                 *string                `protobuf:"bytes,4,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	WorkTypeId            *string                `protobuf:"bytes,5,opt,name=work_type_id,json=workTypeId,proto3,oneof" json:"work_type_id,omitempty"`
+	WorkTypeName          *string                `protobuf:"bytes,29,opt,name=work_type_name,json=workTypeName,proto3,oneof" json:"work_type_name,omitempty"`
+	WorkCategoryId        *string                `protobuf:"bytes,31,opt,name=work_category_id,json=workCategoryId,proto3,oneof" json:"work_category_id,omitempty"`
+	WorkCategoryName      *string                `protobuf:"bytes,32,opt,name=work_category_name,json=workCategoryName,proto3,oneof" json:"work_category_name,omitempty"`
+	WorkSegmentId         *string                `protobuf:"bytes,33,opt,name=work_segment_id,json=workSegmentId,proto3,oneof" json:"work_segment_id,omitempty"`
+	WorkSegmentName       *string                `protobuf:"bytes,34,opt,name=work_segment_name,json=workSegmentName,proto3,oneof" json:"work_segment_name,omitempty"`
 	Description           *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Address               *string                `protobuf:"bytes,7,opt,name=address,proto3,oneof" json:"address,omitempty"`
 	City                  *string                `protobuf:"bytes,8,opt,name=city,proto3,oneof" json:"city,omitempty"`
@@ -315,7 +368,7 @@ type WorkPosting struct {
 	DurationValue         *int32                 `protobuf:"varint,18,opt,name=duration_value,json=durationValue,proto3,oneof" json:"duration_value,omitempty"`
 	DurationUnit          *string                `protobuf:"bytes,19,opt,name=duration_unit,json=durationUnit,proto3,oneof" json:"duration_unit,omitempty"`
 	ShiftTiming           *string                `protobuf:"bytes,20,opt,name=shift_timing,json=shiftTiming,proto3,oneof" json:"shift_timing,omitempty"`
-	PaymentType           *string                `protobuf:"bytes,21,opt,name=payment_type,json=paymentType,proto3,oneof" json:"payment_type,omitempty"`
+	RateBasis             *string                `protobuf:"bytes,21,opt,name=rate_basis,json=rateBasis,proto3,oneof" json:"rate_basis,omitempty"`
 	BudgetRate            *float64               `protobuf:"fixed64,22,opt,name=budget_rate,json=budgetRate,proto3,oneof" json:"budget_rate,omitempty"`
 	PaymentNotes          *string                `protobuf:"bytes,23,opt,name=payment_notes,json=paymentNotes,proto3,oneof" json:"payment_notes,omitempty"`
 	AccommodationProvided *bool                  `protobuf:"varint,24,opt,name=accommodation_provided,json=accommodationProvided,proto3,oneof" json:"accommodation_provided,omitempty"`
@@ -323,6 +376,14 @@ type WorkPosting struct {
 	PublishedAt           *string                `protobuf:"bytes,26,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
 	CreatedAt             string                 `protobuf:"bytes,27,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt             string                 `protobuf:"bytes,28,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Attributes            map[string]string      `protobuf:"bytes,30,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	RateUnit              *string                `protobuf:"bytes,35,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
+	WorkersSelected       *int32                 `protobuf:"varint,36,opt,name=workers_selected,json=workersSelected,proto3,oneof" json:"workers_selected,omitempty"`
+	ApplicationsOpen      *bool                  `protobuf:"varint,37,opt,name=applications_open,json=applicationsOpen,proto3,oneof" json:"applications_open,omitempty"`
+	HiringMode            *string                `protobuf:"bytes,38,opt,name=hiring_mode,json=hiringMode,proto3,oneof" json:"hiring_mode,omitempty"`
+	StartedAt             *string                `protobuf:"bytes,39,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	RemainingWorkers      *int32                 `protobuf:"varint,40,opt,name=remaining_workers,json=remainingWorkers,proto3,oneof" json:"remaining_workers,omitempty"`
+	Visibility            *string                `protobuf:"bytes,41,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -388,6 +449,41 @@ func (x *WorkPosting) GetTitle() string {
 func (x *WorkPosting) GetWorkTypeId() string {
 	if x != nil && x.WorkTypeId != nil {
 		return *x.WorkTypeId
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkTypeName() string {
+	if x != nil && x.WorkTypeName != nil {
+		return *x.WorkTypeName
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkCategoryId() string {
+	if x != nil && x.WorkCategoryId != nil {
+		return *x.WorkCategoryId
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkCategoryName() string {
+	if x != nil && x.WorkCategoryName != nil {
+		return *x.WorkCategoryName
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkSegmentId() string {
+	if x != nil && x.WorkSegmentId != nil {
+		return *x.WorkSegmentId
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkSegmentName() string {
+	if x != nil && x.WorkSegmentName != nil {
+		return *x.WorkSegmentName
 	}
 	return ""
 }
@@ -497,9 +593,9 @@ func (x *WorkPosting) GetShiftTiming() string {
 	return ""
 }
 
-func (x *WorkPosting) GetPaymentType() string {
-	if x != nil && x.PaymentType != nil {
-		return *x.PaymentType
+func (x *WorkPosting) GetRateBasis() string {
+	if x != nil && x.RateBasis != nil {
+		return *x.RateBasis
 	}
 	return ""
 }
@@ -553,45 +649,5705 @@ func (x *WorkPosting) GetUpdatedAt() string {
 	return ""
 }
 
+func (x *WorkPosting) GetAttributes() map[string]string {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+func (x *WorkPosting) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetWorkersSelected() int32 {
+	if x != nil && x.WorkersSelected != nil {
+		return *x.WorkersSelected
+	}
+	return 0
+}
+
+func (x *WorkPosting) GetApplicationsOpen() bool {
+	if x != nil && x.ApplicationsOpen != nil {
+		return *x.ApplicationsOpen
+	}
+	return false
+}
+
+func (x *WorkPosting) GetHiringMode() string {
+	if x != nil && x.HiringMode != nil {
+		return *x.HiringMode
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetStartedAt() string {
+	if x != nil && x.StartedAt != nil {
+		return *x.StartedAt
+	}
+	return ""
+}
+
+func (x *WorkPosting) GetRemainingWorkers() int32 {
+	if x != nil && x.RemainingWorkers != nil {
+		return *x.RemainingWorkers
+	}
+	return 0
+}
+
+func (x *WorkPosting) GetVisibility() string {
+	if x != nil && x.Visibility != nil {
+		return *x.Visibility
+	}
+	return ""
+}
+
+type Quotation struct {
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Amount                 float64                `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	Currency               string                 `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
+	RateBasis              string                 `protobuf:"bytes,3,opt,name=rate_basis,json=rateBasis,proto3" json:"rate_basis,omitempty"`
+	EstimatedDurationHours *float64               `protobuf:"fixed64,4,opt,name=estimated_duration_hours,json=estimatedDurationHours,proto3,oneof" json:"estimated_duration_hours,omitempty"`
+	Message                *string                `protobuf:"bytes,5,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	RateUnit               *string                `protobuf:"bytes,6,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *Quotation) Reset() {
+	*x = Quotation{}
+	mi := &file_work_work_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Quotation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Quotation) ProtoMessage() {}
+
+func (x *Quotation) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Quotation.ProtoReflect.Descriptor instead.
+func (*Quotation) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Quotation) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *Quotation) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *Quotation) GetRateBasis() string {
+	if x != nil {
+		return x.RateBasis
+	}
+	return ""
+}
+
+func (x *Quotation) GetEstimatedDurationHours() float64 {
+	if x != nil && x.EstimatedDurationHours != nil {
+		return *x.EstimatedDurationHours
+	}
+	return 0
+}
+
+func (x *Quotation) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
+func (x *Quotation) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
+}
+
+type WorkApplication struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId             string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkerId           string                 `protobuf:"bytes,3,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Status             string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	Quotation          *Quotation             `protobuf:"bytes,5,opt,name=quotation,proto3" json:"quotation,omitempty"`
+	AppliedAt          string                 `protobuf:"bytes,6,opt,name=applied_at,json=appliedAt,proto3" json:"applied_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	OfferedWorkerCount int32                  `protobuf:"varint,8,opt,name=offered_worker_count,json=offeredWorkerCount,proto3" json:"offered_worker_count,omitempty"`
+	ApplicantType      string                 `protobuf:"bytes,9,opt,name=applicant_type,json=applicantType,proto3" json:"applicant_type,omitempty"`
+	AssignmentId       string                 `protobuf:"bytes,10,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *WorkApplication) Reset() {
+	*x = WorkApplication{}
+	mi := &file_work_work_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkApplication) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkApplication) ProtoMessage() {}
+
+func (x *WorkApplication) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkApplication.ProtoReflect.Descriptor instead.
+func (*WorkApplication) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *WorkApplication) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetQuotation() *Quotation {
+	if x != nil {
+		return x.Quotation
+	}
+	return nil
+}
+
+func (x *WorkApplication) GetAppliedAt() string {
+	if x != nil {
+		return x.AppliedAt
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetOfferedWorkerCount() int32 {
+	if x != nil {
+		return x.OfferedWorkerCount
+	}
+	return 0
+}
+
+func (x *WorkApplication) GetApplicantType() string {
+	if x != nil {
+		return x.ApplicantType
+	}
+	return ""
+}
+
+func (x *WorkApplication) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+type ApplyToWorkRequest struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	UserId             string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId             string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	Quotation          *Quotation             `protobuf:"bytes,3,opt,name=quotation,proto3" json:"quotation,omitempty"`
+	OfferedWorkerCount int32                  `protobuf:"varint,4,opt,name=offered_worker_count,json=offeredWorkerCount,proto3" json:"offered_worker_count,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ApplyToWorkRequest) Reset() {
+	*x = ApplyToWorkRequest{}
+	mi := &file_work_work_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyToWorkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyToWorkRequest) ProtoMessage() {}
+
+func (x *ApplyToWorkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyToWorkRequest.ProtoReflect.Descriptor instead.
+func (*ApplyToWorkRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ApplyToWorkRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ApplyToWorkRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *ApplyToWorkRequest) GetQuotation() *Quotation {
+	if x != nil {
+		return x.Quotation
+	}
+	return nil
+}
+
+func (x *ApplyToWorkRequest) GetOfferedWorkerCount() int32 {
+	if x != nil {
+		return x.OfferedWorkerCount
+	}
+	return 0
+}
+
+type ApplyToWorkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Application   *WorkApplication       `protobuf:"bytes,1,opt,name=application,proto3" json:"application,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyToWorkResponse) Reset() {
+	*x = ApplyToWorkResponse{}
+	mi := &file_work_work_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyToWorkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyToWorkResponse) ProtoMessage() {}
+
+func (x *ApplyToWorkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyToWorkResponse.ProtoReflect.Descriptor instead.
+func (*ApplyToWorkResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ApplyToWorkResponse) GetApplication() *WorkApplication {
+	if x != nil {
+		return x.Application
+	}
+	return nil
+}
+
+type ListWorkApplicationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	Status        *string                `protobuf:"bytes,3,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkApplicationsRequest) Reset() {
+	*x = ListWorkApplicationsRequest{}
+	mi := &file_work_work_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkApplicationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkApplicationsRequest) ProtoMessage() {}
+
+func (x *ListWorkApplicationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkApplicationsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkApplicationsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListWorkApplicationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListWorkApplicationsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *ListWorkApplicationsRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+type ListWorkApplicationsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Applications  []*WorkApplication     `protobuf:"bytes,1,rep,name=applications,proto3" json:"applications,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkApplicationsResponse) Reset() {
+	*x = ListWorkApplicationsResponse{}
+	mi := &file_work_work_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkApplicationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkApplicationsResponse) ProtoMessage() {}
+
+func (x *ListWorkApplicationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkApplicationsResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkApplicationsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListWorkApplicationsResponse) GetApplications() []*WorkApplication {
+	if x != nil {
+		return x.Applications
+	}
+	return nil
+}
+
+type UpdateWorkApplicationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	ApplicationId string                 `protobuf:"bytes,3,opt,name=application_id,json=applicationId,proto3" json:"application_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateWorkApplicationRequest) Reset() {
+	*x = UpdateWorkApplicationRequest{}
+	mi := &file_work_work_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateWorkApplicationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateWorkApplicationRequest) ProtoMessage() {}
+
+func (x *UpdateWorkApplicationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateWorkApplicationRequest.ProtoReflect.Descriptor instead.
+func (*UpdateWorkApplicationRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateWorkApplicationRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateWorkApplicationRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *UpdateWorkApplicationRequest) GetApplicationId() string {
+	if x != nil {
+		return x.ApplicationId
+	}
+	return ""
+}
+
+type UpdateWorkApplicationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Application   *WorkApplication       `protobuf:"bytes,1,opt,name=application,proto3" json:"application,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateWorkApplicationResponse) Reset() {
+	*x = UpdateWorkApplicationResponse{}
+	mi := &file_work_work_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateWorkApplicationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateWorkApplicationResponse) ProtoMessage() {}
+
+func (x *UpdateWorkApplicationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateWorkApplicationResponse.ProtoReflect.Descriptor instead.
+func (*UpdateWorkApplicationResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateWorkApplicationResponse) GetApplication() *WorkApplication {
+	if x != nil {
+		return x.Application
+	}
+	return nil
+}
+
+type ListMyWorksRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyWorksRequest) Reset() {
+	*x = ListMyWorksRequest{}
+	mi := &file_work_work_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyWorksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyWorksRequest) ProtoMessage() {}
+
+func (x *ListMyWorksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyWorksRequest.ProtoReflect.Descriptor instead.
+func (*ListMyWorksRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListMyWorksRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListMyWorksRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+type ListMyWorksResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Works         []*WorkPosting         `protobuf:"bytes,1,rep,name=works,proto3" json:"works,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyWorksResponse) Reset() {
+	*x = ListMyWorksResponse{}
+	mi := &file_work_work_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyWorksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyWorksResponse) ProtoMessage() {}
+
+func (x *ListMyWorksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyWorksResponse.ProtoReflect.Descriptor instead.
+func (*ListMyWorksResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListMyWorksResponse) GetWorks() []*WorkPosting {
+	if x != nil {
+		return x.Works
+	}
+	return nil
+}
+
+type MyWorkApplication struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Application   *WorkApplication       `protobuf:"bytes,1,opt,name=application,proto3" json:"application,omitempty"`
+	Work          *WorkPosting           `protobuf:"bytes,2,opt,name=work,proto3" json:"work,omitempty"`
+	Assignment    *WorkAssignment        `protobuf:"bytes,3,opt,name=assignment,proto3" json:"assignment,omitempty"`
+	Payments      []*WorkPayment         `protobuf:"bytes,4,rep,name=payments,proto3" json:"payments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MyWorkApplication) Reset() {
+	*x = MyWorkApplication{}
+	mi := &file_work_work_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MyWorkApplication) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MyWorkApplication) ProtoMessage() {}
+
+func (x *MyWorkApplication) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MyWorkApplication.ProtoReflect.Descriptor instead.
+func (*MyWorkApplication) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *MyWorkApplication) GetApplication() *WorkApplication {
+	if x != nil {
+		return x.Application
+	}
+	return nil
+}
+
+func (x *MyWorkApplication) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
+func (x *MyWorkApplication) GetAssignment() *WorkAssignment {
+	if x != nil {
+		return x.Assignment
+	}
+	return nil
+}
+
+func (x *MyWorkApplication) GetPayments() []*WorkPayment {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+type ListMyApplicationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyApplicationsRequest) Reset() {
+	*x = ListMyApplicationsRequest{}
+	mi := &file_work_work_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyApplicationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyApplicationsRequest) ProtoMessage() {}
+
+func (x *ListMyApplicationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyApplicationsRequest.ProtoReflect.Descriptor instead.
+func (*ListMyApplicationsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ListMyApplicationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListMyApplicationsRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+type ListMyApplicationsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Applications  []*MyWorkApplication   `protobuf:"bytes,1,rep,name=applications,proto3" json:"applications,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyApplicationsResponse) Reset() {
+	*x = ListMyApplicationsResponse{}
+	mi := &file_work_work_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyApplicationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyApplicationsResponse) ProtoMessage() {}
+
+func (x *ListMyApplicationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyApplicationsResponse.ProtoReflect.Descriptor instead.
+func (*ListMyApplicationsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListMyApplicationsResponse) GetApplications() []*MyWorkApplication {
+	if x != nil {
+		return x.Applications
+	}
+	return nil
+}
+
+type WorkLifecycleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkLifecycleRequest) Reset() {
+	*x = WorkLifecycleRequest{}
+	mi := &file_work_work_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkLifecycleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkLifecycleRequest) ProtoMessage() {}
+
+func (x *WorkLifecycleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkLifecycleRequest.ProtoReflect.Descriptor instead.
+func (*WorkLifecycleRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *WorkLifecycleRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *WorkLifecycleRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type WorkLifecycleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Work          *WorkPosting           `protobuf:"bytes,1,opt,name=work,proto3" json:"work,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkLifecycleResponse) Reset() {
+	*x = WorkLifecycleResponse{}
+	mi := &file_work_work_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkLifecycleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkLifecycleResponse) ProtoMessage() {}
+
+func (x *WorkLifecycleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkLifecycleResponse.ProtoReflect.Descriptor instead.
+func (*WorkLifecycleResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *WorkLifecycleResponse) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
+type WorkAssignment struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId               string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	ApplicationId        string                 `protobuf:"bytes,3,opt,name=application_id,json=applicationId,proto3" json:"application_id,omitempty"`
+	WorkerId             string                 `protobuf:"bytes,4,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Status               string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	AgreedQuotation      *Quotation             `protobuf:"bytes,6,opt,name=agreed_quotation,json=agreedQuotation,proto3" json:"agreed_quotation,omitempty"`
+	AssignedAt           string                 `protobuf:"bytes,7,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	StartedAt            *string                `protobuf:"bytes,8,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	CompletedAt          *string                `protobuf:"bytes,9,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	PaymentStatus        string                 `protobuf:"bytes,10,opt,name=payment_status,json=paymentStatus,proto3" json:"payment_status,omitempty"`
+	FullDays             int32                  `protobuf:"varint,11,opt,name=full_days,json=fullDays,proto3" json:"full_days,omitempty"`
+	HalfDays             int32                  `protobuf:"varint,12,opt,name=half_days,json=halfDays,proto3" json:"half_days,omitempty"`
+	DaysWorked           float64                `protobuf:"fixed64,13,opt,name=days_worked,json=daysWorked,proto3" json:"days_worked,omitempty"`
+	PayableAmount        float64                `protobuf:"fixed64,14,opt,name=payable_amount,json=payableAmount,proto3" json:"payable_amount,omitempty"`
+	PayableCurrency      string                 `protobuf:"bytes,15,opt,name=payable_currency,json=payableCurrency,proto3" json:"payable_currency,omitempty"`
+	LogsFrozen           bool                   `protobuf:"varint,16,opt,name=logs_frozen,json=logsFrozen,proto3" json:"logs_frozen,omitempty"`
+	CreatedAt            string                 `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt            string                 `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	AssignmentType       string                 `protobuf:"bytes,19,opt,name=assignment_type,json=assignmentType,proto3" json:"assignment_type,omitempty"`
+	AgreedPayment        *AgreedPayment         `protobuf:"bytes,20,opt,name=agreed_payment,json=agreedPayment,proto3" json:"agreed_payment,omitempty"`
+	JoinedAt             string                 `protobuf:"bytes,21,opt,name=joined_at,json=joinedAt,proto3" json:"joined_at,omitempty"`
+	WorkerProfileId      *string                `protobuf:"bytes,22,opt,name=worker_profile_id,json=workerProfileId,proto3,oneof" json:"worker_profile_id,omitempty"`
+	ContractorProfileId  *string                `protobuf:"bytes,23,opt,name=contractor_profile_id,json=contractorProfileId,proto3,oneof" json:"contractor_profile_id,omitempty"`
+	CommittedWorkerCount *int32                 `protobuf:"varint,24,opt,name=committed_worker_count,json=committedWorkerCount,proto3,oneof" json:"committed_worker_count,omitempty"`
+	AssignedWorkerCount  *int32                 `protobuf:"varint,25,opt,name=assigned_worker_count,json=assignedWorkerCount,proto3,oneof" json:"assigned_worker_count,omitempty"`
+	InvitationId         *string                `protobuf:"bytes,26,opt,name=invitation_id,json=invitationId,proto3,oneof" json:"invitation_id,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *WorkAssignment) Reset() {
+	*x = WorkAssignment{}
+	mi := &file_work_work_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkAssignment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkAssignment) ProtoMessage() {}
+
+func (x *WorkAssignment) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkAssignment.ProtoReflect.Descriptor instead.
+func (*WorkAssignment) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *WorkAssignment) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetApplicationId() string {
+	if x != nil {
+		return x.ApplicationId
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetAgreedQuotation() *Quotation {
+	if x != nil {
+		return x.AgreedQuotation
+	}
+	return nil
+}
+
+func (x *WorkAssignment) GetAssignedAt() string {
+	if x != nil {
+		return x.AssignedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetStartedAt() string {
+	if x != nil && x.StartedAt != nil {
+		return *x.StartedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetCompletedAt() string {
+	if x != nil && x.CompletedAt != nil {
+		return *x.CompletedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetPaymentStatus() string {
+	if x != nil {
+		return x.PaymentStatus
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetFullDays() int32 {
+	if x != nil {
+		return x.FullDays
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetHalfDays() int32 {
+	if x != nil {
+		return x.HalfDays
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetDaysWorked() float64 {
+	if x != nil {
+		return x.DaysWorked
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetPayableAmount() float64 {
+	if x != nil {
+		return x.PayableAmount
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetPayableCurrency() string {
+	if x != nil {
+		return x.PayableCurrency
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetLogsFrozen() bool {
+	if x != nil {
+		return x.LogsFrozen
+	}
+	return false
+}
+
+func (x *WorkAssignment) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetAssignmentType() string {
+	if x != nil {
+		return x.AssignmentType
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetAgreedPayment() *AgreedPayment {
+	if x != nil {
+		return x.AgreedPayment
+	}
+	return nil
+}
+
+func (x *WorkAssignment) GetJoinedAt() string {
+	if x != nil {
+		return x.JoinedAt
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetWorkerProfileId() string {
+	if x != nil && x.WorkerProfileId != nil {
+		return *x.WorkerProfileId
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetContractorProfileId() string {
+	if x != nil && x.ContractorProfileId != nil {
+		return *x.ContractorProfileId
+	}
+	return ""
+}
+
+func (x *WorkAssignment) GetCommittedWorkerCount() int32 {
+	if x != nil && x.CommittedWorkerCount != nil {
+		return *x.CommittedWorkerCount
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetAssignedWorkerCount() int32 {
+	if x != nil && x.AssignedWorkerCount != nil {
+		return *x.AssignedWorkerCount
+	}
+	return 0
+}
+
+func (x *WorkAssignment) GetInvitationId() string {
+	if x != nil && x.InvitationId != nil {
+		return *x.InvitationId
+	}
+	return ""
+}
+
+type DailyLog struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	WorkerId      string                 `protobuf:"bytes,4,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	WorkDate      string                 `protobuf:"bytes,5,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	DayPortion    string                 `protobuf:"bytes,6,opt,name=day_portion,json=dayPortion,proto3" json:"day_portion,omitempty"`
+	Note          *string                `protobuf:"bytes,7,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	SubmittedAt   string                 `protobuf:"bytes,9,opt,name=submitted_at,json=submittedAt,proto3" json:"submitted_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DailyLog) Reset() {
+	*x = DailyLog{}
+	mi := &file_work_work_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DailyLog) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DailyLog) ProtoMessage() {}
+
+func (x *DailyLog) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DailyLog.ProtoReflect.Descriptor instead.
+func (*DailyLog) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DailyLog) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DailyLog) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *DailyLog) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *DailyLog) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *DailyLog) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *DailyLog) GetDayPortion() string {
+	if x != nil {
+		return x.DayPortion
+	}
+	return ""
+}
+
+func (x *DailyLog) GetNote() string {
+	if x != nil && x.Note != nil {
+		return *x.Note
+	}
+	return ""
+}
+
+func (x *DailyLog) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *DailyLog) GetSubmittedAt() string {
+	if x != nil {
+		return x.SubmittedAt
+	}
+	return ""
+}
+
+func (x *DailyLog) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type WorkPayment struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId         string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId   string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	WorkerId       string                 `protobuf:"bytes,4,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Method         string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Amount         float64                `protobuf:"fixed64,6,opt,name=amount,proto3" json:"amount,omitempty"`
+	Currency       string                 `protobuf:"bytes,7,opt,name=currency,proto3" json:"currency,omitempty"`
+	Reference      *string                `protobuf:"bytes,8,opt,name=reference,proto3,oneof" json:"reference,omitempty"`
+	Status         string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	ReceiptStatus  *string                `protobuf:"bytes,10,opt,name=receipt_status,json=receiptStatus,proto3,oneof" json:"receipt_status,omitempty"`
+	DisputeMessage *string                `protobuf:"bytes,11,opt,name=dispute_message,json=disputeMessage,proto3,oneof" json:"dispute_message,omitempty"`
+	RecordedAt     string                 `protobuf:"bytes,12,opt,name=recorded_at,json=recordedAt,proto3" json:"recorded_at,omitempty"`
+	ConfirmedAt    *string                `protobuf:"bytes,13,opt,name=confirmed_at,json=confirmedAt,proto3,oneof" json:"confirmed_at,omitempty"`
+	DisputedAt     *string                `protobuf:"bytes,14,opt,name=disputed_at,json=disputedAt,proto3,oneof" json:"disputed_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *WorkPayment) Reset() {
+	*x = WorkPayment{}
+	mi := &file_work_work_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkPayment) ProtoMessage() {}
+
+func (x *WorkPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkPayment.ProtoReflect.Descriptor instead.
+func (*WorkPayment) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *WorkPayment) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *WorkPayment) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetReference() string {
+	if x != nil && x.Reference != nil {
+		return *x.Reference
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetReceiptStatus() string {
+	if x != nil && x.ReceiptStatus != nil {
+		return *x.ReceiptStatus
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetDisputeMessage() string {
+	if x != nil && x.DisputeMessage != nil {
+		return *x.DisputeMessage
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetRecordedAt() string {
+	if x != nil {
+		return x.RecordedAt
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetConfirmedAt() string {
+	if x != nil && x.ConfirmedAt != nil {
+		return *x.ConfirmedAt
+	}
+	return ""
+}
+
+func (x *WorkPayment) GetDisputedAt() string {
+	if x != nil && x.DisputedAt != nil {
+		return *x.DisputedAt
+	}
+	return ""
+}
+
+type AssignmentLifecycleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AssignmentLifecycleRequest) Reset() {
+	*x = AssignmentLifecycleRequest{}
+	mi := &file_work_work_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignmentLifecycleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignmentLifecycleRequest) ProtoMessage() {}
+
+func (x *AssignmentLifecycleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssignmentLifecycleRequest.ProtoReflect.Descriptor instead.
+func (*AssignmentLifecycleRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *AssignmentLifecycleRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *AssignmentLifecycleRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+type AssignmentLifecycleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Assignment    *WorkAssignment        `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AssignmentLifecycleResponse) Reset() {
+	*x = AssignmentLifecycleResponse{}
+	mi := &file_work_work_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignmentLifecycleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignmentLifecycleResponse) ProtoMessage() {}
+
+func (x *AssignmentLifecycleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssignmentLifecycleResponse.ProtoReflect.Descriptor instead.
+func (*AssignmentLifecycleResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *AssignmentLifecycleResponse) GetAssignment() *WorkAssignment {
+	if x != nil {
+		return x.Assignment
+	}
+	return nil
+}
+
+type UpsertDailyLogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	WorkDate      string                 `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	DayPortion    string                 `protobuf:"bytes,4,opt,name=day_portion,json=dayPortion,proto3" json:"day_portion,omitempty"`
+	Note          *string                `protobuf:"bytes,5,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpsertDailyLogRequest) Reset() {
+	*x = UpsertDailyLogRequest{}
+	mi := &file_work_work_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertDailyLogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertDailyLogRequest) ProtoMessage() {}
+
+func (x *UpsertDailyLogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertDailyLogRequest.ProtoReflect.Descriptor instead.
+func (*UpsertDailyLogRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *UpsertDailyLogRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpsertDailyLogRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *UpsertDailyLogRequest) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *UpsertDailyLogRequest) GetDayPortion() string {
+	if x != nil {
+		return x.DayPortion
+	}
+	return ""
+}
+
+func (x *UpsertDailyLogRequest) GetNote() string {
+	if x != nil && x.Note != nil {
+		return *x.Note
+	}
+	return ""
+}
+
+type UpsertDailyLogResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DailyLog      *DailyLog              `protobuf:"bytes,1,opt,name=daily_log,json=dailyLog,proto3" json:"daily_log,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpsertDailyLogResponse) Reset() {
+	*x = UpsertDailyLogResponse{}
+	mi := &file_work_work_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertDailyLogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertDailyLogResponse) ProtoMessage() {}
+
+func (x *UpsertDailyLogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertDailyLogResponse.ProtoReflect.Descriptor instead.
+func (*UpsertDailyLogResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *UpsertDailyLogResponse) GetDailyLog() *DailyLog {
+	if x != nil {
+		return x.DailyLog
+	}
+	return nil
+}
+
+type ListAssignmentDailyLogsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAssignmentDailyLogsRequest) Reset() {
+	*x = ListAssignmentDailyLogsRequest{}
+	mi := &file_work_work_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAssignmentDailyLogsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAssignmentDailyLogsRequest) ProtoMessage() {}
+
+func (x *ListAssignmentDailyLogsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAssignmentDailyLogsRequest.ProtoReflect.Descriptor instead.
+func (*ListAssignmentDailyLogsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListAssignmentDailyLogsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListAssignmentDailyLogsRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+type ListWorkDailyLogsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkDailyLogsRequest) Reset() {
+	*x = ListWorkDailyLogsRequest{}
+	mi := &file_work_work_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkDailyLogsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkDailyLogsRequest) ProtoMessage() {}
+
+func (x *ListWorkDailyLogsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkDailyLogsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkDailyLogsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListWorkDailyLogsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListWorkDailyLogsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type ListDailyLogsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DailyLogs     []*DailyLog            `protobuf:"bytes,1,rep,name=daily_logs,json=dailyLogs,proto3" json:"daily_logs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListDailyLogsResponse) Reset() {
+	*x = ListDailyLogsResponse{}
+	mi := &file_work_work_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListDailyLogsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListDailyLogsResponse) ProtoMessage() {}
+
+func (x *ListDailyLogsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListDailyLogsResponse.ProtoReflect.Descriptor instead.
+func (*ListDailyLogsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListDailyLogsResponse) GetDailyLogs() []*DailyLog {
+	if x != nil {
+		return x.DailyLogs
+	}
+	return nil
+}
+
+type GetWorkSettlementRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkSettlementRequest) Reset() {
+	*x = GetWorkSettlementRequest{}
+	mi := &file_work_work_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkSettlementRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkSettlementRequest) ProtoMessage() {}
+
+func (x *GetWorkSettlementRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkSettlementRequest.ProtoReflect.Descriptor instead.
+func (*GetWorkSettlementRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetWorkSettlementRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetWorkSettlementRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type WorkerSettlement struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Assignment    *WorkAssignment        `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
+	Logs          []*DailyLog            `protobuf:"bytes,2,rep,name=logs,proto3" json:"logs,omitempty"`
+	Payments      []*WorkPayment         `protobuf:"bytes,3,rep,name=payments,proto3" json:"payments,omitempty"`
+	FullDays      int32                  `protobuf:"varint,4,opt,name=full_days,json=fullDays,proto3" json:"full_days,omitempty"`
+	HalfDays      int32                  `protobuf:"varint,5,opt,name=half_days,json=halfDays,proto3" json:"half_days,omitempty"`
+	DaysWorked    float64                `protobuf:"fixed64,6,opt,name=days_worked,json=daysWorked,proto3" json:"days_worked,omitempty"`
+	PayableAmount float64                `protobuf:"fixed64,7,opt,name=payable_amount,json=payableAmount,proto3" json:"payable_amount,omitempty"`
+	Currency      string                 `protobuf:"bytes,8,opt,name=currency,proto3" json:"currency,omitempty"`
+	PaymentStatus string                 `protobuf:"bytes,9,opt,name=payment_status,json=paymentStatus,proto3" json:"payment_status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkerSettlement) Reset() {
+	*x = WorkerSettlement{}
+	mi := &file_work_work_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkerSettlement) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkerSettlement) ProtoMessage() {}
+
+func (x *WorkerSettlement) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkerSettlement.ProtoReflect.Descriptor instead.
+func (*WorkerSettlement) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *WorkerSettlement) GetAssignment() *WorkAssignment {
+	if x != nil {
+		return x.Assignment
+	}
+	return nil
+}
+
+func (x *WorkerSettlement) GetLogs() []*DailyLog {
+	if x != nil {
+		return x.Logs
+	}
+	return nil
+}
+
+func (x *WorkerSettlement) GetPayments() []*WorkPayment {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+func (x *WorkerSettlement) GetFullDays() int32 {
+	if x != nil {
+		return x.FullDays
+	}
+	return 0
+}
+
+func (x *WorkerSettlement) GetHalfDays() int32 {
+	if x != nil {
+		return x.HalfDays
+	}
+	return 0
+}
+
+func (x *WorkerSettlement) GetDaysWorked() float64 {
+	if x != nil {
+		return x.DaysWorked
+	}
+	return 0
+}
+
+func (x *WorkerSettlement) GetPayableAmount() float64 {
+	if x != nil {
+		return x.PayableAmount
+	}
+	return 0
+}
+
+func (x *WorkerSettlement) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *WorkerSettlement) GetPaymentStatus() string {
+	if x != nil {
+		return x.PaymentStatus
+	}
+	return ""
+}
+
+type GetWorkSettlementResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Work          *WorkPosting           `protobuf:"bytes,1,opt,name=work,proto3" json:"work,omitempty"`
+	Workers       []*WorkerSettlement    `protobuf:"bytes,2,rep,name=workers,proto3" json:"workers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkSettlementResponse) Reset() {
+	*x = GetWorkSettlementResponse{}
+	mi := &file_work_work_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkSettlementResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkSettlementResponse) ProtoMessage() {}
+
+func (x *GetWorkSettlementResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkSettlementResponse.ProtoReflect.Descriptor instead.
+func (*GetWorkSettlementResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *GetWorkSettlementResponse) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
+func (x *GetWorkSettlementResponse) GetWorkers() []*WorkerSettlement {
+	if x != nil {
+		return x.Workers
+	}
+	return nil
+}
+
+type RecordAssignmentPaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
+	Amount        *float64               `protobuf:"fixed64,5,opt,name=amount,proto3,oneof" json:"amount,omitempty"`
+	Currency      *string                `protobuf:"bytes,6,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	Reference     *string                `protobuf:"bytes,7,opt,name=reference,proto3,oneof" json:"reference,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordAssignmentPaymentRequest) Reset() {
+	*x = RecordAssignmentPaymentRequest{}
+	mi := &file_work_work_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordAssignmentPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordAssignmentPaymentRequest) ProtoMessage() {}
+
+func (x *RecordAssignmentPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordAssignmentPaymentRequest.ProtoReflect.Descriptor instead.
+func (*RecordAssignmentPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *RecordAssignmentPaymentRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RecordAssignmentPaymentRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *RecordAssignmentPaymentRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *RecordAssignmentPaymentRequest) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *RecordAssignmentPaymentRequest) GetAmount() float64 {
+	if x != nil && x.Amount != nil {
+		return *x.Amount
+	}
+	return 0
+}
+
+func (x *RecordAssignmentPaymentRequest) GetCurrency() string {
+	if x != nil && x.Currency != nil {
+		return *x.Currency
+	}
+	return ""
+}
+
+func (x *RecordAssignmentPaymentRequest) GetReference() string {
+	if x != nil && x.Reference != nil {
+		return *x.Reference
+	}
+	return ""
+}
+
+type RecordAssignmentPaymentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payment       *WorkPayment           `protobuf:"bytes,1,opt,name=payment,proto3" json:"payment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordAssignmentPaymentResponse) Reset() {
+	*x = RecordAssignmentPaymentResponse{}
+	mi := &file_work_work_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordAssignmentPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordAssignmentPaymentResponse) ProtoMessage() {}
+
+func (x *RecordAssignmentPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordAssignmentPaymentResponse.ProtoReflect.Descriptor instead.
+func (*RecordAssignmentPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *RecordAssignmentPaymentResponse) GetPayment() *WorkPayment {
+	if x != nil {
+		return x.Payment
+	}
+	return nil
+}
+
+type ListAssignmentPaymentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAssignmentPaymentsRequest) Reset() {
+	*x = ListAssignmentPaymentsRequest{}
+	mi := &file_work_work_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAssignmentPaymentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAssignmentPaymentsRequest) ProtoMessage() {}
+
+func (x *ListAssignmentPaymentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAssignmentPaymentsRequest.ProtoReflect.Descriptor instead.
+func (*ListAssignmentPaymentsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *ListAssignmentPaymentsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListAssignmentPaymentsRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+type ListAssignmentPaymentsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payments      []*WorkPayment         `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAssignmentPaymentsResponse) Reset() {
+	*x = ListAssignmentPaymentsResponse{}
+	mi := &file_work_work_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAssignmentPaymentsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAssignmentPaymentsResponse) ProtoMessage() {}
+
+func (x *ListAssignmentPaymentsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAssignmentPaymentsResponse.ProtoReflect.Descriptor instead.
+func (*ListAssignmentPaymentsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *ListAssignmentPaymentsResponse) GetPayments() []*WorkPayment {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+type UpdateAssignmentPaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,3,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateAssignmentPaymentRequest) Reset() {
+	*x = UpdateAssignmentPaymentRequest{}
+	mi := &file_work_work_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateAssignmentPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAssignmentPaymentRequest) ProtoMessage() {}
+
+func (x *UpdateAssignmentPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAssignmentPaymentRequest.ProtoReflect.Descriptor instead.
+func (*UpdateAssignmentPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *UpdateAssignmentPaymentRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateAssignmentPaymentRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *UpdateAssignmentPaymentRequest) GetPaymentId() string {
+	if x != nil {
+		return x.PaymentId
+	}
+	return ""
+}
+
+type DisputeAssignmentPaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,3,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	Message       *string                `protobuf:"bytes,4,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DisputeAssignmentPaymentRequest) Reset() {
+	*x = DisputeAssignmentPaymentRequest{}
+	mi := &file_work_work_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DisputeAssignmentPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DisputeAssignmentPaymentRequest) ProtoMessage() {}
+
+func (x *DisputeAssignmentPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DisputeAssignmentPaymentRequest.ProtoReflect.Descriptor instead.
+func (*DisputeAssignmentPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *DisputeAssignmentPaymentRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DisputeAssignmentPaymentRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *DisputeAssignmentPaymentRequest) GetPaymentId() string {
+	if x != nil {
+		return x.PaymentId
+	}
+	return ""
+}
+
+func (x *DisputeAssignmentPaymentRequest) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
+type AgreedPayment struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	RateType         string                 `protobuf:"bytes,1,opt,name=rate_type,json=rateType,proto3" json:"rate_type,omitempty"`
+	RateUnit         string                 `protobuf:"bytes,2,opt,name=rate_unit,json=rateUnit,proto3" json:"rate_unit,omitempty"`
+	RateMinor        int64                  `protobuf:"varint,3,opt,name=rate_minor,json=rateMinor,proto3" json:"rate_minor,omitempty"`
+	Currency         string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	FixedAmountMinor *int64                 `protobuf:"varint,5,opt,name=fixed_amount_minor,json=fixedAmountMinor,proto3,oneof" json:"fixed_amount_minor,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *AgreedPayment) Reset() {
+	*x = AgreedPayment{}
+	mi := &file_work_work_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgreedPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgreedPayment) ProtoMessage() {}
+
+func (x *AgreedPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgreedPayment.ProtoReflect.Descriptor instead.
+func (*AgreedPayment) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *AgreedPayment) GetRateType() string {
+	if x != nil {
+		return x.RateType
+	}
+	return ""
+}
+
+func (x *AgreedPayment) GetRateUnit() string {
+	if x != nil {
+		return x.RateUnit
+	}
+	return ""
+}
+
+func (x *AgreedPayment) GetRateMinor() int64 {
+	if x != nil {
+		return x.RateMinor
+	}
+	return 0
+}
+
+func (x *AgreedPayment) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *AgreedPayment) GetFixedAmountMinor() int64 {
+	if x != nil && x.FixedAmountMinor != nil {
+		return *x.FixedAmountMinor
+	}
+	return 0
+}
+
+type WorkerDayRecordItem struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	AssignmentId         string                 `protobuf:"bytes,1,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	WorkerProfileId      string                 `protobuf:"bytes,2,opt,name=worker_profile_id,json=workerProfileId,proto3" json:"worker_profile_id,omitempty"`
+	WorkerName           string                 `protobuf:"bytes,3,opt,name=worker_name,json=workerName,proto3" json:"worker_name,omitempty"`
+	DayType              *string                `protobuf:"bytes,4,opt,name=day_type,json=dayType,proto3,oneof" json:"day_type,omitempty"`
+	PayableUnits         *float64               `protobuf:"fixed64,5,opt,name=payable_units,json=payableUnits,proto3,oneof" json:"payable_units,omitempty"`
+	AgreedRateMinor      int64                  `protobuf:"varint,6,opt,name=agreed_rate_minor,json=agreedRateMinor,proto3" json:"agreed_rate_minor,omitempty"`
+	EstimatedAmountMinor int64                  `protobuf:"varint,7,opt,name=estimated_amount_minor,json=estimatedAmountMinor,proto3" json:"estimated_amount_minor,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *WorkerDayRecordItem) Reset() {
+	*x = WorkerDayRecordItem{}
+	mi := &file_work_work_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkerDayRecordItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkerDayRecordItem) ProtoMessage() {}
+
+func (x *WorkerDayRecordItem) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkerDayRecordItem.ProtoReflect.Descriptor instead.
+func (*WorkerDayRecordItem) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *WorkerDayRecordItem) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkerDayRecordItem) GetWorkerProfileId() string {
+	if x != nil {
+		return x.WorkerProfileId
+	}
+	return ""
+}
+
+func (x *WorkerDayRecordItem) GetWorkerName() string {
+	if x != nil {
+		return x.WorkerName
+	}
+	return ""
+}
+
+func (x *WorkerDayRecordItem) GetDayType() string {
+	if x != nil && x.DayType != nil {
+		return *x.DayType
+	}
+	return ""
+}
+
+func (x *WorkerDayRecordItem) GetPayableUnits() float64 {
+	if x != nil && x.PayableUnits != nil {
+		return *x.PayableUnits
+	}
+	return 0
+}
+
+func (x *WorkerDayRecordItem) GetAgreedRateMinor() int64 {
+	if x != nil {
+		return x.AgreedRateMinor
+	}
+	return 0
+}
+
+func (x *WorkerDayRecordItem) GetEstimatedAmountMinor() int64 {
+	if x != nil {
+		return x.EstimatedAmountMinor
+	}
+	return 0
+}
+
+type GetWorkDayRecordsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkDate      string                 `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkDayRecordsRequest) Reset() {
+	*x = GetWorkDayRecordsRequest{}
+	mi := &file_work_work_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkDayRecordsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkDayRecordsRequest) ProtoMessage() {}
+
+func (x *GetWorkDayRecordsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkDayRecordsRequest.ProtoReflect.Descriptor instead.
+func (*GetWorkDayRecordsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *GetWorkDayRecordsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetWorkDayRecordsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetWorkDayRecordsRequest) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+type GetWorkDayRecordsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkId        string                 `protobuf:"bytes,1,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkDate      string                 `protobuf:"bytes,2,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	Workers       []*WorkerDayRecordItem `protobuf:"bytes,3,rep,name=workers,proto3" json:"workers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkDayRecordsResponse) Reset() {
+	*x = GetWorkDayRecordsResponse{}
+	mi := &file_work_work_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkDayRecordsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkDayRecordsResponse) ProtoMessage() {}
+
+func (x *GetWorkDayRecordsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkDayRecordsResponse.ProtoReflect.Descriptor instead.
+func (*GetWorkDayRecordsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetWorkDayRecordsResponse) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetWorkDayRecordsResponse) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *GetWorkDayRecordsResponse) GetWorkers() []*WorkerDayRecordItem {
+	if x != nil {
+		return x.Workers
+	}
+	return nil
+}
+
+type SaveWorkDayRecordInput struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssignmentId  string                 `protobuf:"bytes,1,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	DayType       string                 `protobuf:"bytes,2,opt,name=day_type,json=dayType,proto3" json:"day_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveWorkDayRecordInput) Reset() {
+	*x = SaveWorkDayRecordInput{}
+	mi := &file_work_work_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveWorkDayRecordInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveWorkDayRecordInput) ProtoMessage() {}
+
+func (x *SaveWorkDayRecordInput) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveWorkDayRecordInput.ProtoReflect.Descriptor instead.
+func (*SaveWorkDayRecordInput) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *SaveWorkDayRecordInput) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *SaveWorkDayRecordInput) GetDayType() string {
+	if x != nil {
+		return x.DayType
+	}
+	return ""
+}
+
+type SaveWorkDayRecordsRequest struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	UserId        string                    `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                    `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkDate      string                    `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	Records       []*SaveWorkDayRecordInput `protobuf:"bytes,4,rep,name=records,proto3" json:"records,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveWorkDayRecordsRequest) Reset() {
+	*x = SaveWorkDayRecordsRequest{}
+	mi := &file_work_work_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveWorkDayRecordsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveWorkDayRecordsRequest) ProtoMessage() {}
+
+func (x *SaveWorkDayRecordsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveWorkDayRecordsRequest.ProtoReflect.Descriptor instead.
+func (*SaveWorkDayRecordsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *SaveWorkDayRecordsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *SaveWorkDayRecordsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *SaveWorkDayRecordsRequest) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *SaveWorkDayRecordsRequest) GetRecords() []*SaveWorkDayRecordInput {
+	if x != nil {
+		return x.Records
+	}
+	return nil
+}
+
+type WorkerWorkSummary struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	AssignmentId          string                 `protobuf:"bytes,1,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	WorkerProfileId       string                 `protobuf:"bytes,2,opt,name=worker_profile_id,json=workerProfileId,proto3" json:"worker_profile_id,omitempty"`
+	WorkerName            string                 `protobuf:"bytes,3,opt,name=worker_name,json=workerName,proto3" json:"worker_name,omitempty"`
+	FullDays              int32                  `protobuf:"varint,4,opt,name=full_days,json=fullDays,proto3" json:"full_days,omitempty"`
+	HalfDays              int32                  `protobuf:"varint,5,opt,name=half_days,json=halfDays,proto3" json:"half_days,omitempty"`
+	NotWorkedDays         int32                  `protobuf:"varint,6,opt,name=not_worked_days,json=notWorkedDays,proto3" json:"not_worked_days,omitempty"`
+	UnrecordedDays        int32                  `protobuf:"varint,7,opt,name=unrecorded_days,json=unrecordedDays,proto3" json:"unrecorded_days,omitempty"`
+	PayableDays           float64                `protobuf:"fixed64,8,opt,name=payable_days,json=payableDays,proto3" json:"payable_days,omitempty"`
+	AgreedRateMinor       int64                  `protobuf:"varint,9,opt,name=agreed_rate_minor,json=agreedRateMinor,proto3" json:"agreed_rate_minor,omitempty"`
+	CalculatedAmountMinor int64                  `protobuf:"varint,10,opt,name=calculated_amount_minor,json=calculatedAmountMinor,proto3" json:"calculated_amount_minor,omitempty"`
+	Currency              string                 `protobuf:"bytes,11,opt,name=currency,proto3" json:"currency,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *WorkerWorkSummary) Reset() {
+	*x = WorkerWorkSummary{}
+	mi := &file_work_work_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkerWorkSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkerWorkSummary) ProtoMessage() {}
+
+func (x *WorkerWorkSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkerWorkSummary.ProtoReflect.Descriptor instead.
+func (*WorkerWorkSummary) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *WorkerWorkSummary) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkerWorkSummary) GetWorkerProfileId() string {
+	if x != nil {
+		return x.WorkerProfileId
+	}
+	return ""
+}
+
+func (x *WorkerWorkSummary) GetWorkerName() string {
+	if x != nil {
+		return x.WorkerName
+	}
+	return ""
+}
+
+func (x *WorkerWorkSummary) GetFullDays() int32 {
+	if x != nil {
+		return x.FullDays
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetHalfDays() int32 {
+	if x != nil {
+		return x.HalfDays
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetNotWorkedDays() int32 {
+	if x != nil {
+		return x.NotWorkedDays
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetUnrecordedDays() int32 {
+	if x != nil {
+		return x.UnrecordedDays
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetPayableDays() float64 {
+	if x != nil {
+		return x.PayableDays
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetAgreedRateMinor() int64 {
+	if x != nil {
+		return x.AgreedRateMinor
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetCalculatedAmountMinor() int64 {
+	if x != nil {
+		return x.CalculatedAmountMinor
+	}
+	return 0
+}
+
+func (x *WorkerWorkSummary) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+type GetWorkerWorkSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkerWorkSummaryRequest) Reset() {
+	*x = GetWorkerWorkSummaryRequest{}
+	mi := &file_work_work_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkerWorkSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkerWorkSummaryRequest) ProtoMessage() {}
+
+func (x *GetWorkerWorkSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkerWorkSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetWorkerWorkSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GetWorkerWorkSummaryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetWorkerWorkSummaryRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type GetWorkerWorkSummaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkId        string                 `protobuf:"bytes,1,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	Workers       []*WorkerWorkSummary   `protobuf:"bytes,2,rep,name=workers,proto3" json:"workers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkerWorkSummaryResponse) Reset() {
+	*x = GetWorkerWorkSummaryResponse{}
+	mi := &file_work_work_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkerWorkSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkerWorkSummaryResponse) ProtoMessage() {}
+
+func (x *GetWorkerWorkSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkerWorkSummaryResponse.ProtoReflect.Descriptor instead.
+func (*GetWorkerWorkSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *GetWorkerWorkSummaryResponse) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetWorkerWorkSummaryResponse) GetWorkers() []*WorkerWorkSummary {
+	if x != nil {
+		return x.Workers
+	}
+	return nil
+}
+
+type ContractorInfo struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	AssignmentId         string                 `protobuf:"bytes,1,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	ContractorProfileId  string                 `protobuf:"bytes,2,opt,name=contractor_profile_id,json=contractorProfileId,proto3" json:"contractor_profile_id,omitempty"`
+	ContractorName       string                 `protobuf:"bytes,3,opt,name=contractor_name,json=contractorName,proto3" json:"contractor_name,omitempty"`
+	CommittedWorkerCount int32                  `protobuf:"varint,4,opt,name=committed_worker_count,json=committedWorkerCount,proto3" json:"committed_worker_count,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *ContractorInfo) Reset() {
+	*x = ContractorInfo{}
+	mi := &file_work_work_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContractorInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContractorInfo) ProtoMessage() {}
+
+func (x *ContractorInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContractorInfo.ProtoReflect.Descriptor instead.
+func (*ContractorInfo) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *ContractorInfo) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *ContractorInfo) GetContractorProfileId() string {
+	if x != nil {
+		return x.ContractorProfileId
+	}
+	return ""
+}
+
+func (x *ContractorInfo) GetContractorName() string {
+	if x != nil {
+		return x.ContractorName
+	}
+	return ""
+}
+
+func (x *ContractorInfo) GetCommittedWorkerCount() int32 {
+	if x != nil {
+		return x.CommittedWorkerCount
+	}
+	return 0
+}
+
+type ContractorWorkRecordItem struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	WorkDate            string                 `protobuf:"bytes,1,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	DeployedWorkerCount int32                  `protobuf:"varint,2,opt,name=deployed_worker_count,json=deployedWorkerCount,proto3" json:"deployed_worker_count,omitempty"`
+	Shortfall           int32                  `protobuf:"varint,3,opt,name=shortfall,proto3" json:"shortfall,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ContractorWorkRecordItem) Reset() {
+	*x = ContractorWorkRecordItem{}
+	mi := &file_work_work_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContractorWorkRecordItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContractorWorkRecordItem) ProtoMessage() {}
+
+func (x *ContractorWorkRecordItem) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContractorWorkRecordItem.ProtoReflect.Descriptor instead.
+func (*ContractorWorkRecordItem) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *ContractorWorkRecordItem) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *ContractorWorkRecordItem) GetDeployedWorkerCount() int32 {
+	if x != nil {
+		return x.DeployedWorkerCount
+	}
+	return 0
+}
+
+func (x *ContractorWorkRecordItem) GetShortfall() int32 {
+	if x != nil {
+		return x.Shortfall
+	}
+	return 0
+}
+
+type GetContractorWorkRecordsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkDate      *string                `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3,oneof" json:"work_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractorWorkRecordsRequest) Reset() {
+	*x = GetContractorWorkRecordsRequest{}
+	mi := &file_work_work_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractorWorkRecordsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractorWorkRecordsRequest) ProtoMessage() {}
+
+func (x *GetContractorWorkRecordsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractorWorkRecordsRequest.ProtoReflect.Descriptor instead.
+func (*GetContractorWorkRecordsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *GetContractorWorkRecordsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkRecordsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkRecordsRequest) GetWorkDate() string {
+	if x != nil && x.WorkDate != nil {
+		return *x.WorkDate
+	}
+	return ""
+}
+
+type GetContractorWorkRecordsResponse struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	WorkId        string                      `protobuf:"bytes,1,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	Contractor    *ContractorInfo             `protobuf:"bytes,2,opt,name=contractor,proto3" json:"contractor,omitempty"`
+	Records       []*ContractorWorkRecordItem `protobuf:"bytes,3,rep,name=records,proto3" json:"records,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractorWorkRecordsResponse) Reset() {
+	*x = GetContractorWorkRecordsResponse{}
+	mi := &file_work_work_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractorWorkRecordsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractorWorkRecordsResponse) ProtoMessage() {}
+
+func (x *GetContractorWorkRecordsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractorWorkRecordsResponse.ProtoReflect.Descriptor instead.
+func (*GetContractorWorkRecordsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *GetContractorWorkRecordsResponse) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkRecordsResponse) GetContractor() *ContractorInfo {
+	if x != nil {
+		return x.Contractor
+	}
+	return nil
+}
+
+func (x *GetContractorWorkRecordsResponse) GetRecords() []*ContractorWorkRecordItem {
+	if x != nil {
+		return x.Records
+	}
+	return nil
+}
+
+type SaveContractorWorkRecordRequest struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	UserId              string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId              string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkDate            string                 `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	DeployedWorkerCount int32                  `protobuf:"varint,4,opt,name=deployed_worker_count,json=deployedWorkerCount,proto3" json:"deployed_worker_count,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *SaveContractorWorkRecordRequest) Reset() {
+	*x = SaveContractorWorkRecordRequest{}
+	mi := &file_work_work_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveContractorWorkRecordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveContractorWorkRecordRequest) ProtoMessage() {}
+
+func (x *SaveContractorWorkRecordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveContractorWorkRecordRequest.ProtoReflect.Descriptor instead.
+func (*SaveContractorWorkRecordRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *SaveContractorWorkRecordRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *SaveContractorWorkRecordRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *SaveContractorWorkRecordRequest) GetWorkDate() string {
+	if x != nil {
+		return x.WorkDate
+	}
+	return ""
+}
+
+func (x *SaveContractorWorkRecordRequest) GetDeployedWorkerCount() int32 {
+	if x != nil {
+		return x.DeployedWorkerCount
+	}
+	return 0
+}
+
+type GetContractorWorkSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractorWorkSummaryRequest) Reset() {
+	*x = GetContractorWorkSummaryRequest{}
+	mi := &file_work_work_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractorWorkSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractorWorkSummaryRequest) ProtoMessage() {}
+
+func (x *GetContractorWorkSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractorWorkSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetContractorWorkSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *GetContractorWorkSummaryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type GetContractorWorkSummaryResponse struct {
+	state                   protoimpl.MessageState `protogen:"open.v1"`
+	WorkId                  string                 `protobuf:"bytes,1,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId            string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	ContractorProfileId     string                 `protobuf:"bytes,3,opt,name=contractor_profile_id,json=contractorProfileId,proto3" json:"contractor_profile_id,omitempty"`
+	ContractorName          string                 `protobuf:"bytes,4,opt,name=contractor_name,json=contractorName,proto3" json:"contractor_name,omitempty"`
+	CommittedWorkerCount    int32                  `protobuf:"varint,5,opt,name=committed_worker_count,json=committedWorkerCount,proto3" json:"committed_worker_count,omitempty"`
+	TotalRecordedDays       int32                  `protobuf:"varint,6,opt,name=total_recorded_days,json=totalRecordedDays,proto3" json:"total_recorded_days,omitempty"`
+	TotalDeployedWorkerDays int32                  `protobuf:"varint,7,opt,name=total_deployed_worker_days,json=totalDeployedWorkerDays,proto3" json:"total_deployed_worker_days,omitempty"`
+	AverageDeployedWorkers  float64                `protobuf:"fixed64,8,opt,name=average_deployed_workers,json=averageDeployedWorkers,proto3" json:"average_deployed_workers,omitempty"`
+	TotalShortfall          int32                  `protobuf:"varint,9,opt,name=total_shortfall,json=totalShortfall,proto3" json:"total_shortfall,omitempty"`
+	RateType                string                 `protobuf:"bytes,10,opt,name=rate_type,json=rateType,proto3" json:"rate_type,omitempty"`
+	RateMinor               int64                  `protobuf:"varint,11,opt,name=rate_minor,json=rateMinor,proto3" json:"rate_minor,omitempty"`
+	CompletedQuantity       float64                `protobuf:"fixed64,12,opt,name=completed_quantity,json=completedQuantity,proto3" json:"completed_quantity,omitempty"`
+	EstimatedAmountMinor    int64                  `protobuf:"varint,13,opt,name=estimated_amount_minor,json=estimatedAmountMinor,proto3" json:"estimated_amount_minor,omitempty"`
+	Currency                string                 `protobuf:"bytes,14,opt,name=currency,proto3" json:"currency,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *GetContractorWorkSummaryResponse) Reset() {
+	*x = GetContractorWorkSummaryResponse{}
+	mi := &file_work_work_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractorWorkSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractorWorkSummaryResponse) ProtoMessage() {}
+
+func (x *GetContractorWorkSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractorWorkSummaryResponse.ProtoReflect.Descriptor instead.
+func (*GetContractorWorkSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *GetContractorWorkSummaryResponse) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryResponse) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryResponse) GetContractorProfileId() string {
+	if x != nil {
+		return x.ContractorProfileId
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryResponse) GetContractorName() string {
+	if x != nil {
+		return x.ContractorName
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryResponse) GetCommittedWorkerCount() int32 {
+	if x != nil {
+		return x.CommittedWorkerCount
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetTotalRecordedDays() int32 {
+	if x != nil {
+		return x.TotalRecordedDays
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetTotalDeployedWorkerDays() int32 {
+	if x != nil {
+		return x.TotalDeployedWorkerDays
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetAverageDeployedWorkers() float64 {
+	if x != nil {
+		return x.AverageDeployedWorkers
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetTotalShortfall() int32 {
+	if x != nil {
+		return x.TotalShortfall
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetRateType() string {
+	if x != nil {
+		return x.RateType
+	}
+	return ""
+}
+
+func (x *GetContractorWorkSummaryResponse) GetRateMinor() int64 {
+	if x != nil {
+		return x.RateMinor
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetCompletedQuantity() float64 {
+	if x != nil {
+		return x.CompletedQuantity
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetEstimatedAmountMinor() int64 {
+	if x != nil {
+		return x.EstimatedAmountMinor
+	}
+	return 0
+}
+
+func (x *GetContractorWorkSummaryResponse) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+type PaymentTransaction struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	PaymentObligationId string                 `protobuf:"bytes,2,opt,name=payment_obligation_id,json=paymentObligationId,proto3" json:"payment_obligation_id,omitempty"`
+	WorkId              string                 `protobuf:"bytes,3,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId        string                 `protobuf:"bytes,4,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	AmountMinor         int64                  `protobuf:"varint,5,opt,name=amount_minor,json=amountMinor,proto3" json:"amount_minor,omitempty"`
+	PaymentMethod       string                 `protobuf:"bytes,6,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Reference           *string                `protobuf:"bytes,7,opt,name=reference,proto3,oneof" json:"reference,omitempty"`
+	RecordedBy          string                 `protobuf:"bytes,8,opt,name=recorded_by,json=recordedBy,proto3" json:"recorded_by,omitempty"`
+	PaidAt              string                 `protobuf:"bytes,9,opt,name=paid_at,json=paidAt,proto3" json:"paid_at,omitempty"`
+	CreatedAt           string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ReceiptStatus       *string                `protobuf:"bytes,11,opt,name=receipt_status,json=receiptStatus,proto3,oneof" json:"receipt_status,omitempty"`
+	ConfirmedAt         *string                `protobuf:"bytes,12,opt,name=confirmed_at,json=confirmedAt,proto3,oneof" json:"confirmed_at,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *PaymentTransaction) Reset() {
+	*x = PaymentTransaction{}
+	mi := &file_work_work_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PaymentTransaction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PaymentTransaction) ProtoMessage() {}
+
+func (x *PaymentTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PaymentTransaction.ProtoReflect.Descriptor instead.
+func (*PaymentTransaction) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *PaymentTransaction) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetPaymentObligationId() string {
+	if x != nil {
+		return x.PaymentObligationId
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetAmountMinor() int64 {
+	if x != nil {
+		return x.AmountMinor
+	}
+	return 0
+}
+
+func (x *PaymentTransaction) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetReference() string {
+	if x != nil && x.Reference != nil {
+		return *x.Reference
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetRecordedBy() string {
+	if x != nil {
+		return x.RecordedBy
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetPaidAt() string {
+	if x != nil {
+		return x.PaidAt
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetReceiptStatus() string {
+	if x != nil && x.ReceiptStatus != nil {
+		return *x.ReceiptStatus
+	}
+	return ""
+}
+
+func (x *PaymentTransaction) GetConfirmedAt() string {
+	if x != nil && x.ConfirmedAt != nil {
+		return *x.ConfirmedAt
+	}
+	return ""
+}
+
+type PaymentObligation struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId             string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId       string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	PayeeType          string                 `protobuf:"bytes,4,opt,name=payee_type,json=payeeType,proto3" json:"payee_type,omitempty"`
+	PayeeId            string                 `protobuf:"bytes,5,opt,name=payee_id,json=payeeId,proto3" json:"payee_id,omitempty"`
+	PayeeName          string                 `protobuf:"bytes,6,opt,name=payee_name,json=payeeName,proto3" json:"payee_name,omitempty"`
+	Currency           string                 `protobuf:"bytes,7,opt,name=currency,proto3" json:"currency,omitempty"`
+	PayableAmountMinor int64                  `protobuf:"varint,8,opt,name=payable_amount_minor,json=payableAmountMinor,proto3" json:"payable_amount_minor,omitempty"`
+	PaidAmountMinor    int64                  `protobuf:"varint,9,opt,name=paid_amount_minor,json=paidAmountMinor,proto3" json:"paid_amount_minor,omitempty"`
+	Status             string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *PaymentObligation) Reset() {
+	*x = PaymentObligation{}
+	mi := &file_work_work_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PaymentObligation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PaymentObligation) ProtoMessage() {}
+
+func (x *PaymentObligation) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PaymentObligation.ProtoReflect.Descriptor instead.
+func (*PaymentObligation) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *PaymentObligation) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetPayeeType() string {
+	if x != nil {
+		return x.PayeeType
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetPayeeId() string {
+	if x != nil {
+		return x.PayeeId
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetPayeeName() string {
+	if x != nil {
+		return x.PayeeName
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetPayableAmountMinor() int64 {
+	if x != nil {
+		return x.PayableAmountMinor
+	}
+	return 0
+}
+
+func (x *PaymentObligation) GetPaidAmountMinor() int64 {
+	if x != nil {
+		return x.PaidAmountMinor
+	}
+	return 0
+}
+
+func (x *PaymentObligation) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *PaymentObligation) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type WorkPaymentItem struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Obligation           *PaymentObligation     `protobuf:"bytes,1,opt,name=obligation,proto3" json:"obligation,omitempty"`
+	AssignmentId         string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	PayeeType            string                 `protobuf:"bytes,3,opt,name=payee_type,json=payeeType,proto3" json:"payee_type,omitempty"`
+	PayeeId              string                 `protobuf:"bytes,4,opt,name=payee_id,json=payeeId,proto3" json:"payee_id,omitempty"`
+	PayeeName            string                 `protobuf:"bytes,5,opt,name=payee_name,json=payeeName,proto3" json:"payee_name,omitempty"`
+	RateType             string                 `protobuf:"bytes,6,opt,name=rate_type,json=rateType,proto3" json:"rate_type,omitempty"`
+	PayableAmountMinor   int64                  `protobuf:"varint,7,opt,name=payable_amount_minor,json=payableAmountMinor,proto3" json:"payable_amount_minor,omitempty"`
+	PaidAmountMinor      int64                  `protobuf:"varint,8,opt,name=paid_amount_minor,json=paidAmountMinor,proto3" json:"paid_amount_minor,omitempty"`
+	RemainingAmountMinor int64                  `protobuf:"varint,9,opt,name=remaining_amount_minor,json=remainingAmountMinor,proto3" json:"remaining_amount_minor,omitempty"`
+	Status               string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	Transactions         []*PaymentTransaction  `protobuf:"bytes,11,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	ReceiptStatus        *string                `protobuf:"bytes,12,opt,name=receipt_status,json=receiptStatus,proto3,oneof" json:"receipt_status,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *WorkPaymentItem) Reset() {
+	*x = WorkPaymentItem{}
+	mi := &file_work_work_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkPaymentItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkPaymentItem) ProtoMessage() {}
+
+func (x *WorkPaymentItem) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkPaymentItem.ProtoReflect.Descriptor instead.
+func (*WorkPaymentItem) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *WorkPaymentItem) GetObligation() *PaymentObligation {
+	if x != nil {
+		return x.Obligation
+	}
+	return nil
+}
+
+func (x *WorkPaymentItem) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetPayeeType() string {
+	if x != nil {
+		return x.PayeeType
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetPayeeId() string {
+	if x != nil {
+		return x.PayeeId
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetPayeeName() string {
+	if x != nil {
+		return x.PayeeName
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetRateType() string {
+	if x != nil {
+		return x.RateType
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetPayableAmountMinor() int64 {
+	if x != nil {
+		return x.PayableAmountMinor
+	}
+	return 0
+}
+
+func (x *WorkPaymentItem) GetPaidAmountMinor() int64 {
+	if x != nil {
+		return x.PaidAmountMinor
+	}
+	return 0
+}
+
+func (x *WorkPaymentItem) GetRemainingAmountMinor() int64 {
+	if x != nil {
+		return x.RemainingAmountMinor
+	}
+	return 0
+}
+
+func (x *WorkPaymentItem) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *WorkPaymentItem) GetTransactions() []*PaymentTransaction {
+	if x != nil {
+		return x.Transactions
+	}
+	return nil
+}
+
+func (x *WorkPaymentItem) GetReceiptStatus() string {
+	if x != nil && x.ReceiptStatus != nil {
+		return *x.ReceiptStatus
+	}
+	return ""
+}
+
+type GetWorkPaymentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWorkPaymentsRequest) Reset() {
+	*x = GetWorkPaymentsRequest{}
+	mi := &file_work_work_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkPaymentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkPaymentsRequest) ProtoMessage() {}
+
+func (x *GetWorkPaymentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkPaymentsRequest.ProtoReflect.Descriptor instead.
+func (*GetWorkPaymentsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *GetWorkPaymentsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetWorkPaymentsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type GetWorkPaymentsResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	WorkId           string                 `protobuf:"bytes,1,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	HiringMode       string                 `protobuf:"bytes,2,opt,name=hiring_mode,json=hiringMode,proto3" json:"hiring_mode,omitempty"`
+	OutstandingMinor int64                  `protobuf:"varint,3,opt,name=outstanding_minor,json=outstandingMinor,proto3" json:"outstanding_minor,omitempty"`
+	Payments         []*WorkPaymentItem     `protobuf:"bytes,4,rep,name=payments,proto3" json:"payments,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *GetWorkPaymentsResponse) Reset() {
+	*x = GetWorkPaymentsResponse{}
+	mi := &file_work_work_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWorkPaymentsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWorkPaymentsResponse) ProtoMessage() {}
+
+func (x *GetWorkPaymentsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWorkPaymentsResponse.ProtoReflect.Descriptor instead.
+func (*GetWorkPaymentsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *GetWorkPaymentsResponse) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *GetWorkPaymentsResponse) GetHiringMode() string {
+	if x != nil {
+		return x.HiringMode
+	}
+	return ""
+}
+
+func (x *GetWorkPaymentsResponse) GetOutstandingMinor() int64 {
+	if x != nil {
+		return x.OutstandingMinor
+	}
+	return 0
+}
+
+func (x *GetWorkPaymentsResponse) GetPayments() []*WorkPaymentItem {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+type OfferedPayment struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Amount        float64                `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	Currency      string                 `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
+	RateBasis     string                 `protobuf:"bytes,3,opt,name=rate_basis,json=rateBasis,proto3" json:"rate_basis,omitempty"`
+	RateUnit      *string                `protobuf:"bytes,4,opt,name=rate_unit,json=rateUnit,proto3,oneof" json:"rate_unit,omitempty"`
+	Notes         *string                `protobuf:"bytes,5,opt,name=notes,proto3,oneof" json:"notes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OfferedPayment) Reset() {
+	*x = OfferedPayment{}
+	mi := &file_work_work_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OfferedPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OfferedPayment) ProtoMessage() {}
+
+func (x *OfferedPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OfferedPayment.ProtoReflect.Descriptor instead.
+func (*OfferedPayment) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *OfferedPayment) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *OfferedPayment) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OfferedPayment) GetRateBasis() string {
+	if x != nil {
+		return x.RateBasis
+	}
+	return ""
+}
+
+func (x *OfferedPayment) GetRateUnit() string {
+	if x != nil && x.RateUnit != nil {
+		return *x.RateUnit
+	}
+	return ""
+}
+
+func (x *OfferedPayment) GetNotes() string {
+	if x != nil && x.Notes != nil {
+		return *x.Notes
+	}
+	return ""
+}
+
+type WorkInvitation struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId         string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	OwnerId        string                 `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	WorkerId       string                 `protobuf:"bytes,4,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Status         string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	ApplicantType  string                 `protobuf:"bytes,6,opt,name=applicant_type,json=applicantType,proto3" json:"applicant_type,omitempty"`
+	SeatCount      int32                  `protobuf:"varint,7,opt,name=seat_count,json=seatCount,proto3" json:"seat_count,omitempty"`
+	OfferedPayment *OfferedPayment        `protobuf:"bytes,8,opt,name=offered_payment,json=offeredPayment,proto3" json:"offered_payment,omitempty"`
+	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ExpiresAt      string                 `protobuf:"bytes,11,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	RespondedAt    *string                `protobuf:"bytes,12,opt,name=responded_at,json=respondedAt,proto3,oneof" json:"responded_at,omitempty"`
+	AssignmentId   *string                `protobuf:"bytes,13,opt,name=assignment_id,json=assignmentId,proto3,oneof" json:"assignment_id,omitempty"`
+	OwnerName      *string                `protobuf:"bytes,14,opt,name=owner_name,json=ownerName,proto3,oneof" json:"owner_name,omitempty"`
+	Work           *WorkPosting           `protobuf:"bytes,15,opt,name=work,proto3" json:"work,omitempty"`
+	WorkerName     *string                `protobuf:"bytes,16,opt,name=worker_name,json=workerName,proto3,oneof" json:"worker_name,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *WorkInvitation) Reset() {
+	*x = WorkInvitation{}
+	mi := &file_work_work_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkInvitation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkInvitation) ProtoMessage() {}
+
+func (x *WorkInvitation) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkInvitation.ProtoReflect.Descriptor instead.
+func (*WorkInvitation) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *WorkInvitation) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetOwnerId() string {
+	if x != nil {
+		return x.OwnerId
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetApplicantType() string {
+	if x != nil {
+		return x.ApplicantType
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetSeatCount() int32 {
+	if x != nil {
+		return x.SeatCount
+	}
+	return 0
+}
+
+func (x *WorkInvitation) GetOfferedPayment() *OfferedPayment {
+	if x != nil {
+		return x.OfferedPayment
+	}
+	return nil
+}
+
+func (x *WorkInvitation) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetExpiresAt() string {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetRespondedAt() string {
+	if x != nil && x.RespondedAt != nil {
+		return *x.RespondedAt
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetAssignmentId() string {
+	if x != nil && x.AssignmentId != nil {
+		return *x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetOwnerName() string {
+	if x != nil && x.OwnerName != nil {
+		return *x.OwnerName
+	}
+	return ""
+}
+
+func (x *WorkInvitation) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
+func (x *WorkInvitation) GetWorkerName() string {
+	if x != nil && x.WorkerName != nil {
+		return *x.WorkerName
+	}
+	return ""
+}
+
+type InvitationCreateResult struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkerId      string                 `protobuf:"bytes,1,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	Outcome       string                 `protobuf:"bytes,2,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	Invitation    *WorkInvitation        `protobuf:"bytes,4,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InvitationCreateResult) Reset() {
+	*x = InvitationCreateResult{}
+	mi := &file_work_work_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InvitationCreateResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvitationCreateResult) ProtoMessage() {}
+
+func (x *InvitationCreateResult) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvitationCreateResult.ProtoReflect.Descriptor instead.
+func (*InvitationCreateResult) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *InvitationCreateResult) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+func (x *InvitationCreateResult) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
+}
+
+func (x *InvitationCreateResult) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *InvitationCreateResult) GetInvitation() *WorkInvitation {
+	if x != nil {
+		return x.Invitation
+	}
+	return nil
+}
+
+type EligibleRecruitmentWork struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Work          *WorkPosting           `protobuf:"bytes,1,opt,name=work,proto3" json:"work,omitempty"`
+	Eligible      bool                   `protobuf:"varint,2,opt,name=eligible,proto3" json:"eligible,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	SeatCount     int32                  `protobuf:"varint,4,opt,name=seat_count,json=seatCount,proto3" json:"seat_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EligibleRecruitmentWork) Reset() {
+	*x = EligibleRecruitmentWork{}
+	mi := &file_work_work_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EligibleRecruitmentWork) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EligibleRecruitmentWork) ProtoMessage() {}
+
+func (x *EligibleRecruitmentWork) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EligibleRecruitmentWork.ProtoReflect.Descriptor instead.
+func (*EligibleRecruitmentWork) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *EligibleRecruitmentWork) GetWork() *WorkPosting {
+	if x != nil {
+		return x.Work
+	}
+	return nil
+}
+
+func (x *EligibleRecruitmentWork) GetEligible() bool {
+	if x != nil {
+		return x.Eligible
+	}
+	return false
+}
+
+func (x *EligibleRecruitmentWork) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *EligibleRecruitmentWork) GetSeatCount() int32 {
+	if x != nil {
+		return x.SeatCount
+	}
+	return 0
+}
+
+type ListEligibleRecruitmentWorksRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkerId      string                 `protobuf:"bytes,2,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListEligibleRecruitmentWorksRequest) Reset() {
+	*x = ListEligibleRecruitmentWorksRequest{}
+	mi := &file_work_work_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEligibleRecruitmentWorksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEligibleRecruitmentWorksRequest) ProtoMessage() {}
+
+func (x *ListEligibleRecruitmentWorksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEligibleRecruitmentWorksRequest.ProtoReflect.Descriptor instead.
+func (*ListEligibleRecruitmentWorksRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *ListEligibleRecruitmentWorksRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListEligibleRecruitmentWorksRequest) GetWorkerId() string {
+	if x != nil {
+		return x.WorkerId
+	}
+	return ""
+}
+
+type ListEligibleRecruitmentWorksResponse struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Works         []*EligibleRecruitmentWork `protobuf:"bytes,1,rep,name=works,proto3" json:"works,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListEligibleRecruitmentWorksResponse) Reset() {
+	*x = ListEligibleRecruitmentWorksResponse{}
+	mi := &file_work_work_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEligibleRecruitmentWorksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEligibleRecruitmentWorksResponse) ProtoMessage() {}
+
+func (x *ListEligibleRecruitmentWorksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEligibleRecruitmentWorksResponse.ProtoReflect.Descriptor instead.
+func (*ListEligibleRecruitmentWorksResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *ListEligibleRecruitmentWorksResponse) GetWorks() []*EligibleRecruitmentWork {
+	if x != nil {
+		return x.Works
+	}
+	return nil
+}
+
+type CreateWorkInvitationsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserId         string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId         string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	WorkerIds      []string               `protobuf:"bytes,3,rep,name=worker_ids,json=workerIds,proto3" json:"worker_ids,omitempty"`
+	OfferedPayment *OfferedPayment        `protobuf:"bytes,4,opt,name=offered_payment,json=offeredPayment,proto3" json:"offered_payment,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CreateWorkInvitationsRequest) Reset() {
+	*x = CreateWorkInvitationsRequest{}
+	mi := &file_work_work_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateWorkInvitationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateWorkInvitationsRequest) ProtoMessage() {}
+
+func (x *CreateWorkInvitationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateWorkInvitationsRequest.ProtoReflect.Descriptor instead.
+func (*CreateWorkInvitationsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *CreateWorkInvitationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateWorkInvitationsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *CreateWorkInvitationsRequest) GetWorkerIds() []string {
+	if x != nil {
+		return x.WorkerIds
+	}
+	return nil
+}
+
+func (x *CreateWorkInvitationsRequest) GetOfferedPayment() *OfferedPayment {
+	if x != nil {
+		return x.OfferedPayment
+	}
+	return nil
+}
+
+type CreateWorkInvitationsResponse struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Results       []*InvitationCreateResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateWorkInvitationsResponse) Reset() {
+	*x = CreateWorkInvitationsResponse{}
+	mi := &file_work_work_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateWorkInvitationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateWorkInvitationsResponse) ProtoMessage() {}
+
+func (x *CreateWorkInvitationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateWorkInvitationsResponse.ProtoReflect.Descriptor instead.
+func (*CreateWorkInvitationsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *CreateWorkInvitationsResponse) GetResults() []*InvitationCreateResult {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
+type ListWorkInvitationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkInvitationsRequest) Reset() {
+	*x = ListWorkInvitationsRequest{}
+	mi := &file_work_work_proto_msgTypes[66]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkInvitationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkInvitationsRequest) ProtoMessage() {}
+
+func (x *ListWorkInvitationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[66]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkInvitationsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkInvitationsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{66}
+}
+
+func (x *ListWorkInvitationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListWorkInvitationsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type ListWorkInvitationsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Invitations   []*WorkInvitation      `protobuf:"bytes,1,rep,name=invitations,proto3" json:"invitations,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkInvitationsResponse) Reset() {
+	*x = ListWorkInvitationsResponse{}
+	mi := &file_work_work_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkInvitationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkInvitationsResponse) ProtoMessage() {}
+
+func (x *ListWorkInvitationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkInvitationsResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkInvitationsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *ListWorkInvitationsResponse) GetInvitations() []*WorkInvitation {
+	if x != nil {
+		return x.Invitations
+	}
+	return nil
+}
+
+type ListMyInvitationsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyInvitationsRequest) Reset() {
+	*x = ListMyInvitationsRequest{}
+	mi := &file_work_work_proto_msgTypes[68]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyInvitationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyInvitationsRequest) ProtoMessage() {}
+
+func (x *ListMyInvitationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[68]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyInvitationsRequest.ProtoReflect.Descriptor instead.
+func (*ListMyInvitationsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{68}
+}
+
+func (x *ListMyInvitationsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListMyInvitationsRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+type ListMyInvitationsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Invitations   []*WorkInvitation      `protobuf:"bytes,1,rep,name=invitations,proto3" json:"invitations,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyInvitationsResponse) Reset() {
+	*x = ListMyInvitationsResponse{}
+	mi := &file_work_work_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyInvitationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyInvitationsResponse) ProtoMessage() {}
+
+func (x *ListMyInvitationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyInvitationsResponse.ProtoReflect.Descriptor instead.
+func (*ListMyInvitationsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{69}
+}
+
+func (x *ListMyInvitationsResponse) GetInvitations() []*WorkInvitation {
+	if x != nil {
+		return x.Invitations
+	}
+	return nil
+}
+
+type RespondWorkInvitationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	InvitationId  string                 `protobuf:"bytes,2,opt,name=invitation_id,json=invitationId,proto3" json:"invitation_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespondWorkInvitationRequest) Reset() {
+	*x = RespondWorkInvitationRequest{}
+	mi := &file_work_work_proto_msgTypes[70]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespondWorkInvitationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespondWorkInvitationRequest) ProtoMessage() {}
+
+func (x *RespondWorkInvitationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[70]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespondWorkInvitationRequest.ProtoReflect.Descriptor instead.
+func (*RespondWorkInvitationRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{70}
+}
+
+func (x *RespondWorkInvitationRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RespondWorkInvitationRequest) GetInvitationId() string {
+	if x != nil {
+		return x.InvitationId
+	}
+	return ""
+}
+
+type RespondWorkInvitationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Invitation    *WorkInvitation        `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespondWorkInvitationResponse) Reset() {
+	*x = RespondWorkInvitationResponse{}
+	mi := &file_work_work_proto_msgTypes[71]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespondWorkInvitationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespondWorkInvitationResponse) ProtoMessage() {}
+
+func (x *RespondWorkInvitationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[71]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespondWorkInvitationResponse.ProtoReflect.Descriptor instead.
+func (*RespondWorkInvitationResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{71}
+}
+
+func (x *RespondWorkInvitationResponse) GetInvitation() *WorkInvitation {
+	if x != nil {
+		return x.Invitation
+	}
+	return nil
+}
+
+type CancelWorkInvitationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	InvitationId  string                 `protobuf:"bytes,3,opt,name=invitation_id,json=invitationId,proto3" json:"invitation_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelWorkInvitationRequest) Reset() {
+	*x = CancelWorkInvitationRequest{}
+	mi := &file_work_work_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelWorkInvitationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelWorkInvitationRequest) ProtoMessage() {}
+
+func (x *CancelWorkInvitationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelWorkInvitationRequest.ProtoReflect.Descriptor instead.
+func (*CancelWorkInvitationRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *CancelWorkInvitationRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CancelWorkInvitationRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *CancelWorkInvitationRequest) GetInvitationId() string {
+	if x != nil {
+		return x.InvitationId
+	}
+	return ""
+}
+
+type RecordPaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,2,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	AmountMinor   int64                  `protobuf:"varint,3,opt,name=amount_minor,json=amountMinor,proto3" json:"amount_minor,omitempty"`
+	PaymentMethod string                 `protobuf:"bytes,4,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	Reference     *string                `protobuf:"bytes,5,opt,name=reference,proto3,oneof" json:"reference,omitempty"`
+	PaidAt        *string                `protobuf:"bytes,6,opt,name=paid_at,json=paidAt,proto3,oneof" json:"paid_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordPaymentRequest) Reset() {
+	*x = RecordPaymentRequest{}
+	mi := &file_work_work_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordPaymentRequest) ProtoMessage() {}
+
+func (x *RecordPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordPaymentRequest.ProtoReflect.Descriptor instead.
+func (*RecordPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *RecordPaymentRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RecordPaymentRequest) GetPaymentId() string {
+	if x != nil {
+		return x.PaymentId
+	}
+	return ""
+}
+
+func (x *RecordPaymentRequest) GetAmountMinor() int64 {
+	if x != nil {
+		return x.AmountMinor
+	}
+	return 0
+}
+
+func (x *RecordPaymentRequest) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *RecordPaymentRequest) GetReference() string {
+	if x != nil && x.Reference != nil {
+		return *x.Reference
+	}
+	return ""
+}
+
+func (x *RecordPaymentRequest) GetPaidAt() string {
+	if x != nil && x.PaidAt != nil {
+		return *x.PaidAt
+	}
+	return ""
+}
+
+type RecordPaymentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Transaction   *PaymentTransaction    `protobuf:"bytes,1,opt,name=transaction,proto3" json:"transaction,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordPaymentResponse) Reset() {
+	*x = RecordPaymentResponse{}
+	mi := &file_work_work_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordPaymentResponse) ProtoMessage() {}
+
+func (x *RecordPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordPaymentResponse.ProtoReflect.Descriptor instead.
+func (*RecordPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *RecordPaymentResponse) GetTransaction() *PaymentTransaction {
+	if x != nil {
+		return x.Transaction
+	}
+	return nil
+}
+
+type WorkReview struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	ReviewerId    string                 `protobuf:"bytes,4,opt,name=reviewer_id,json=reviewerId,proto3" json:"reviewer_id,omitempty"`
+	ReviewerRole  string                 `protobuf:"bytes,5,opt,name=reviewer_role,json=reviewerRole,proto3" json:"reviewer_role,omitempty"`
+	RevieweeId    string                 `protobuf:"bytes,6,opt,name=reviewee_id,json=revieweeId,proto3" json:"reviewee_id,omitempty"`
+	ReviewerName  *string                `protobuf:"bytes,7,opt,name=reviewer_name,json=reviewerName,proto3,oneof" json:"reviewer_name,omitempty"`
+	RevieweeName  *string                `protobuf:"bytes,8,opt,name=reviewee_name,json=revieweeName,proto3,oneof" json:"reviewee_name,omitempty"`
+	Rating        int32                  `protobuf:"varint,9,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       *string                `protobuf:"bytes,10,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkReview) Reset() {
+	*x = WorkReview{}
+	mi := &file_work_work_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkReview) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkReview) ProtoMessage() {}
+
+func (x *WorkReview) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkReview.ProtoReflect.Descriptor instead.
+func (*WorkReview) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *WorkReview) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkReview) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerId() string {
+	if x != nil {
+		return x.ReviewerId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerRole() string {
+	if x != nil {
+		return x.ReviewerRole
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRevieweeId() string {
+	if x != nil {
+		return x.RevieweeId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerName() string {
+	if x != nil && x.ReviewerName != nil {
+		return *x.ReviewerName
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRevieweeName() string {
+	if x != nil && x.RevieweeName != nil {
+		return *x.RevieweeName
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRating() int32 {
+	if x != nil {
+		return x.Rating
+	}
+	return 0
+}
+
+func (x *WorkReview) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
+func (x *WorkReview) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type CreateReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	Rating        int32                  `protobuf:"varint,3,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       *string                `protobuf:"bytes,4,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReviewRequest) Reset() {
+	*x = CreateReviewRequest{}
+	mi := &file_work_work_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReviewRequest) ProtoMessage() {}
+
+func (x *CreateReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReviewRequest.ProtoReflect.Descriptor instead.
+func (*CreateReviewRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *CreateReviewRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateReviewRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *CreateReviewRequest) GetRating() int32 {
+	if x != nil {
+		return x.Rating
+	}
+	return 0
+}
+
+func (x *CreateReviewRequest) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
+type CreateReviewResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Review        *WorkReview            `protobuf:"bytes,1,opt,name=review,proto3" json:"review,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReviewResponse) Reset() {
+	*x = CreateReviewResponse{}
+	mi := &file_work_work_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReviewResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReviewResponse) ProtoMessage() {}
+
+func (x *CreateReviewResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReviewResponse.ProtoReflect.Descriptor instead.
+func (*CreateReviewResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *CreateReviewResponse) GetReview() *WorkReview {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
+type ListWorkReviewsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkReviewsRequest) Reset() {
+	*x = ListWorkReviewsRequest{}
+	mi := &file_work_work_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkReviewsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkReviewsRequest) ProtoMessage() {}
+
+func (x *ListWorkReviewsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkReviewsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkReviewsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *ListWorkReviewsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListWorkReviewsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type ListWorkReviewsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reviews       []*WorkReview          `protobuf:"bytes,1,rep,name=reviews,proto3" json:"reviews,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkReviewsResponse) Reset() {
+	*x = ListWorkReviewsResponse{}
+	mi := &file_work_work_proto_msgTypes[79]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkReviewsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkReviewsResponse) ProtoMessage() {}
+
+func (x *ListWorkReviewsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[79]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkReviewsResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkReviewsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *ListWorkReviewsResponse) GetReviews() []*WorkReview {
+	if x != nil {
+		return x.Reviews
+	}
+	return nil
+}
+
+type ListUserReviewsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TargetUserId  string                 `protobuf:"bytes,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserReviewsRequest) Reset() {
+	*x = ListUserReviewsRequest{}
+	mi := &file_work_work_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserReviewsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserReviewsRequest) ProtoMessage() {}
+
+func (x *ListUserReviewsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserReviewsRequest.ProtoReflect.Descriptor instead.
+func (*ListUserReviewsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *ListUserReviewsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListUserReviewsRequest) GetTargetUserId() string {
+	if x != nil {
+		return x.TargetUserId
+	}
+	return ""
+}
+
+type ListUserReviewsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reviews       []*WorkReview          `protobuf:"bytes,1,rep,name=reviews,proto3" json:"reviews,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserReviewsResponse) Reset() {
+	*x = ListUserReviewsResponse{}
+	mi := &file_work_work_proto_msgTypes[81]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserReviewsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserReviewsResponse) ProtoMessage() {}
+
+func (x *ListUserReviewsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[81]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserReviewsResponse.ProtoReflect.Descriptor instead.
+func (*ListUserReviewsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *ListUserReviewsResponse) GetReviews() []*WorkReview {
+	if x != nil {
+		return x.Reviews
+	}
+	return nil
+}
+
+type GetUserRatingSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TargetUserId  string                 `protobuf:"bytes,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRatingSummaryRequest) Reset() {
+	*x = GetUserRatingSummaryRequest{}
+	mi := &file_work_work_proto_msgTypes[82]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRatingSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRatingSummaryRequest) ProtoMessage() {}
+
+func (x *GetUserRatingSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[82]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRatingSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRatingSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{82}
+}
+
+func (x *GetUserRatingSummaryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetUserRatingSummaryRequest) GetTargetUserId() string {
+	if x != nil {
+		return x.TargetUserId
+	}
+	return ""
+}
+
+type GetUserRatingSummaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AverageRating float64                `protobuf:"fixed64,2,opt,name=average_rating,json=averageRating,proto3" json:"average_rating,omitempty"`
+	ReviewCount   int32                  `protobuf:"varint,3,opt,name=review_count,json=reviewCount,proto3" json:"review_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRatingSummaryResponse) Reset() {
+	*x = GetUserRatingSummaryResponse{}
+	mi := &file_work_work_proto_msgTypes[83]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRatingSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRatingSummaryResponse) ProtoMessage() {}
+
+func (x *GetUserRatingSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[83]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRatingSummaryResponse.ProtoReflect.Descriptor instead.
+func (*GetUserRatingSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{83}
+}
+
+func (x *GetUserRatingSummaryResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetUserRatingSummaryResponse) GetAverageRating() float64 {
+	if x != nil {
+		return x.AverageRating
+	}
+	return 0
+}
+
+func (x *GetUserRatingSummaryResponse) GetReviewCount() int32 {
+	if x != nil {
+		return x.ReviewCount
+	}
+	return 0
+}
+
 var File_work_work_proto protoreflect.FileDescriptor
 
 const file_work_work_proto_rawDesc = "" +
 	"\n" +
-	"\x0fwork/work.proto\x12\awork.v1\"\x87\n" +
-	"\n" +
+	"\x0fwork/work.proto\x12\awork.v1\"\xab\r\n" +
 	"\x11CreateWorkRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01\x12\x19\n" +
 	"\x05title\x18\x03 \x01(\tH\x01R\x05title\x88\x01\x01\x12%\n" +
 	"\fwork_type_id\x18\x04 \x01(\tH\x02R\n" +
-	"workTypeId\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x03R\vdescription\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\x06 \x01(\tH\x04R\aaddress\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\a \x01(\tH\x05R\x04city\x88\x01\x01\x12\x19\n" +
-	"\x05state\x18\b \x01(\tH\x06R\x05state\x88\x01\x01\x12\x1f\n" +
-	"\blatitude\x18\t \x01(\x01H\aR\blatitude\x88\x01\x01\x12!\n" +
+	"workTypeId\x88\x01\x01\x12-\n" +
+	"\x10work_category_id\x18\x1a \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x12+\n" +
+	"\x0fwork_segment_id\x18\x1b \x01(\tH\x04R\rworkSegmentId\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x05 \x01(\tH\x05R\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x06 \x01(\tH\x06R\aaddress\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\a \x01(\tH\aR\x04city\x88\x01\x01\x12\x19\n" +
+	"\x05state\x18\b \x01(\tH\bR\x05state\x88\x01\x01\x12\x1f\n" +
+	"\blatitude\x18\t \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
 	"\tlongitude\x18\n" +
-	" \x01(\x01H\bR\tlongitude\x88\x01\x01\x12*\n" +
-	"\x0eworkers_needed\x18\v \x01(\x05H\tR\rworkersNeeded\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\f \x01(\tH\n" +
-	"R\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
+	" \x01(\x01H\n" +
+	"R\tlongitude\x88\x01\x01\x12*\n" +
+	"\x0eworkers_needed\x18\v \x01(\x05H\vR\rworkersNeeded\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\f \x01(\tH\fR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
 	"\x06skills\x18\r \x03(\tR\x06skills\x12*\n" +
-	"\x0etools_provided\x18\x0e \x01(\bH\vR\rtoolsProvided\x88\x01\x01\x122\n" +
-	"\x12materials_provided\x18\x0f \x01(\bH\fR\x11materialsProvided\x88\x01\x01\x12\"\n" +
+	"\x0etools_provided\x18\x0e \x01(\bH\rR\rtoolsProvided\x88\x01\x01\x122\n" +
+	"\x12materials_provided\x18\x0f \x01(\bH\x0eR\x11materialsProvided\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"start_date\x18\x10 \x01(\tH\rR\tstartDate\x88\x01\x01\x12*\n" +
-	"\x0eduration_value\x18\x11 \x01(\x05H\x0eR\rdurationValue\x88\x01\x01\x12(\n" +
-	"\rduration_unit\x18\x12 \x01(\tH\x0fR\fdurationUnit\x88\x01\x01\x12&\n" +
-	"\fshift_timing\x18\x13 \x01(\tH\x10R\vshiftTiming\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x14 \x01(\tH\x11R\vpaymentType\x88\x01\x01\x12$\n" +
-	"\vbudget_rate\x18\x15 \x01(\x01H\x12R\n" +
+	"start_date\x18\x10 \x01(\tH\x0fR\tstartDate\x88\x01\x01\x12*\n" +
+	"\x0eduration_value\x18\x11 \x01(\x05H\x10R\rdurationValue\x88\x01\x01\x12(\n" +
+	"\rduration_unit\x18\x12 \x01(\tH\x11R\fdurationUnit\x88\x01\x01\x12&\n" +
+	"\fshift_timing\x18\x13 \x01(\tH\x12R\vshiftTiming\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"rate_basis\x18\x14 \x01(\tH\x13R\trateBasis\x88\x01\x01\x12$\n" +
+	"\vbudget_rate\x18\x15 \x01(\x01H\x14R\n" +
 	"budgetRate\x88\x01\x01\x12(\n" +
-	"\rpayment_notes\x18\x16 \x01(\tH\x13R\fpaymentNotes\x88\x01\x01\x12:\n" +
-	"\x16accommodation_provided\x18\x17 \x01(\bH\x14R\x15accommodationProvided\x88\x01\x01\x12*\n" +
-	"\x0emeals_provided\x18\x18 \x01(\bH\x15R\rmealsProvided\x88\x01\x01B\t\n" +
+	"\rpayment_notes\x18\x16 \x01(\tH\x15R\fpaymentNotes\x88\x01\x01\x12:\n" +
+	"\x16accommodation_provided\x18\x17 \x01(\bH\x16R\x15accommodationProvided\x88\x01\x01\x12*\n" +
+	"\x0emeals_provided\x18\x18 \x01(\bH\x17R\rmealsProvided\x88\x01\x01\x12J\n" +
+	"\n" +
+	"attributes\x18\x19 \x03(\v2*.work.v1.CreateWorkRequest.AttributesEntryR\n" +
+	"attributes\x12 \n" +
+	"\trate_unit\x18\x1c \x01(\tH\x18R\brateUnit\x88\x01\x01\x12$\n" +
+	"\vhiring_mode\x18\x1d \x01(\tH\x19R\n" +
+	"hiringMode\x88\x01\x01\x12#\n" +
+	"\n" +
+	"visibility\x18\x1e \x01(\tH\x1aR\n" +
+	"visibility\x88\x01\x01\x1a=\n" +
+	"\x0fAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\t\n" +
 	"\a_statusB\b\n" +
 	"\x06_titleB\x0f\n" +
-	"\r_work_type_idB\x0e\n" +
+	"\r_work_type_idB\x13\n" +
+	"\x11_work_category_idB\x12\n" +
+	"\x10_work_segment_idB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_addressB\a\n" +
@@ -607,53 +6363,84 @@ const file_work_work_proto_rawDesc = "" +
 	"\v_start_dateB\x11\n" +
 	"\x0f_duration_valueB\x10\n" +
 	"\x0e_duration_unitB\x0f\n" +
-	"\r_shift_timingB\x0f\n" +
-	"\r_payment_typeB\x0e\n" +
+	"\r_shift_timingB\r\n" +
+	"\v_rate_basisB\x0e\n" +
 	"\f_budget_rateB\x10\n" +
 	"\x0e_payment_notesB\x19\n" +
 	"\x17_accommodation_providedB\x11\n" +
-	"\x0f_meals_provided\">\n" +
-	"\x12CreateWorkResponse\x12(\n" +
-	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xf8\n" +
+	"\x0f_meals_providedB\f\n" +
 	"\n" +
+	"_rate_unitB\x0e\n" +
+	"\f_hiring_modeB\r\n" +
+	"\v_visibility\">\n" +
+	"\x12CreateWorkResponse\x12(\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\xed\x11\n" +
 	"\vWorkPosting\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\x12\x19\n" +
 	"\x05title\x18\x04 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
 	"\fwork_type_id\x18\x05 \x01(\tH\x01R\n" +
-	"workTypeId\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x06 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\a \x01(\tH\x03R\aaddress\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\b \x01(\tH\x04R\x04city\x88\x01\x01\x12\x19\n" +
-	"\x05state\x18\t \x01(\tH\x05R\x05state\x88\x01\x01\x12\x1f\n" +
+	"workTypeId\x88\x01\x01\x12)\n" +
+	"\x0ework_type_name\x18\x1d \x01(\tH\x02R\fworkTypeName\x88\x01\x01\x12-\n" +
+	"\x10work_category_id\x18\x1f \x01(\tH\x03R\x0eworkCategoryId\x88\x01\x01\x121\n" +
+	"\x12work_category_name\x18  \x01(\tH\x04R\x10workCategoryName\x88\x01\x01\x12+\n" +
+	"\x0fwork_segment_id\x18! \x01(\tH\x05R\rworkSegmentId\x88\x01\x01\x12/\n" +
+	"\x11work_segment_name\x18\" \x01(\tH\x06R\x0fworkSegmentName\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x06 \x01(\tH\aR\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\a \x01(\tH\bR\aaddress\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\b \x01(\tH\tR\x04city\x88\x01\x01\x12\x19\n" +
+	"\x05state\x18\t \x01(\tH\n" +
+	"R\x05state\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\n" +
-	" \x01(\x01H\x06R\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\v \x01(\x01H\aR\tlongitude\x88\x01\x01\x12*\n" +
-	"\x0eworkers_needed\x18\f \x01(\x05H\bR\rworkersNeeded\x88\x01\x01\x12.\n" +
-	"\x10experience_level\x18\r \x01(\tH\tR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
+	" \x01(\x01H\vR\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\v \x01(\x01H\fR\tlongitude\x88\x01\x01\x12*\n" +
+	"\x0eworkers_needed\x18\f \x01(\x05H\rR\rworkersNeeded\x88\x01\x01\x12.\n" +
+	"\x10experience_level\x18\r \x01(\tH\x0eR\x0fexperienceLevel\x88\x01\x01\x12\x16\n" +
 	"\x06skills\x18\x0e \x03(\tR\x06skills\x12*\n" +
-	"\x0etools_provided\x18\x0f \x01(\bH\n" +
-	"R\rtoolsProvided\x88\x01\x01\x122\n" +
-	"\x12materials_provided\x18\x10 \x01(\bH\vR\x11materialsProvided\x88\x01\x01\x12\"\n" +
+	"\x0etools_provided\x18\x0f \x01(\bH\x0fR\rtoolsProvided\x88\x01\x01\x122\n" +
+	"\x12materials_provided\x18\x10 \x01(\bH\x10R\x11materialsProvided\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"start_date\x18\x11 \x01(\tH\fR\tstartDate\x88\x01\x01\x12*\n" +
-	"\x0eduration_value\x18\x12 \x01(\x05H\rR\rdurationValue\x88\x01\x01\x12(\n" +
-	"\rduration_unit\x18\x13 \x01(\tH\x0eR\fdurationUnit\x88\x01\x01\x12&\n" +
-	"\fshift_timing\x18\x14 \x01(\tH\x0fR\vshiftTiming\x88\x01\x01\x12&\n" +
-	"\fpayment_type\x18\x15 \x01(\tH\x10R\vpaymentType\x88\x01\x01\x12$\n" +
-	"\vbudget_rate\x18\x16 \x01(\x01H\x11R\n" +
+	"start_date\x18\x11 \x01(\tH\x11R\tstartDate\x88\x01\x01\x12*\n" +
+	"\x0eduration_value\x18\x12 \x01(\x05H\x12R\rdurationValue\x88\x01\x01\x12(\n" +
+	"\rduration_unit\x18\x13 \x01(\tH\x13R\fdurationUnit\x88\x01\x01\x12&\n" +
+	"\fshift_timing\x18\x14 \x01(\tH\x14R\vshiftTiming\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"rate_basis\x18\x15 \x01(\tH\x15R\trateBasis\x88\x01\x01\x12$\n" +
+	"\vbudget_rate\x18\x16 \x01(\x01H\x16R\n" +
 	"budgetRate\x88\x01\x01\x12(\n" +
-	"\rpayment_notes\x18\x17 \x01(\tH\x12R\fpaymentNotes\x88\x01\x01\x12:\n" +
-	"\x16accommodation_provided\x18\x18 \x01(\bH\x13R\x15accommodationProvided\x88\x01\x01\x12*\n" +
-	"\x0emeals_provided\x18\x19 \x01(\bH\x14R\rmealsProvided\x88\x01\x01\x12&\n" +
-	"\fpublished_at\x18\x1a \x01(\tH\x15R\vpublishedAt\x88\x01\x01\x12\x1d\n" +
+	"\rpayment_notes\x18\x17 \x01(\tH\x17R\fpaymentNotes\x88\x01\x01\x12:\n" +
+	"\x16accommodation_provided\x18\x18 \x01(\bH\x18R\x15accommodationProvided\x88\x01\x01\x12*\n" +
+	"\x0emeals_provided\x18\x19 \x01(\bH\x19R\rmealsProvided\x88\x01\x01\x12&\n" +
+	"\fpublished_at\x18\x1a \x01(\tH\x1aR\vpublishedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x1b \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x1c \x01(\tR\tupdatedAtB\b\n" +
+	"updated_at\x18\x1c \x01(\tR\tupdatedAt\x12D\n" +
+	"\n" +
+	"attributes\x18\x1e \x03(\v2$.work.v1.WorkPosting.AttributesEntryR\n" +
+	"attributes\x12 \n" +
+	"\trate_unit\x18# \x01(\tH\x1bR\brateUnit\x88\x01\x01\x12.\n" +
+	"\x10workers_selected\x18$ \x01(\x05H\x1cR\x0fworkersSelected\x88\x01\x01\x120\n" +
+	"\x11applications_open\x18% \x01(\bH\x1dR\x10applicationsOpen\x88\x01\x01\x12$\n" +
+	"\vhiring_mode\x18& \x01(\tH\x1eR\n" +
+	"hiringMode\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"started_at\x18' \x01(\tH\x1fR\tstartedAt\x88\x01\x01\x120\n" +
+	"\x11remaining_workers\x18( \x01(\x05H R\x10remainingWorkers\x88\x01\x01\x12#\n" +
+	"\n" +
+	"visibility\x18) \x01(\tH!R\n" +
+	"visibility\x88\x01\x01\x1a=\n" +
+	"\x0fAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\b\n" +
 	"\x06_titleB\x0f\n" +
-	"\r_work_type_idB\x0e\n" +
+	"\r_work_type_idB\x11\n" +
+	"\x0f_work_type_nameB\x13\n" +
+	"\x11_work_category_idB\x15\n" +
+	"\x13_work_category_nameB\x12\n" +
+	"\x10_work_segment_idB\x14\n" +
+	"\x12_work_segment_nameB\x0e\n" +
 	"\f_descriptionB\n" +
 	"\n" +
 	"\b_addressB\a\n" +
@@ -669,16 +6456,612 @@ const file_work_work_proto_rawDesc = "" +
 	"\v_start_dateB\x11\n" +
 	"\x0f_duration_valueB\x10\n" +
 	"\x0e_duration_unitB\x0f\n" +
-	"\r_shift_timingB\x0f\n" +
-	"\r_payment_typeB\x0e\n" +
+	"\r_shift_timingB\r\n" +
+	"\v_rate_basisB\x0e\n" +
 	"\f_budget_rateB\x10\n" +
 	"\x0e_payment_notesB\x19\n" +
 	"\x17_accommodation_providedB\x11\n" +
 	"\x0f_meals_providedB\x0f\n" +
-	"\r_published_at2T\n" +
+	"\r_published_atB\f\n" +
+	"\n" +
+	"_rate_unitB\x13\n" +
+	"\x11_workers_selectedB\x14\n" +
+	"\x12_applications_openB\x0e\n" +
+	"\f_hiring_modeB\r\n" +
+	"\v_started_atB\x14\n" +
+	"\x12_remaining_workersB\r\n" +
+	"\v_visibility\"\x95\x02\n" +
+	"\tQuotation\x12\x16\n" +
+	"\x06amount\x18\x01 \x01(\x01R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x12\x1d\n" +
+	"\n" +
+	"rate_basis\x18\x03 \x01(\tR\trateBasis\x12=\n" +
+	"\x18estimated_duration_hours\x18\x04 \x01(\x01H\x00R\x16estimatedDurationHours\x88\x01\x01\x12\x1d\n" +
+	"\amessage\x18\x05 \x01(\tH\x01R\amessage\x88\x01\x01\x12 \n" +
+	"\trate_unit\x18\x06 \x01(\tH\x02R\brateUnit\x88\x01\x01B\x1b\n" +
+	"\x19_estimated_duration_hoursB\n" +
+	"\n" +
+	"\b_messageB\f\n" +
+	"\n" +
+	"_rate_unit\"\xdd\x02\n" +
+	"\x0fWorkApplication\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
+	"\tworker_id\x18\x03 \x01(\tR\bworkerId\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x120\n" +
+	"\tquotation\x18\x05 \x01(\v2\x12.work.v1.QuotationR\tquotation\x12\x1d\n" +
+	"\n" +
+	"applied_at\x18\x06 \x01(\tR\tappliedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x120\n" +
+	"\x14offered_worker_count\x18\b \x01(\x05R\x12offeredWorkerCount\x12%\n" +
+	"\x0eapplicant_type\x18\t \x01(\tR\rapplicantType\x12#\n" +
+	"\rassignment_id\x18\n" +
+	" \x01(\tR\fassignmentId\"\xaa\x01\n" +
+	"\x12ApplyToWorkRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x120\n" +
+	"\tquotation\x18\x03 \x01(\v2\x12.work.v1.QuotationR\tquotation\x120\n" +
+	"\x14offered_worker_count\x18\x04 \x01(\x05R\x12offeredWorkerCount\"Q\n" +
+	"\x13ApplyToWorkResponse\x12:\n" +
+	"\vapplication\x18\x01 \x01(\v2\x18.work.v1.WorkApplicationR\vapplication\"w\n" +
+	"\x1bListWorkApplicationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
+	"\x06status\x18\x03 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_status\"\\\n" +
+	"\x1cListWorkApplicationsResponse\x12<\n" +
+	"\fapplications\x18\x01 \x03(\v2\x18.work.v1.WorkApplicationR\fapplications\"w\n" +
+	"\x1cUpdateWorkApplicationRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12%\n" +
+	"\x0eapplication_id\x18\x03 \x01(\tR\rapplicationId\"[\n" +
+	"\x1dUpdateWorkApplicationResponse\x12:\n" +
+	"\vapplication\x18\x01 \x01(\v2\x18.work.v1.WorkApplicationR\vapplication\"U\n" +
+	"\x12ListMyWorksRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_status\"A\n" +
+	"\x13ListMyWorksResponse\x12*\n" +
+	"\x05works\x18\x01 \x03(\v2\x14.work.v1.WorkPostingR\x05works\"\xe4\x01\n" +
+	"\x11MyWorkApplication\x12:\n" +
+	"\vapplication\x18\x01 \x01(\v2\x18.work.v1.WorkApplicationR\vapplication\x12(\n" +
+	"\x04work\x18\x02 \x01(\v2\x14.work.v1.WorkPostingR\x04work\x127\n" +
+	"\n" +
+	"assignment\x18\x03 \x01(\v2\x17.work.v1.WorkAssignmentR\n" +
+	"assignment\x120\n" +
+	"\bpayments\x18\x04 \x03(\v2\x14.work.v1.WorkPaymentR\bpayments\"\\\n" +
+	"\x19ListMyApplicationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_status\"\\\n" +
+	"\x1aListMyApplicationsResponse\x12>\n" +
+	"\fapplications\x18\x01 \x03(\v2\x1a.work.v1.MyWorkApplicationR\fapplications\"H\n" +
+	"\x14WorkLifecycleRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"A\n" +
+	"\x15WorkLifecycleResponse\x12(\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\"\x98\t\n" +
+	"\x0eWorkAssignment\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12%\n" +
+	"\x0eapplication_id\x18\x03 \x01(\tR\rapplicationId\x12\x1b\n" +
+	"\tworker_id\x18\x04 \x01(\tR\bworkerId\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x12=\n" +
+	"\x10agreed_quotation\x18\x06 \x01(\v2\x12.work.v1.QuotationR\x0fagreedQuotation\x12\x1f\n" +
+	"\vassigned_at\x18\a \x01(\tR\n" +
+	"assignedAt\x12\"\n" +
+	"\n" +
+	"started_at\x18\b \x01(\tH\x00R\tstartedAt\x88\x01\x01\x12&\n" +
+	"\fcompleted_at\x18\t \x01(\tH\x01R\vcompletedAt\x88\x01\x01\x12%\n" +
+	"\x0epayment_status\x18\n" +
+	" \x01(\tR\rpaymentStatus\x12\x1b\n" +
+	"\tfull_days\x18\v \x01(\x05R\bfullDays\x12\x1b\n" +
+	"\thalf_days\x18\f \x01(\x05R\bhalfDays\x12\x1f\n" +
+	"\vdays_worked\x18\r \x01(\x01R\n" +
+	"daysWorked\x12%\n" +
+	"\x0epayable_amount\x18\x0e \x01(\x01R\rpayableAmount\x12)\n" +
+	"\x10payable_currency\x18\x0f \x01(\tR\x0fpayableCurrency\x12\x1f\n" +
+	"\vlogs_frozen\x18\x10 \x01(\bR\n" +
+	"logsFrozen\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x11 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x12 \x01(\tR\tupdatedAt\x12'\n" +
+	"\x0fassignment_type\x18\x13 \x01(\tR\x0eassignmentType\x12=\n" +
+	"\x0eagreed_payment\x18\x14 \x01(\v2\x16.work.v1.AgreedPaymentR\ragreedPayment\x12\x1b\n" +
+	"\tjoined_at\x18\x15 \x01(\tR\bjoinedAt\x12/\n" +
+	"\x11worker_profile_id\x18\x16 \x01(\tH\x02R\x0fworkerProfileId\x88\x01\x01\x127\n" +
+	"\x15contractor_profile_id\x18\x17 \x01(\tH\x03R\x13contractorProfileId\x88\x01\x01\x129\n" +
+	"\x16committed_worker_count\x18\x18 \x01(\x05H\x04R\x14committedWorkerCount\x88\x01\x01\x127\n" +
+	"\x15assigned_worker_count\x18\x19 \x01(\x05H\x05R\x13assignedWorkerCount\x88\x01\x01\x12(\n" +
+	"\rinvitation_id\x18\x1a \x01(\tH\x06R\finvitationId\x88\x01\x01B\r\n" +
+	"\v_started_atB\x0f\n" +
+	"\r_completed_atB\x14\n" +
+	"\x12_worker_profile_idB\x18\n" +
+	"\x16_contractor_profile_idB\x19\n" +
+	"\x17_committed_worker_countB\x18\n" +
+	"\x16_assigned_worker_countB\x10\n" +
+	"\x0e_invitation_id\"\xaf\x02\n" +
+	"\bDailyLog\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x1b\n" +
+	"\tworker_id\x18\x04 \x01(\tR\bworkerId\x12\x1b\n" +
+	"\twork_date\x18\x05 \x01(\tR\bworkDate\x12\x1f\n" +
+	"\vday_portion\x18\x06 \x01(\tR\n" +
+	"dayPortion\x12\x17\n" +
+	"\x04note\x18\a \x01(\tH\x00R\x04note\x88\x01\x01\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12!\n" +
+	"\fsubmitted_at\x18\t \x01(\tR\vsubmittedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAtB\a\n" +
+	"\x05_note\"\x9e\x04\n" +
+	"\vWorkPayment\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x1b\n" +
+	"\tworker_id\x18\x04 \x01(\tR\bworkerId\x12\x16\n" +
+	"\x06method\x18\x05 \x01(\tR\x06method\x12\x16\n" +
+	"\x06amount\x18\x06 \x01(\x01R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\a \x01(\tR\bcurrency\x12!\n" +
+	"\treference\x18\b \x01(\tH\x00R\treference\x88\x01\x01\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12*\n" +
+	"\x0ereceipt_status\x18\n" +
+	" \x01(\tH\x01R\rreceiptStatus\x88\x01\x01\x12,\n" +
+	"\x0fdispute_message\x18\v \x01(\tH\x02R\x0edisputeMessage\x88\x01\x01\x12\x1f\n" +
+	"\vrecorded_at\x18\f \x01(\tR\n" +
+	"recordedAt\x12&\n" +
+	"\fconfirmed_at\x18\r \x01(\tH\x03R\vconfirmedAt\x88\x01\x01\x12$\n" +
+	"\vdisputed_at\x18\x0e \x01(\tH\x04R\n" +
+	"disputedAt\x88\x01\x01B\f\n" +
+	"\n" +
+	"_referenceB\x11\n" +
+	"\x0f_receipt_statusB\x12\n" +
+	"\x10_dispute_messageB\x0f\n" +
+	"\r_confirmed_atB\x0e\n" +
+	"\f_disputed_at\"Z\n" +
+	"\x1aAssignmentLifecycleRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\"V\n" +
+	"\x1bAssignmentLifecycleResponse\x127\n" +
+	"\n" +
+	"assignment\x18\x01 \x01(\v2\x17.work.v1.WorkAssignmentR\n" +
+	"assignment\"\xb5\x01\n" +
+	"\x15UpsertDailyLogRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x1b\n" +
+	"\twork_date\x18\x03 \x01(\tR\bworkDate\x12\x1f\n" +
+	"\vday_portion\x18\x04 \x01(\tR\n" +
+	"dayPortion\x12\x17\n" +
+	"\x04note\x18\x05 \x01(\tH\x00R\x04note\x88\x01\x01B\a\n" +
+	"\x05_note\"H\n" +
+	"\x16UpsertDailyLogResponse\x12.\n" +
+	"\tdaily_log\x18\x01 \x01(\v2\x11.work.v1.DailyLogR\bdailyLog\"^\n" +
+	"\x1eListAssignmentDailyLogsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\"L\n" +
+	"\x18ListWorkDailyLogsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"I\n" +
+	"\x15ListDailyLogsResponse\x120\n" +
+	"\n" +
+	"daily_logs\x18\x01 \x03(\v2\x11.work.v1.DailyLogR\tdailyLogs\"L\n" +
+	"\x18GetWorkSettlementRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"\xe9\x02\n" +
+	"\x10WorkerSettlement\x127\n" +
+	"\n" +
+	"assignment\x18\x01 \x01(\v2\x17.work.v1.WorkAssignmentR\n" +
+	"assignment\x12%\n" +
+	"\x04logs\x18\x02 \x03(\v2\x11.work.v1.DailyLogR\x04logs\x120\n" +
+	"\bpayments\x18\x03 \x03(\v2\x14.work.v1.WorkPaymentR\bpayments\x12\x1b\n" +
+	"\tfull_days\x18\x04 \x01(\x05R\bfullDays\x12\x1b\n" +
+	"\thalf_days\x18\x05 \x01(\x05R\bhalfDays\x12\x1f\n" +
+	"\vdays_worked\x18\x06 \x01(\x01R\n" +
+	"daysWorked\x12%\n" +
+	"\x0epayable_amount\x18\a \x01(\x01R\rpayableAmount\x12\x1a\n" +
+	"\bcurrency\x18\b \x01(\tR\bcurrency\x12%\n" +
+	"\x0epayment_status\x18\t \x01(\tR\rpaymentStatus\"z\n" +
+	"\x19GetWorkSettlementResponse\x12(\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\x123\n" +
+	"\aworkers\x18\x02 \x03(\v2\x19.work.v1.WorkerSettlementR\aworkers\"\x96\x02\n" +
+	"\x1eRecordAssignmentPaymentRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x16\n" +
+	"\x06method\x18\x04 \x01(\tR\x06method\x12\x1b\n" +
+	"\x06amount\x18\x05 \x01(\x01H\x00R\x06amount\x88\x01\x01\x12\x1f\n" +
+	"\bcurrency\x18\x06 \x01(\tH\x01R\bcurrency\x88\x01\x01\x12!\n" +
+	"\treference\x18\a \x01(\tH\x02R\treference\x88\x01\x01B\t\n" +
+	"\a_amountB\v\n" +
+	"\t_currencyB\f\n" +
+	"\n" +
+	"_reference\"Q\n" +
+	"\x1fRecordAssignmentPaymentResponse\x12.\n" +
+	"\apayment\x18\x01 \x01(\v2\x14.work.v1.WorkPaymentR\apayment\"]\n" +
+	"\x1dListAssignmentPaymentsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\"R\n" +
+	"\x1eListAssignmentPaymentsResponse\x120\n" +
+	"\bpayments\x18\x01 \x03(\v2\x14.work.v1.WorkPaymentR\bpayments\"}\n" +
+	"\x1eUpdateAssignmentPaymentRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x1d\n" +
+	"\n" +
+	"payment_id\x18\x03 \x01(\tR\tpaymentId\"\xa9\x01\n" +
+	"\x1fDisputeAssignmentPaymentRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x1d\n" +
+	"\n" +
+	"payment_id\x18\x03 \x01(\tR\tpaymentId\x12\x1d\n" +
+	"\amessage\x18\x04 \x01(\tH\x00R\amessage\x88\x01\x01B\n" +
+	"\n" +
+	"\b_message\"\xce\x01\n" +
+	"\rAgreedPayment\x12\x1b\n" +
+	"\trate_type\x18\x01 \x01(\tR\brateType\x12\x1b\n" +
+	"\trate_unit\x18\x02 \x01(\tR\brateUnit\x12\x1d\n" +
+	"\n" +
+	"rate_minor\x18\x03 \x01(\x03R\trateMinor\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x121\n" +
+	"\x12fixed_amount_minor\x18\x05 \x01(\x03H\x00R\x10fixedAmountMinor\x88\x01\x01B\x15\n" +
+	"\x13_fixed_amount_minor\"\xd2\x02\n" +
+	"\x13WorkerDayRecordItem\x12#\n" +
+	"\rassignment_id\x18\x01 \x01(\tR\fassignmentId\x12*\n" +
+	"\x11worker_profile_id\x18\x02 \x01(\tR\x0fworkerProfileId\x12\x1f\n" +
+	"\vworker_name\x18\x03 \x01(\tR\n" +
+	"workerName\x12\x1e\n" +
+	"\bday_type\x18\x04 \x01(\tH\x00R\adayType\x88\x01\x01\x12(\n" +
+	"\rpayable_units\x18\x05 \x01(\x01H\x01R\fpayableUnits\x88\x01\x01\x12*\n" +
+	"\x11agreed_rate_minor\x18\x06 \x01(\x03R\x0fagreedRateMinor\x124\n" +
+	"\x16estimated_amount_minor\x18\a \x01(\x03R\x14estimatedAmountMinorB\v\n" +
+	"\t_day_typeB\x10\n" +
+	"\x0e_payable_units\"i\n" +
+	"\x18GetWorkDayRecordsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
+	"\twork_date\x18\x03 \x01(\tR\bworkDate\"\x89\x01\n" +
+	"\x19GetWorkDayRecordsResponse\x12\x17\n" +
+	"\awork_id\x18\x01 \x01(\tR\x06workId\x12\x1b\n" +
+	"\twork_date\x18\x02 \x01(\tR\bworkDate\x126\n" +
+	"\aworkers\x18\x03 \x03(\v2\x1c.work.v1.WorkerDayRecordItemR\aworkers\"X\n" +
+	"\x16SaveWorkDayRecordInput\x12#\n" +
+	"\rassignment_id\x18\x01 \x01(\tR\fassignmentId\x12\x19\n" +
+	"\bday_type\x18\x02 \x01(\tR\adayType\"\xa5\x01\n" +
+	"\x19SaveWorkDayRecordsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
+	"\twork_date\x18\x03 \x01(\tR\bworkDate\x129\n" +
+	"\arecords\x18\x04 \x03(\v2\x1f.work.v1.SaveWorkDayRecordInputR\arecords\"\xb3\x03\n" +
+	"\x11WorkerWorkSummary\x12#\n" +
+	"\rassignment_id\x18\x01 \x01(\tR\fassignmentId\x12*\n" +
+	"\x11worker_profile_id\x18\x02 \x01(\tR\x0fworkerProfileId\x12\x1f\n" +
+	"\vworker_name\x18\x03 \x01(\tR\n" +
+	"workerName\x12\x1b\n" +
+	"\tfull_days\x18\x04 \x01(\x05R\bfullDays\x12\x1b\n" +
+	"\thalf_days\x18\x05 \x01(\x05R\bhalfDays\x12&\n" +
+	"\x0fnot_worked_days\x18\x06 \x01(\x05R\rnotWorkedDays\x12'\n" +
+	"\x0funrecorded_days\x18\a \x01(\x05R\x0eunrecordedDays\x12!\n" +
+	"\fpayable_days\x18\b \x01(\x01R\vpayableDays\x12*\n" +
+	"\x11agreed_rate_minor\x18\t \x01(\x03R\x0fagreedRateMinor\x126\n" +
+	"\x17calculated_amount_minor\x18\n" +
+	" \x01(\x03R\x15calculatedAmountMinor\x12\x1a\n" +
+	"\bcurrency\x18\v \x01(\tR\bcurrency\"O\n" +
+	"\x1bGetWorkerWorkSummaryRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"m\n" +
+	"\x1cGetWorkerWorkSummaryResponse\x12\x17\n" +
+	"\awork_id\x18\x01 \x01(\tR\x06workId\x124\n" +
+	"\aworkers\x18\x02 \x03(\v2\x1a.work.v1.WorkerWorkSummaryR\aworkers\"\xc8\x01\n" +
+	"\x0eContractorInfo\x12#\n" +
+	"\rassignment_id\x18\x01 \x01(\tR\fassignmentId\x122\n" +
+	"\x15contractor_profile_id\x18\x02 \x01(\tR\x13contractorProfileId\x12'\n" +
+	"\x0fcontractor_name\x18\x03 \x01(\tR\x0econtractorName\x124\n" +
+	"\x16committed_worker_count\x18\x04 \x01(\x05R\x14committedWorkerCount\"\x89\x01\n" +
+	"\x18ContractorWorkRecordItem\x12\x1b\n" +
+	"\twork_date\x18\x01 \x01(\tR\bworkDate\x122\n" +
+	"\x15deployed_worker_count\x18\x02 \x01(\x05R\x13deployedWorkerCount\x12\x1c\n" +
+	"\tshortfall\x18\x03 \x01(\x05R\tshortfall\"\x83\x01\n" +
+	"\x1fGetContractorWorkRecordsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12 \n" +
+	"\twork_date\x18\x03 \x01(\tH\x00R\bworkDate\x88\x01\x01B\f\n" +
+	"\n" +
+	"_work_date\"\xb1\x01\n" +
+	" GetContractorWorkRecordsResponse\x12\x17\n" +
+	"\awork_id\x18\x01 \x01(\tR\x06workId\x127\n" +
+	"\n" +
+	"contractor\x18\x02 \x01(\v2\x17.work.v1.ContractorInfoR\n" +
+	"contractor\x12;\n" +
+	"\arecords\x18\x03 \x03(\v2!.work.v1.ContractorWorkRecordItemR\arecords\"\xa4\x01\n" +
+	"\x1fSaveContractorWorkRecordRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1b\n" +
+	"\twork_date\x18\x03 \x01(\tR\bworkDate\x122\n" +
+	"\x15deployed_worker_count\x18\x04 \x01(\x05R\x13deployedWorkerCount\"S\n" +
+	"\x1fGetContractorWorkSummaryRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"\x80\x05\n" +
+	" GetContractorWorkSummaryResponse\x12\x17\n" +
+	"\awork_id\x18\x01 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x122\n" +
+	"\x15contractor_profile_id\x18\x03 \x01(\tR\x13contractorProfileId\x12'\n" +
+	"\x0fcontractor_name\x18\x04 \x01(\tR\x0econtractorName\x124\n" +
+	"\x16committed_worker_count\x18\x05 \x01(\x05R\x14committedWorkerCount\x12.\n" +
+	"\x13total_recorded_days\x18\x06 \x01(\x05R\x11totalRecordedDays\x12;\n" +
+	"\x1atotal_deployed_worker_days\x18\a \x01(\x05R\x17totalDeployedWorkerDays\x128\n" +
+	"\x18average_deployed_workers\x18\b \x01(\x01R\x16averageDeployedWorkers\x12'\n" +
+	"\x0ftotal_shortfall\x18\t \x01(\x05R\x0etotalShortfall\x12\x1b\n" +
+	"\trate_type\x18\n" +
+	" \x01(\tR\brateType\x12\x1d\n" +
+	"\n" +
+	"rate_minor\x18\v \x01(\x03R\trateMinor\x12-\n" +
+	"\x12completed_quantity\x18\f \x01(\x01R\x11completedQuantity\x124\n" +
+	"\x16estimated_amount_minor\x18\r \x01(\x03R\x14estimatedAmountMinor\x12\x1a\n" +
+	"\bcurrency\x18\x0e \x01(\tR\bcurrency\"\xe2\x03\n" +
+	"\x12PaymentTransaction\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x122\n" +
+	"\x15payment_obligation_id\x18\x02 \x01(\tR\x13paymentObligationId\x12\x17\n" +
+	"\awork_id\x18\x03 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x04 \x01(\tR\fassignmentId\x12!\n" +
+	"\famount_minor\x18\x05 \x01(\x03R\vamountMinor\x12%\n" +
+	"\x0epayment_method\x18\x06 \x01(\tR\rpaymentMethod\x12!\n" +
+	"\treference\x18\a \x01(\tH\x00R\treference\x88\x01\x01\x12\x1f\n" +
+	"\vrecorded_by\x18\b \x01(\tR\n" +
+	"recordedBy\x12\x17\n" +
+	"\apaid_at\x18\t \x01(\tR\x06paidAt\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\tR\tcreatedAt\x12*\n" +
+	"\x0ereceipt_status\x18\v \x01(\tH\x01R\rreceiptStatus\x88\x01\x01\x12&\n" +
+	"\fconfirmed_at\x18\f \x01(\tH\x02R\vconfirmedAt\x88\x01\x01B\f\n" +
+	"\n" +
+	"_referenceB\x11\n" +
+	"\x0f_receipt_statusB\x0f\n" +
+	"\r_confirmed_at\"\x8a\x03\n" +
+	"\x11PaymentObligation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x1d\n" +
+	"\n" +
+	"payee_type\x18\x04 \x01(\tR\tpayeeType\x12\x19\n" +
+	"\bpayee_id\x18\x05 \x01(\tR\apayeeId\x12\x1d\n" +
+	"\n" +
+	"payee_name\x18\x06 \x01(\tR\tpayeeName\x12\x1a\n" +
+	"\bcurrency\x18\a \x01(\tR\bcurrency\x120\n" +
+	"\x14payable_amount_minor\x18\b \x01(\x03R\x12payableAmountMinor\x12*\n" +
+	"\x11paid_amount_minor\x18\t \x01(\x03R\x0fpaidAmountMinor\x12\x16\n" +
+	"\x06status\x18\n" +
+	" \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\f \x01(\tR\tupdatedAt\"\x94\x04\n" +
+	"\x0fWorkPaymentItem\x12:\n" +
+	"\n" +
+	"obligation\x18\x01 \x01(\v2\x1a.work.v1.PaymentObligationR\n" +
+	"obligation\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x1d\n" +
+	"\n" +
+	"payee_type\x18\x03 \x01(\tR\tpayeeType\x12\x19\n" +
+	"\bpayee_id\x18\x04 \x01(\tR\apayeeId\x12\x1d\n" +
+	"\n" +
+	"payee_name\x18\x05 \x01(\tR\tpayeeName\x12\x1b\n" +
+	"\trate_type\x18\x06 \x01(\tR\brateType\x120\n" +
+	"\x14payable_amount_minor\x18\a \x01(\x03R\x12payableAmountMinor\x12*\n" +
+	"\x11paid_amount_minor\x18\b \x01(\x03R\x0fpaidAmountMinor\x124\n" +
+	"\x16remaining_amount_minor\x18\t \x01(\x03R\x14remainingAmountMinor\x12\x16\n" +
+	"\x06status\x18\n" +
+	" \x01(\tR\x06status\x12?\n" +
+	"\ftransactions\x18\v \x03(\v2\x1b.work.v1.PaymentTransactionR\ftransactions\x12*\n" +
+	"\x0ereceipt_status\x18\f \x01(\tH\x00R\rreceiptStatus\x88\x01\x01B\x11\n" +
+	"\x0f_receipt_status\"J\n" +
+	"\x16GetWorkPaymentsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"\xb6\x01\n" +
+	"\x17GetWorkPaymentsResponse\x12\x17\n" +
+	"\awork_id\x18\x01 \x01(\tR\x06workId\x12\x1f\n" +
+	"\vhiring_mode\x18\x02 \x01(\tR\n" +
+	"hiringMode\x12+\n" +
+	"\x11outstanding_minor\x18\x03 \x01(\x03R\x10outstandingMinor\x124\n" +
+	"\bpayments\x18\x04 \x03(\v2\x18.work.v1.WorkPaymentItemR\bpayments\"\xb8\x01\n" +
+	"\x0eOfferedPayment\x12\x16\n" +
+	"\x06amount\x18\x01 \x01(\x01R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x12\x1d\n" +
+	"\n" +
+	"rate_basis\x18\x03 \x01(\tR\trateBasis\x12 \n" +
+	"\trate_unit\x18\x04 \x01(\tH\x00R\brateUnit\x88\x01\x01\x12\x19\n" +
+	"\x05notes\x18\x05 \x01(\tH\x01R\x05notes\x88\x01\x01B\f\n" +
+	"\n" +
+	"_rate_unitB\b\n" +
+	"\x06_notes\"\xf6\x04\n" +
+	"\x0eWorkInvitation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x19\n" +
+	"\bowner_id\x18\x03 \x01(\tR\aownerId\x12\x1b\n" +
+	"\tworker_id\x18\x04 \x01(\tR\bworkerId\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x12%\n" +
+	"\x0eapplicant_type\x18\x06 \x01(\tR\rapplicantType\x12\x1d\n" +
+	"\n" +
+	"seat_count\x18\a \x01(\x05R\tseatCount\x12@\n" +
+	"\x0foffered_payment\x18\b \x01(\v2\x17.work.v1.OfferedPaymentR\x0eofferedPayment\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\v \x01(\tR\texpiresAt\x12&\n" +
+	"\fresponded_at\x18\f \x01(\tH\x00R\vrespondedAt\x88\x01\x01\x12(\n" +
+	"\rassignment_id\x18\r \x01(\tH\x01R\fassignmentId\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"owner_name\x18\x0e \x01(\tH\x02R\townerName\x88\x01\x01\x12(\n" +
+	"\x04work\x18\x0f \x01(\v2\x14.work.v1.WorkPostingR\x04work\x12$\n" +
+	"\vworker_name\x18\x10 \x01(\tH\x03R\n" +
+	"workerName\x88\x01\x01B\x0f\n" +
+	"\r_responded_atB\x10\n" +
+	"\x0e_assignment_idB\r\n" +
+	"\v_owner_nameB\x0e\n" +
+	"\f_worker_name\"\xa0\x01\n" +
+	"\x16InvitationCreateResult\x12\x1b\n" +
+	"\tworker_id\x18\x01 \x01(\tR\bworkerId\x12\x18\n" +
+	"\aoutcome\x18\x02 \x01(\tR\aoutcome\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\x127\n" +
+	"\n" +
+	"invitation\x18\x04 \x01(\v2\x17.work.v1.WorkInvitationR\n" +
+	"invitation\"\x96\x01\n" +
+	"\x17EligibleRecruitmentWork\x12(\n" +
+	"\x04work\x18\x01 \x01(\v2\x14.work.v1.WorkPostingR\x04work\x12\x1a\n" +
+	"\beligible\x18\x02 \x01(\bR\beligible\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\x12\x1d\n" +
+	"\n" +
+	"seat_count\x18\x04 \x01(\x05R\tseatCount\"[\n" +
+	"#ListEligibleRecruitmentWorksRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\tworker_id\x18\x02 \x01(\tR\bworkerId\"^\n" +
+	"$ListEligibleRecruitmentWorksResponse\x126\n" +
+	"\x05works\x18\x01 \x03(\v2 .work.v1.EligibleRecruitmentWorkR\x05works\"\xb1\x01\n" +
+	"\x1cCreateWorkInvitationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12\x1d\n" +
+	"\n" +
+	"worker_ids\x18\x03 \x03(\tR\tworkerIds\x12@\n" +
+	"\x0foffered_payment\x18\x04 \x01(\v2\x17.work.v1.OfferedPaymentR\x0eofferedPayment\"Z\n" +
+	"\x1dCreateWorkInvitationsResponse\x129\n" +
+	"\aresults\x18\x01 \x03(\v2\x1f.work.v1.InvitationCreateResultR\aresults\"N\n" +
+	"\x1aListWorkInvitationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"X\n" +
+	"\x1bListWorkInvitationsResponse\x129\n" +
+	"\vinvitations\x18\x01 \x03(\v2\x17.work.v1.WorkInvitationR\vinvitations\"[\n" +
+	"\x18ListMyInvitationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_status\"V\n" +
+	"\x19ListMyInvitationsResponse\x129\n" +
+	"\vinvitations\x18\x01 \x03(\v2\x17.work.v1.WorkInvitationR\vinvitations\"\\\n" +
+	"\x1cRespondWorkInvitationRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rinvitation_id\x18\x02 \x01(\tR\finvitationId\"X\n" +
+	"\x1dRespondWorkInvitationResponse\x127\n" +
+	"\n" +
+	"invitation\x18\x01 \x01(\v2\x17.work.v1.WorkInvitationR\n" +
+	"invitation\"t\n" +
+	"\x1bCancelWorkInvitationRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rinvitation_id\x18\x03 \x01(\tR\finvitationId\"\xf3\x01\n" +
+	"\x14RecordPaymentRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
+	"\n" +
+	"payment_id\x18\x02 \x01(\tR\tpaymentId\x12!\n" +
+	"\famount_minor\x18\x03 \x01(\x03R\vamountMinor\x12%\n" +
+	"\x0epayment_method\x18\x04 \x01(\tR\rpaymentMethod\x12!\n" +
+	"\treference\x18\x05 \x01(\tH\x00R\treference\x88\x01\x01\x12\x1c\n" +
+	"\apaid_at\x18\x06 \x01(\tH\x01R\x06paidAt\x88\x01\x01B\f\n" +
+	"\n" +
+	"_referenceB\n" +
+	"\n" +
+	"\b_paid_at\"V\n" +
+	"\x15RecordPaymentResponse\x12=\n" +
+	"\vtransaction\x18\x01 \x01(\v2\x1b.work.v1.PaymentTransactionR\vtransaction\"\x9b\x03\n" +
+	"\n" +
+	"WorkReview\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x1f\n" +
+	"\vreviewer_id\x18\x04 \x01(\tR\n" +
+	"reviewerId\x12#\n" +
+	"\rreviewer_role\x18\x05 \x01(\tR\freviewerRole\x12\x1f\n" +
+	"\vreviewee_id\x18\x06 \x01(\tR\n" +
+	"revieweeId\x12(\n" +
+	"\rreviewer_name\x18\a \x01(\tH\x00R\freviewerName\x88\x01\x01\x12(\n" +
+	"\rreviewee_name\x18\b \x01(\tH\x01R\frevieweeName\x88\x01\x01\x12\x16\n" +
+	"\x06rating\x18\t \x01(\x05R\x06rating\x12\x1d\n" +
+	"\acomment\x18\n" +
+	" \x01(\tH\x02R\acomment\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAtB\x10\n" +
+	"\x0e_reviewer_nameB\x10\n" +
+	"\x0e_reviewee_nameB\n" +
+	"\n" +
+	"\b_comment\"\x96\x01\n" +
+	"\x13CreateReviewRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x16\n" +
+	"\x06rating\x18\x03 \x01(\x05R\x06rating\x12\x1d\n" +
+	"\acomment\x18\x04 \x01(\tH\x00R\acomment\x88\x01\x01B\n" +
+	"\n" +
+	"\b_comment\"C\n" +
+	"\x14CreateReviewResponse\x12+\n" +
+	"\x06review\x18\x01 \x01(\v2\x13.work.v1.WorkReviewR\x06review\"J\n" +
+	"\x16ListWorkReviewsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"H\n" +
+	"\x17ListWorkReviewsResponse\x12-\n" +
+	"\areviews\x18\x01 \x03(\v2\x13.work.v1.WorkReviewR\areviews\"W\n" +
+	"\x16ListUserReviewsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
+	"\x0etarget_user_id\x18\x02 \x01(\tR\ftargetUserId\"H\n" +
+	"\x17ListUserReviewsResponse\x12-\n" +
+	"\areviews\x18\x01 \x03(\v2\x13.work.v1.WorkReviewR\areviews\"\\\n" +
+	"\x1bGetUserRatingSummaryRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
+	"\x0etarget_user_id\x18\x02 \x01(\tR\ftargetUserId\"\x81\x01\n" +
+	"\x1cGetUserRatingSummaryResponse\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12%\n" +
+	"\x0eaverage_rating\x18\x02 \x01(\x01R\raverageRating\x12!\n" +
+	"\freview_count\x18\x03 \x01(\x05R\vreviewCount2\x97\"\n" +
 	"\vWorkService\x12E\n" +
 	"\n" +
-	"CreateWork\x12\x1a.work.v1.CreateWorkRequest\x1a\x1b.work.v1.CreateWorkResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
+	"CreateWork\x12\x1a.work.v1.CreateWorkRequest\x1a\x1b.work.v1.CreateWorkResponse\x12H\n" +
+	"\vListMyWorks\x12\x1b.work.v1.ListMyWorksRequest\x1a\x1c.work.v1.ListMyWorksResponse\x12H\n" +
+	"\vApplyToWork\x12\x1b.work.v1.ApplyToWorkRequest\x1a\x1c.work.v1.ApplyToWorkResponse\x12]\n" +
+	"\x12ListMyApplications\x12\".work.v1.ListMyApplicationsRequest\x1a#.work.v1.ListMyApplicationsResponse\x12c\n" +
+	"\x14ListWorkApplications\x12$.work.v1.ListWorkApplicationsRequest\x1a%.work.v1.ListWorkApplicationsResponse\x12i\n" +
+	"\x18ShortlistWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12f\n" +
+	"\x15AcceptWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12f\n" +
+	"\x15RejectWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12h\n" +
+	"\x17WithdrawWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12f\n" +
+	"\x15CancelWorkApplication\x12%.work.v1.UpdateWorkApplicationRequest\x1a&.work.v1.UpdateWorkApplicationResponse\x12J\n" +
+	"\tStartWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12M\n" +
+	"\fCompleteWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12V\n" +
+	"\x15ConfirmWorkCompletion\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12K\n" +
+	"\n" +
+	"CancelWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12R\n" +
+	"\x11CloseApplications\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12L\n" +
+	"\vCompleteJob\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12J\n" +
+	"\tCloseWork\x12\x1d.work.v1.WorkLifecycleRequest\x1a\x1e.work.v1.WorkLifecycleResponse\x12\\\n" +
+	"\x0fStartAssignment\x12#.work.v1.AssignmentLifecycleRequest\x1a$.work.v1.AssignmentLifecycleResponse\x12_\n" +
+	"\x12CompleteAssignment\x12#.work.v1.AssignmentLifecycleRequest\x1a$.work.v1.AssignmentLifecycleResponse\x12Q\n" +
+	"\x0eUpsertDailyLog\x12\x1e.work.v1.UpsertDailyLogRequest\x1a\x1f.work.v1.UpsertDailyLogResponse\x12b\n" +
+	"\x17ListAssignmentDailyLogs\x12'.work.v1.ListAssignmentDailyLogsRequest\x1a\x1e.work.v1.ListDailyLogsResponse\x12V\n" +
+	"\x11ListWorkDailyLogs\x12!.work.v1.ListWorkDailyLogsRequest\x1a\x1e.work.v1.ListDailyLogsResponse\x12Z\n" +
+	"\x11GetWorkSettlement\x12!.work.v1.GetWorkSettlementRequest\x1a\".work.v1.GetWorkSettlementResponse\x12l\n" +
+	"\x17RecordAssignmentPayment\x12'.work.v1.RecordAssignmentPaymentRequest\x1a(.work.v1.RecordAssignmentPaymentResponse\x12i\n" +
+	"\x16ListAssignmentPayments\x12&.work.v1.ListAssignmentPaymentsRequest\x1a'.work.v1.ListAssignmentPaymentsResponse\x12m\n" +
+	"\x18ConfirmAssignmentPayment\x12'.work.v1.UpdateAssignmentPaymentRequest\x1a(.work.v1.RecordAssignmentPaymentResponse\x12n\n" +
+	"\x18DisputeAssignmentPayment\x12(.work.v1.DisputeAssignmentPaymentRequest\x1a(.work.v1.RecordAssignmentPaymentResponse\x12Z\n" +
+	"\x11GetWorkDayRecords\x12!.work.v1.GetWorkDayRecordsRequest\x1a\".work.v1.GetWorkDayRecordsResponse\x12\\\n" +
+	"\x12SaveWorkDayRecords\x12\".work.v1.SaveWorkDayRecordsRequest\x1a\".work.v1.GetWorkDayRecordsResponse\x12c\n" +
+	"\x14GetWorkerWorkSummary\x12$.work.v1.GetWorkerWorkSummaryRequest\x1a%.work.v1.GetWorkerWorkSummaryResponse\x12o\n" +
+	"\x18GetContractorWorkRecords\x12(.work.v1.GetContractorWorkRecordsRequest\x1a).work.v1.GetContractorWorkRecordsResponse\x12o\n" +
+	"\x18SaveContractorWorkRecord\x12(.work.v1.SaveContractorWorkRecordRequest\x1a).work.v1.GetContractorWorkRecordsResponse\x12o\n" +
+	"\x18GetContractorWorkSummary\x12(.work.v1.GetContractorWorkSummaryRequest\x1a).work.v1.GetContractorWorkSummaryResponse\x12T\n" +
+	"\x0fGetWorkPayments\x12\x1f.work.v1.GetWorkPaymentsRequest\x1a .work.v1.GetWorkPaymentsResponse\x12N\n" +
+	"\rRecordPayment\x12\x1d.work.v1.RecordPaymentRequest\x1a\x1e.work.v1.RecordPaymentResponse\x12{\n" +
+	"\x1cListEligibleRecruitmentWorks\x12,.work.v1.ListEligibleRecruitmentWorksRequest\x1a-.work.v1.ListEligibleRecruitmentWorksResponse\x12f\n" +
+	"\x15CreateWorkInvitations\x12%.work.v1.CreateWorkInvitationsRequest\x1a&.work.v1.CreateWorkInvitationsResponse\x12`\n" +
+	"\x13ListWorkInvitations\x12#.work.v1.ListWorkInvitationsRequest\x1a$.work.v1.ListWorkInvitationsResponse\x12Z\n" +
+	"\x11ListMyInvitations\x12!.work.v1.ListMyInvitationsRequest\x1a\".work.v1.ListMyInvitationsResponse\x12e\n" +
+	"\x14AcceptWorkInvitation\x12%.work.v1.RespondWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12f\n" +
+	"\x15DeclineWorkInvitation\x12%.work.v1.RespondWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12d\n" +
+	"\x14CancelWorkInvitation\x12$.work.v1.CancelWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12K\n" +
+	"\fCreateReview\x12\x1c.work.v1.CreateReviewRequest\x1a\x1d.work.v1.CreateReviewResponse\x12T\n" +
+	"\x0fListWorkReviews\x12\x1f.work.v1.ListWorkReviewsRequest\x1a .work.v1.ListWorkReviewsResponse\x12T\n" +
+	"\x0fListUserReviews\x12\x1f.work.v1.ListUserReviewsRequest\x1a .work.v1.ListUserReviewsResponse\x12c\n" +
+	"\x14GetUserRatingSummary\x12$.work.v1.GetUserRatingSummaryRequest\x1a%.work.v1.GetUserRatingSummaryResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
 
 var (
 	file_work_work_proto_rawDescOnce sync.Once
@@ -692,21 +7075,242 @@ func file_work_work_proto_rawDescGZIP() []byte {
 	return file_work_work_proto_rawDescData
 }
 
-var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 86)
 var file_work_work_proto_goTypes = []any{
-	(*CreateWorkRequest)(nil),  // 0: work.v1.CreateWorkRequest
-	(*CreateWorkResponse)(nil), // 1: work.v1.CreateWorkResponse
-	(*WorkPosting)(nil),        // 2: work.v1.WorkPosting
+	(*CreateWorkRequest)(nil),                    // 0: work.v1.CreateWorkRequest
+	(*CreateWorkResponse)(nil),                   // 1: work.v1.CreateWorkResponse
+	(*WorkPosting)(nil),                          // 2: work.v1.WorkPosting
+	(*Quotation)(nil),                            // 3: work.v1.Quotation
+	(*WorkApplication)(nil),                      // 4: work.v1.WorkApplication
+	(*ApplyToWorkRequest)(nil),                   // 5: work.v1.ApplyToWorkRequest
+	(*ApplyToWorkResponse)(nil),                  // 6: work.v1.ApplyToWorkResponse
+	(*ListWorkApplicationsRequest)(nil),          // 7: work.v1.ListWorkApplicationsRequest
+	(*ListWorkApplicationsResponse)(nil),         // 8: work.v1.ListWorkApplicationsResponse
+	(*UpdateWorkApplicationRequest)(nil),         // 9: work.v1.UpdateWorkApplicationRequest
+	(*UpdateWorkApplicationResponse)(nil),        // 10: work.v1.UpdateWorkApplicationResponse
+	(*ListMyWorksRequest)(nil),                   // 11: work.v1.ListMyWorksRequest
+	(*ListMyWorksResponse)(nil),                  // 12: work.v1.ListMyWorksResponse
+	(*MyWorkApplication)(nil),                    // 13: work.v1.MyWorkApplication
+	(*ListMyApplicationsRequest)(nil),            // 14: work.v1.ListMyApplicationsRequest
+	(*ListMyApplicationsResponse)(nil),           // 15: work.v1.ListMyApplicationsResponse
+	(*WorkLifecycleRequest)(nil),                 // 16: work.v1.WorkLifecycleRequest
+	(*WorkLifecycleResponse)(nil),                // 17: work.v1.WorkLifecycleResponse
+	(*WorkAssignment)(nil),                       // 18: work.v1.WorkAssignment
+	(*DailyLog)(nil),                             // 19: work.v1.DailyLog
+	(*WorkPayment)(nil),                          // 20: work.v1.WorkPayment
+	(*AssignmentLifecycleRequest)(nil),           // 21: work.v1.AssignmentLifecycleRequest
+	(*AssignmentLifecycleResponse)(nil),          // 22: work.v1.AssignmentLifecycleResponse
+	(*UpsertDailyLogRequest)(nil),                // 23: work.v1.UpsertDailyLogRequest
+	(*UpsertDailyLogResponse)(nil),               // 24: work.v1.UpsertDailyLogResponse
+	(*ListAssignmentDailyLogsRequest)(nil),       // 25: work.v1.ListAssignmentDailyLogsRequest
+	(*ListWorkDailyLogsRequest)(nil),             // 26: work.v1.ListWorkDailyLogsRequest
+	(*ListDailyLogsResponse)(nil),                // 27: work.v1.ListDailyLogsResponse
+	(*GetWorkSettlementRequest)(nil),             // 28: work.v1.GetWorkSettlementRequest
+	(*WorkerSettlement)(nil),                     // 29: work.v1.WorkerSettlement
+	(*GetWorkSettlementResponse)(nil),            // 30: work.v1.GetWorkSettlementResponse
+	(*RecordAssignmentPaymentRequest)(nil),       // 31: work.v1.RecordAssignmentPaymentRequest
+	(*RecordAssignmentPaymentResponse)(nil),      // 32: work.v1.RecordAssignmentPaymentResponse
+	(*ListAssignmentPaymentsRequest)(nil),        // 33: work.v1.ListAssignmentPaymentsRequest
+	(*ListAssignmentPaymentsResponse)(nil),       // 34: work.v1.ListAssignmentPaymentsResponse
+	(*UpdateAssignmentPaymentRequest)(nil),       // 35: work.v1.UpdateAssignmentPaymentRequest
+	(*DisputeAssignmentPaymentRequest)(nil),      // 36: work.v1.DisputeAssignmentPaymentRequest
+	(*AgreedPayment)(nil),                        // 37: work.v1.AgreedPayment
+	(*WorkerDayRecordItem)(nil),                  // 38: work.v1.WorkerDayRecordItem
+	(*GetWorkDayRecordsRequest)(nil),             // 39: work.v1.GetWorkDayRecordsRequest
+	(*GetWorkDayRecordsResponse)(nil),            // 40: work.v1.GetWorkDayRecordsResponse
+	(*SaveWorkDayRecordInput)(nil),               // 41: work.v1.SaveWorkDayRecordInput
+	(*SaveWorkDayRecordsRequest)(nil),            // 42: work.v1.SaveWorkDayRecordsRequest
+	(*WorkerWorkSummary)(nil),                    // 43: work.v1.WorkerWorkSummary
+	(*GetWorkerWorkSummaryRequest)(nil),          // 44: work.v1.GetWorkerWorkSummaryRequest
+	(*GetWorkerWorkSummaryResponse)(nil),         // 45: work.v1.GetWorkerWorkSummaryResponse
+	(*ContractorInfo)(nil),                       // 46: work.v1.ContractorInfo
+	(*ContractorWorkRecordItem)(nil),             // 47: work.v1.ContractorWorkRecordItem
+	(*GetContractorWorkRecordsRequest)(nil),      // 48: work.v1.GetContractorWorkRecordsRequest
+	(*GetContractorWorkRecordsResponse)(nil),     // 49: work.v1.GetContractorWorkRecordsResponse
+	(*SaveContractorWorkRecordRequest)(nil),      // 50: work.v1.SaveContractorWorkRecordRequest
+	(*GetContractorWorkSummaryRequest)(nil),      // 51: work.v1.GetContractorWorkSummaryRequest
+	(*GetContractorWorkSummaryResponse)(nil),     // 52: work.v1.GetContractorWorkSummaryResponse
+	(*PaymentTransaction)(nil),                   // 53: work.v1.PaymentTransaction
+	(*PaymentObligation)(nil),                    // 54: work.v1.PaymentObligation
+	(*WorkPaymentItem)(nil),                      // 55: work.v1.WorkPaymentItem
+	(*GetWorkPaymentsRequest)(nil),               // 56: work.v1.GetWorkPaymentsRequest
+	(*GetWorkPaymentsResponse)(nil),              // 57: work.v1.GetWorkPaymentsResponse
+	(*OfferedPayment)(nil),                       // 58: work.v1.OfferedPayment
+	(*WorkInvitation)(nil),                       // 59: work.v1.WorkInvitation
+	(*InvitationCreateResult)(nil),               // 60: work.v1.InvitationCreateResult
+	(*EligibleRecruitmentWork)(nil),              // 61: work.v1.EligibleRecruitmentWork
+	(*ListEligibleRecruitmentWorksRequest)(nil),  // 62: work.v1.ListEligibleRecruitmentWorksRequest
+	(*ListEligibleRecruitmentWorksResponse)(nil), // 63: work.v1.ListEligibleRecruitmentWorksResponse
+	(*CreateWorkInvitationsRequest)(nil),         // 64: work.v1.CreateWorkInvitationsRequest
+	(*CreateWorkInvitationsResponse)(nil),        // 65: work.v1.CreateWorkInvitationsResponse
+	(*ListWorkInvitationsRequest)(nil),           // 66: work.v1.ListWorkInvitationsRequest
+	(*ListWorkInvitationsResponse)(nil),          // 67: work.v1.ListWorkInvitationsResponse
+	(*ListMyInvitationsRequest)(nil),             // 68: work.v1.ListMyInvitationsRequest
+	(*ListMyInvitationsResponse)(nil),            // 69: work.v1.ListMyInvitationsResponse
+	(*RespondWorkInvitationRequest)(nil),         // 70: work.v1.RespondWorkInvitationRequest
+	(*RespondWorkInvitationResponse)(nil),        // 71: work.v1.RespondWorkInvitationResponse
+	(*CancelWorkInvitationRequest)(nil),          // 72: work.v1.CancelWorkInvitationRequest
+	(*RecordPaymentRequest)(nil),                 // 73: work.v1.RecordPaymentRequest
+	(*RecordPaymentResponse)(nil),                // 74: work.v1.RecordPaymentResponse
+	(*WorkReview)(nil),                           // 75: work.v1.WorkReview
+	(*CreateReviewRequest)(nil),                  // 76: work.v1.CreateReviewRequest
+	(*CreateReviewResponse)(nil),                 // 77: work.v1.CreateReviewResponse
+	(*ListWorkReviewsRequest)(nil),               // 78: work.v1.ListWorkReviewsRequest
+	(*ListWorkReviewsResponse)(nil),              // 79: work.v1.ListWorkReviewsResponse
+	(*ListUserReviewsRequest)(nil),               // 80: work.v1.ListUserReviewsRequest
+	(*ListUserReviewsResponse)(nil),              // 81: work.v1.ListUserReviewsResponse
+	(*GetUserRatingSummaryRequest)(nil),          // 82: work.v1.GetUserRatingSummaryRequest
+	(*GetUserRatingSummaryResponse)(nil),         // 83: work.v1.GetUserRatingSummaryResponse
+	nil,                                          // 84: work.v1.CreateWorkRequest.AttributesEntry
+	nil,                                          // 85: work.v1.WorkPosting.AttributesEntry
 }
 var file_work_work_proto_depIdxs = []int32{
-	2, // 0: work.v1.CreateWorkResponse.work:type_name -> work.v1.WorkPosting
-	0, // 1: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
-	1, // 2: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	84, // 0: work.v1.CreateWorkRequest.attributes:type_name -> work.v1.CreateWorkRequest.AttributesEntry
+	2,  // 1: work.v1.CreateWorkResponse.work:type_name -> work.v1.WorkPosting
+	85, // 2: work.v1.WorkPosting.attributes:type_name -> work.v1.WorkPosting.AttributesEntry
+	3,  // 3: work.v1.WorkApplication.quotation:type_name -> work.v1.Quotation
+	3,  // 4: work.v1.ApplyToWorkRequest.quotation:type_name -> work.v1.Quotation
+	4,  // 5: work.v1.ApplyToWorkResponse.application:type_name -> work.v1.WorkApplication
+	4,  // 6: work.v1.ListWorkApplicationsResponse.applications:type_name -> work.v1.WorkApplication
+	4,  // 7: work.v1.UpdateWorkApplicationResponse.application:type_name -> work.v1.WorkApplication
+	2,  // 8: work.v1.ListMyWorksResponse.works:type_name -> work.v1.WorkPosting
+	4,  // 9: work.v1.MyWorkApplication.application:type_name -> work.v1.WorkApplication
+	2,  // 10: work.v1.MyWorkApplication.work:type_name -> work.v1.WorkPosting
+	18, // 11: work.v1.MyWorkApplication.assignment:type_name -> work.v1.WorkAssignment
+	20, // 12: work.v1.MyWorkApplication.payments:type_name -> work.v1.WorkPayment
+	13, // 13: work.v1.ListMyApplicationsResponse.applications:type_name -> work.v1.MyWorkApplication
+	2,  // 14: work.v1.WorkLifecycleResponse.work:type_name -> work.v1.WorkPosting
+	3,  // 15: work.v1.WorkAssignment.agreed_quotation:type_name -> work.v1.Quotation
+	37, // 16: work.v1.WorkAssignment.agreed_payment:type_name -> work.v1.AgreedPayment
+	18, // 17: work.v1.AssignmentLifecycleResponse.assignment:type_name -> work.v1.WorkAssignment
+	19, // 18: work.v1.UpsertDailyLogResponse.daily_log:type_name -> work.v1.DailyLog
+	19, // 19: work.v1.ListDailyLogsResponse.daily_logs:type_name -> work.v1.DailyLog
+	18, // 20: work.v1.WorkerSettlement.assignment:type_name -> work.v1.WorkAssignment
+	19, // 21: work.v1.WorkerSettlement.logs:type_name -> work.v1.DailyLog
+	20, // 22: work.v1.WorkerSettlement.payments:type_name -> work.v1.WorkPayment
+	2,  // 23: work.v1.GetWorkSettlementResponse.work:type_name -> work.v1.WorkPosting
+	29, // 24: work.v1.GetWorkSettlementResponse.workers:type_name -> work.v1.WorkerSettlement
+	20, // 25: work.v1.RecordAssignmentPaymentResponse.payment:type_name -> work.v1.WorkPayment
+	20, // 26: work.v1.ListAssignmentPaymentsResponse.payments:type_name -> work.v1.WorkPayment
+	38, // 27: work.v1.GetWorkDayRecordsResponse.workers:type_name -> work.v1.WorkerDayRecordItem
+	41, // 28: work.v1.SaveWorkDayRecordsRequest.records:type_name -> work.v1.SaveWorkDayRecordInput
+	43, // 29: work.v1.GetWorkerWorkSummaryResponse.workers:type_name -> work.v1.WorkerWorkSummary
+	46, // 30: work.v1.GetContractorWorkRecordsResponse.contractor:type_name -> work.v1.ContractorInfo
+	47, // 31: work.v1.GetContractorWorkRecordsResponse.records:type_name -> work.v1.ContractorWorkRecordItem
+	54, // 32: work.v1.WorkPaymentItem.obligation:type_name -> work.v1.PaymentObligation
+	53, // 33: work.v1.WorkPaymentItem.transactions:type_name -> work.v1.PaymentTransaction
+	55, // 34: work.v1.GetWorkPaymentsResponse.payments:type_name -> work.v1.WorkPaymentItem
+	58, // 35: work.v1.WorkInvitation.offered_payment:type_name -> work.v1.OfferedPayment
+	2,  // 36: work.v1.WorkInvitation.work:type_name -> work.v1.WorkPosting
+	59, // 37: work.v1.InvitationCreateResult.invitation:type_name -> work.v1.WorkInvitation
+	2,  // 38: work.v1.EligibleRecruitmentWork.work:type_name -> work.v1.WorkPosting
+	61, // 39: work.v1.ListEligibleRecruitmentWorksResponse.works:type_name -> work.v1.EligibleRecruitmentWork
+	58, // 40: work.v1.CreateWorkInvitationsRequest.offered_payment:type_name -> work.v1.OfferedPayment
+	60, // 41: work.v1.CreateWorkInvitationsResponse.results:type_name -> work.v1.InvitationCreateResult
+	59, // 42: work.v1.ListWorkInvitationsResponse.invitations:type_name -> work.v1.WorkInvitation
+	59, // 43: work.v1.ListMyInvitationsResponse.invitations:type_name -> work.v1.WorkInvitation
+	59, // 44: work.v1.RespondWorkInvitationResponse.invitation:type_name -> work.v1.WorkInvitation
+	53, // 45: work.v1.RecordPaymentResponse.transaction:type_name -> work.v1.PaymentTransaction
+	75, // 46: work.v1.CreateReviewResponse.review:type_name -> work.v1.WorkReview
+	75, // 47: work.v1.ListWorkReviewsResponse.reviews:type_name -> work.v1.WorkReview
+	75, // 48: work.v1.ListUserReviewsResponse.reviews:type_name -> work.v1.WorkReview
+	0,  // 49: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
+	11, // 50: work.v1.WorkService.ListMyWorks:input_type -> work.v1.ListMyWorksRequest
+	5,  // 51: work.v1.WorkService.ApplyToWork:input_type -> work.v1.ApplyToWorkRequest
+	14, // 52: work.v1.WorkService.ListMyApplications:input_type -> work.v1.ListMyApplicationsRequest
+	7,  // 53: work.v1.WorkService.ListWorkApplications:input_type -> work.v1.ListWorkApplicationsRequest
+	9,  // 54: work.v1.WorkService.ShortlistWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 55: work.v1.WorkService.AcceptWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 56: work.v1.WorkService.RejectWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 57: work.v1.WorkService.WithdrawWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 58: work.v1.WorkService.CancelWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	16, // 59: work.v1.WorkService.StartWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 60: work.v1.WorkService.CompleteWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 61: work.v1.WorkService.ConfirmWorkCompletion:input_type -> work.v1.WorkLifecycleRequest
+	16, // 62: work.v1.WorkService.CancelWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 63: work.v1.WorkService.CloseApplications:input_type -> work.v1.WorkLifecycleRequest
+	16, // 64: work.v1.WorkService.CompleteJob:input_type -> work.v1.WorkLifecycleRequest
+	16, // 65: work.v1.WorkService.CloseWork:input_type -> work.v1.WorkLifecycleRequest
+	21, // 66: work.v1.WorkService.StartAssignment:input_type -> work.v1.AssignmentLifecycleRequest
+	21, // 67: work.v1.WorkService.CompleteAssignment:input_type -> work.v1.AssignmentLifecycleRequest
+	23, // 68: work.v1.WorkService.UpsertDailyLog:input_type -> work.v1.UpsertDailyLogRequest
+	25, // 69: work.v1.WorkService.ListAssignmentDailyLogs:input_type -> work.v1.ListAssignmentDailyLogsRequest
+	26, // 70: work.v1.WorkService.ListWorkDailyLogs:input_type -> work.v1.ListWorkDailyLogsRequest
+	28, // 71: work.v1.WorkService.GetWorkSettlement:input_type -> work.v1.GetWorkSettlementRequest
+	31, // 72: work.v1.WorkService.RecordAssignmentPayment:input_type -> work.v1.RecordAssignmentPaymentRequest
+	33, // 73: work.v1.WorkService.ListAssignmentPayments:input_type -> work.v1.ListAssignmentPaymentsRequest
+	35, // 74: work.v1.WorkService.ConfirmAssignmentPayment:input_type -> work.v1.UpdateAssignmentPaymentRequest
+	36, // 75: work.v1.WorkService.DisputeAssignmentPayment:input_type -> work.v1.DisputeAssignmentPaymentRequest
+	39, // 76: work.v1.WorkService.GetWorkDayRecords:input_type -> work.v1.GetWorkDayRecordsRequest
+	42, // 77: work.v1.WorkService.SaveWorkDayRecords:input_type -> work.v1.SaveWorkDayRecordsRequest
+	44, // 78: work.v1.WorkService.GetWorkerWorkSummary:input_type -> work.v1.GetWorkerWorkSummaryRequest
+	48, // 79: work.v1.WorkService.GetContractorWorkRecords:input_type -> work.v1.GetContractorWorkRecordsRequest
+	50, // 80: work.v1.WorkService.SaveContractorWorkRecord:input_type -> work.v1.SaveContractorWorkRecordRequest
+	51, // 81: work.v1.WorkService.GetContractorWorkSummary:input_type -> work.v1.GetContractorWorkSummaryRequest
+	56, // 82: work.v1.WorkService.GetWorkPayments:input_type -> work.v1.GetWorkPaymentsRequest
+	73, // 83: work.v1.WorkService.RecordPayment:input_type -> work.v1.RecordPaymentRequest
+	62, // 84: work.v1.WorkService.ListEligibleRecruitmentWorks:input_type -> work.v1.ListEligibleRecruitmentWorksRequest
+	64, // 85: work.v1.WorkService.CreateWorkInvitations:input_type -> work.v1.CreateWorkInvitationsRequest
+	66, // 86: work.v1.WorkService.ListWorkInvitations:input_type -> work.v1.ListWorkInvitationsRequest
+	68, // 87: work.v1.WorkService.ListMyInvitations:input_type -> work.v1.ListMyInvitationsRequest
+	70, // 88: work.v1.WorkService.AcceptWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
+	70, // 89: work.v1.WorkService.DeclineWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
+	72, // 90: work.v1.WorkService.CancelWorkInvitation:input_type -> work.v1.CancelWorkInvitationRequest
+	76, // 91: work.v1.WorkService.CreateReview:input_type -> work.v1.CreateReviewRequest
+	78, // 92: work.v1.WorkService.ListWorkReviews:input_type -> work.v1.ListWorkReviewsRequest
+	80, // 93: work.v1.WorkService.ListUserReviews:input_type -> work.v1.ListUserReviewsRequest
+	82, // 94: work.v1.WorkService.GetUserRatingSummary:input_type -> work.v1.GetUserRatingSummaryRequest
+	1,  // 95: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
+	12, // 96: work.v1.WorkService.ListMyWorks:output_type -> work.v1.ListMyWorksResponse
+	6,  // 97: work.v1.WorkService.ApplyToWork:output_type -> work.v1.ApplyToWorkResponse
+	15, // 98: work.v1.WorkService.ListMyApplications:output_type -> work.v1.ListMyApplicationsResponse
+	8,  // 99: work.v1.WorkService.ListWorkApplications:output_type -> work.v1.ListWorkApplicationsResponse
+	10, // 100: work.v1.WorkService.ShortlistWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 101: work.v1.WorkService.AcceptWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 102: work.v1.WorkService.RejectWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 103: work.v1.WorkService.WithdrawWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 104: work.v1.WorkService.CancelWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	17, // 105: work.v1.WorkService.StartWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 106: work.v1.WorkService.CompleteWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 107: work.v1.WorkService.ConfirmWorkCompletion:output_type -> work.v1.WorkLifecycleResponse
+	17, // 108: work.v1.WorkService.CancelWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 109: work.v1.WorkService.CloseApplications:output_type -> work.v1.WorkLifecycleResponse
+	17, // 110: work.v1.WorkService.CompleteJob:output_type -> work.v1.WorkLifecycleResponse
+	17, // 111: work.v1.WorkService.CloseWork:output_type -> work.v1.WorkLifecycleResponse
+	22, // 112: work.v1.WorkService.StartAssignment:output_type -> work.v1.AssignmentLifecycleResponse
+	22, // 113: work.v1.WorkService.CompleteAssignment:output_type -> work.v1.AssignmentLifecycleResponse
+	24, // 114: work.v1.WorkService.UpsertDailyLog:output_type -> work.v1.UpsertDailyLogResponse
+	27, // 115: work.v1.WorkService.ListAssignmentDailyLogs:output_type -> work.v1.ListDailyLogsResponse
+	27, // 116: work.v1.WorkService.ListWorkDailyLogs:output_type -> work.v1.ListDailyLogsResponse
+	30, // 117: work.v1.WorkService.GetWorkSettlement:output_type -> work.v1.GetWorkSettlementResponse
+	32, // 118: work.v1.WorkService.RecordAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	34, // 119: work.v1.WorkService.ListAssignmentPayments:output_type -> work.v1.ListAssignmentPaymentsResponse
+	32, // 120: work.v1.WorkService.ConfirmAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	32, // 121: work.v1.WorkService.DisputeAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	40, // 122: work.v1.WorkService.GetWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
+	40, // 123: work.v1.WorkService.SaveWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
+	45, // 124: work.v1.WorkService.GetWorkerWorkSummary:output_type -> work.v1.GetWorkerWorkSummaryResponse
+	49, // 125: work.v1.WorkService.GetContractorWorkRecords:output_type -> work.v1.GetContractorWorkRecordsResponse
+	49, // 126: work.v1.WorkService.SaveContractorWorkRecord:output_type -> work.v1.GetContractorWorkRecordsResponse
+	52, // 127: work.v1.WorkService.GetContractorWorkSummary:output_type -> work.v1.GetContractorWorkSummaryResponse
+	57, // 128: work.v1.WorkService.GetWorkPayments:output_type -> work.v1.GetWorkPaymentsResponse
+	74, // 129: work.v1.WorkService.RecordPayment:output_type -> work.v1.RecordPaymentResponse
+	63, // 130: work.v1.WorkService.ListEligibleRecruitmentWorks:output_type -> work.v1.ListEligibleRecruitmentWorksResponse
+	65, // 131: work.v1.WorkService.CreateWorkInvitations:output_type -> work.v1.CreateWorkInvitationsResponse
+	67, // 132: work.v1.WorkService.ListWorkInvitations:output_type -> work.v1.ListWorkInvitationsResponse
+	69, // 133: work.v1.WorkService.ListMyInvitations:output_type -> work.v1.ListMyInvitationsResponse
+	71, // 134: work.v1.WorkService.AcceptWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	71, // 135: work.v1.WorkService.DeclineWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	71, // 136: work.v1.WorkService.CancelWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	77, // 137: work.v1.WorkService.CreateReview:output_type -> work.v1.CreateReviewResponse
+	79, // 138: work.v1.WorkService.ListWorkReviews:output_type -> work.v1.ListWorkReviewsResponse
+	81, // 139: work.v1.WorkService.ListUserReviews:output_type -> work.v1.ListUserReviewsResponse
+	83, // 140: work.v1.WorkService.GetUserRatingSummary:output_type -> work.v1.GetUserRatingSummaryResponse
+	95, // [95:141] is the sub-list for method output_type
+	49, // [49:95] is the sub-list for method input_type
+	49, // [49:49] is the sub-list for extension type_name
+	49, // [49:49] is the sub-list for extension extendee
+	0,  // [0:49] is the sub-list for field type_name
 }
 
 func init() { file_work_work_proto_init() }
@@ -716,13 +7320,34 @@ func file_work_work_proto_init() {
 	}
 	file_work_work_proto_msgTypes[0].OneofWrappers = []any{}
 	file_work_work_proto_msgTypes[2].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[3].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[7].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[11].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[14].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[18].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[19].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[20].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[23].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[31].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[36].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[37].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[38].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[48].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[53].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[55].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[58].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[59].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[68].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[73].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[75].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[76].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_work_work_proto_rawDesc), len(file_work_work_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   86,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

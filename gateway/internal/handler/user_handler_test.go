@@ -15,9 +15,12 @@ import (
 )
 
 type userServiceClientStub struct {
-	listWorkTypes func(context.Context, *userv1.ListWorkTypesRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error)
-	createProfile func(context.Context, *userv1.CreateProfileRequest, ...grpc.CallOption) (*userv1.CreateProfileResponse, error)
-	updateProfile func(context.Context, *userv1.UpdateProfileRequest, ...grpc.CallOption) (*userv1.UpdateProfileResponse, error)
+	listWorkTypes           func(context.Context, *userv1.ListWorkTypesRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error)
+	listWorkCategories      func(context.Context, *userv1.ListWorkCategoriesRequest, ...grpc.CallOption) (*userv1.ListWorkCategoriesResponse, error)
+	listWorkTypesByCategory func(context.Context, *userv1.ListWorkTypesByCategoryRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error)
+	listWorkTypeFields      func(context.Context, *userv1.ListWorkTypeFieldsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeFieldsResponse, error)
+	createProfile           func(context.Context, *userv1.CreateProfileRequest, ...grpc.CallOption) (*userv1.CreateProfileResponse, error)
+	updateProfile           func(context.Context, *userv1.UpdateProfileRequest, ...grpc.CallOption) (*userv1.UpdateProfileResponse, error)
 }
 
 func (s userServiceClientStub) GetProfile(context.Context, *userv1.GetProfileRequest, ...grpc.CallOption) (*userv1.GetProfileResponse, error) {
@@ -42,6 +45,10 @@ func (s userServiceClientStub) CreateWorkerProfile(context.Context, *userv1.Crea
 	return nil, errors.New("not implemented")
 }
 
+func (s userServiceClientStub) UpdateWorkerProfile(context.Context, *userv1.UpdateWorkerProfileRequest, ...grpc.CallOption) (*userv1.UpdateWorkerProfileResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s userServiceClientStub) CreateOwnerProfile(context.Context, *userv1.CreateOwnerProfileRequest, ...grpc.CallOption) (*userv1.CreateOwnerProfileResponse, error) {
 	return nil, errors.New("not implemented")
 }
@@ -54,6 +61,59 @@ func (s userServiceClientStub) ListWorkTypes(ctx context.Context, req *userv1.Li
 	return s.listWorkTypes(ctx, req, opts...)
 }
 
+func (s userServiceClientStub) ListWorkCategories(ctx context.Context, req *userv1.ListWorkCategoriesRequest, opts ...grpc.CallOption) (*userv1.ListWorkCategoriesResponse, error) {
+	if s.listWorkCategories != nil {
+		return s.listWorkCategories(ctx, req, opts...)
+	}
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypesByCategory(ctx context.Context, req *userv1.ListWorkTypesByCategoryRequest, opts ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
+	if s.listWorkTypesByCategory != nil {
+		return s.listWorkTypesByCategory(ctx, req, opts...)
+	}
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeFields(ctx context.Context, req *userv1.ListWorkTypeFieldsRequest, opts ...grpc.CallOption) (*userv1.ListWorkTypeFieldsResponse, error) {
+	if s.listWorkTypeFields != nil {
+		return s.listWorkTypeFields(ctx, req, opts...)
+	}
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeRateTypes(context.Context, *userv1.ListWorkTypeRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkSegmentRateTypes(context.Context, *userv1.ListWorkSegmentRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkCategoryRateTypes(context.Context, *userv1.ListWorkCategoryRateTypesRequest, ...grpc.CallOption) (*userv1.ListRateTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeSkills(context.Context, *userv1.ListWorkTypeSkillsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeSkillsResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypeCommonRoles(context.Context, *userv1.ListWorkTypeCommonRolesRequest, ...grpc.CallOption) (*userv1.ListWorkTypeCommonRolesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) GetWorkTypeConfiguration(context.Context, *userv1.GetWorkTypeConfigurationRequest, ...grpc.CallOption) (*userv1.GetWorkTypeConfigurationResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkSegmentsByCategory(context.Context, *userv1.ListWorkSegmentsByCategoryRequest, ...grpc.CallOption) (*userv1.ListWorkSegmentsResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (s userServiceClientStub) ListWorkTypesBySegment(context.Context, *userv1.ListWorkTypesBySegmentRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
 func TestUserHandlerListWorkTypes(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	handler := NewUserHandler(userServiceClientStub{
@@ -63,7 +123,7 @@ func TestUserHandlerListWorkTypes(t *testing.T) {
 			}
 			return &userv1.ListWorkTypesResponse{WorkTypes: []*userv1.WorkType{{Id: "work-type-1", Name: "Carpenter"}}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -85,7 +145,7 @@ func TestUserHandlerListWorkTypesReturnsInternalError(t *testing.T) {
 		listWorkTypes: func(context.Context, *userv1.ListWorkTypesRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
 			return nil, errors.New("user service unavailable")
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -96,6 +156,151 @@ func TestUserHandlerListWorkTypesReturnsInternalError(t *testing.T) {
 		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusInternalServerError)
 	}
 	const want = `"message":"failed to fetch work types"`
+	if response := recorder.Body.String(); !strings.Contains(response, want) {
+		t.Fatalf("response = %s, want %s", response, want)
+	}
+}
+
+func TestUserHandlerListWorkCategories(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkCategories: func(_ context.Context, req *userv1.ListWorkCategoriesRequest, _ ...grpc.CallOption) (*userv1.ListWorkCategoriesResponse, error) {
+			if req == nil {
+				t.Fatal("ListWorkCategories request must not be nil")
+			}
+			return &userv1.ListWorkCategoriesResponse{Categories: []*userv1.WorkCategory{{Id: "category-1", Code: "construction", Name: "Construction"}}}, nil
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-categories", nil)
+	handler.ListWorkCategories(context)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
+	}
+	const want = `{"success":true,"data":{"categories":[{"id":"category-1","code":"construction","name":"Construction"}]}`
+	if len(recorder.Body.String()) < len(want) || recorder.Body.String()[:len(want)] != want {
+		t.Fatalf("response = %s, want prefix %s", recorder.Body.String(), want)
+	}
+}
+
+func TestUserHandlerListWorkCategoriesReturnsInternalError(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkCategories: func(context.Context, *userv1.ListWorkCategoriesRequest, ...grpc.CallOption) (*userv1.ListWorkCategoriesResponse, error) {
+			return nil, errors.New("user service unavailable")
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-categories", nil)
+	handler.ListWorkCategories(context)
+
+	if recorder.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusInternalServerError)
+	}
+	const want = `"message":"failed to fetch work categories"`
+	if response := recorder.Body.String(); !strings.Contains(response, want) {
+		t.Fatalf("response = %s, want %s", response, want)
+	}
+}
+
+func TestUserHandlerListWorkTypesByCategory(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkTypesByCategory: func(_ context.Context, req *userv1.ListWorkTypesByCategoryRequest, _ ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
+			if req.CategoryId != "category-1" {
+				t.Fatalf("category_id = %q, want %q", req.CategoryId, "category-1")
+			}
+			return &userv1.ListWorkTypesResponse{WorkTypes: []*userv1.WorkType{{Id: "work-type-1", Name: "Carpenter", CategoryId: "category-1"}}}, nil
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/work-types", nil)
+	context.Params = gin.Params{{Key: "categoryId", Value: "category-1"}}
+	handler.ListWorkTypesByCategory(context)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
+	}
+	const want = `{"success":true,"data":{"work_types":[{"id":"work-type-1","name":"Carpenter","category_id":"category-1"}]}`
+	if len(recorder.Body.String()) < len(want) || recorder.Body.String()[:len(want)] != want {
+		t.Fatalf("response = %s, want prefix %s", recorder.Body.String(), want)
+	}
+}
+
+func TestUserHandlerListWorkTypesByCategoryReturnsInternalError(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkTypesByCategory: func(context.Context, *userv1.ListWorkTypesByCategoryRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
+			return nil, errors.New("user service unavailable")
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/work-types", nil)
+	context.Params = gin.Params{{Key: "categoryId", Value: "category-1"}}
+	handler.ListWorkTypesByCategory(context)
+
+	if recorder.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusInternalServerError)
+	}
+	const want = `"message":"failed to fetch work types"`
+	if response := recorder.Body.String(); !strings.Contains(response, want) {
+		t.Fatalf("response = %s, want %s", response, want)
+	}
+}
+
+func TestUserHandlerListWorkTypeFields(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkTypeFields: func(_ context.Context, req *userv1.ListWorkTypeFieldsRequest, _ ...grpc.CallOption) (*userv1.ListWorkTypeFieldsResponse, error) {
+			if req.WorkTypeId != "work-type-1" {
+				t.Fatalf("work_type_id = %q, want %q", req.WorkTypeId, "work-type-1")
+			}
+			return &userv1.ListWorkTypeFieldsResponse{Fields: []*userv1.WorkTypeField{{Id: "field-1", WorkTypeId: "work-type-1", FieldKey: "wire_gauge", Label: "Wire Gauge", FieldType: "TEXT"}}}, nil
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/fields", nil)
+	context.Params = gin.Params{{Key: "workTypeId", Value: "work-type-1"}}
+	handler.ListWorkTypeFields(context)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
+	}
+	const want = `{"success":true,"data":{"fields":[{"id":"field-1","work_type_id":"work-type-1","field_key":"wire_gauge","label":"Wire Gauge","field_type":"TEXT"}]}`
+	if len(recorder.Body.String()) < len(want) || recorder.Body.String()[:len(want)] != want {
+		t.Fatalf("response = %s, want prefix %s", recorder.Body.String(), want)
+	}
+}
+
+func TestUserHandlerListWorkTypeFieldsReturnsInternalError(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	handler := NewUserHandler(userServiceClientStub{
+		listWorkTypeFields: func(context.Context, *userv1.ListWorkTypeFieldsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeFieldsResponse, error) {
+			return nil, errors.New("user service unavailable")
+		},
+	}, nil)
+
+	recorder := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(recorder)
+	context.Request = httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/fields", nil)
+	context.Params = gin.Params{{Key: "workTypeId", Value: "work-type-1"}}
+	handler.ListWorkTypeFields(context)
+
+	if recorder.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusInternalServerError)
+	}
+	const want = `"message":"failed to fetch work type fields"`
 	if response := recorder.Body.String(); !strings.Contains(response, want) {
 		t.Fatalf("response = %s, want %s", response, want)
 	}
@@ -113,7 +318,7 @@ func TestUserHandlerUpdateProfileUsesAuthenticatedUser(t *testing.T) {
 			}
 			return &userv1.UpdateProfileResponse{Profile: &userv1.UserProfile{Id: "profile-123", FirstName: "Ada"}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -142,7 +347,7 @@ func TestUserHandlerCreateProfileForwardsUserType(t *testing.T) {
 			}
 			return &userv1.CreateProfileResponse{Profile: &userv1.UserProfile{UserType: req.UserType}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -165,11 +370,62 @@ func TestWorkTypesRouteRequiresAuthentication(t *testing.T) {
 	router.GET(
 		"/api/v1/work-types",
 		middleware.AuthMiddleware("test-secret"),
-		NewUserHandler(userServiceClientStub{}).ListWorkTypes,
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypes,
 	)
 
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/v1/work-types", nil))
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestWorkCategoriesRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.GET(
+		"/api/v1/work-categories",
+		middleware.AuthMiddleware("test-secret"),
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkCategories,
+	)
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/v1/work-categories", nil))
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestWorkTypesByCategoryRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.GET(
+		"/api/v1/work-categories/:categoryId/work-types",
+		middleware.AuthMiddleware("test-secret"),
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypesByCategory,
+	)
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/v1/work-categories/category-1/work-types", nil))
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)
+	}
+}
+
+func TestWorkTypeFieldsRouteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.GET(
+		"/api/v1/work-types/:workTypeId/fields",
+		middleware.AuthMiddleware("test-secret"),
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypeFields,
+	)
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/v1/work-types/work-type-1/fields", nil))
 
 	if recorder.Code != http.StatusUnauthorized {
 		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusUnauthorized)

@@ -40,15 +40,4 @@ func main() {
 		tables = append(tables, name)
 	}
 	fmt.Println("tables:", tables)
-
-	for _, table := range []string{"auth_schema_migrations", "user_schema_migrations", "schema_migrations"} {
-		var version int64
-		var dirty bool
-		err := pool.QueryRow(ctx, fmt.Sprintf(`SELECT version, dirty FROM %s LIMIT 1`, table)).Scan(&version, &dirty)
-		if err != nil {
-			fmt.Printf("%s: not found or empty (%v)\n", table, err)
-			continue
-		}
-		fmt.Printf("%s: version=%d dirty=%v\n", table, version, dirty)
-	}
 }

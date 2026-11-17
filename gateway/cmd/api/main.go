@@ -1,18 +1,38 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	_ "github.com/chandangowdacbkrewops/krewops-backend/gateway/docs"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/client"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/handler"
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/middleware"
 )
 
+// @title						KrewOps API Gateway
+// @version						1.0
+// @description					Public REST API exposed by the KrewOps API Gateway. The gateway fronts the auth,
+// @description					user, work, and search gRPC services, exposing them as a single JSON/REST surface
+// @description					for mobile and web clients. All responses are wrapped in a consistent envelope
+// @description					(see response.SuccessResponse / response.ErrorResponse).
+// @BasePath					/api/v1
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
+// @description					Bearer JWT access token issued by /auth/otp/verify. Pass as "Bearer <token>".
 func main() {
 
 	_ = godotenv.Load()
@@ -32,8 +52,14 @@ func main() {
 	jwtSecret :=
 		os.Getenv("JWT_SECRET")
 
+	// Platforms like Cloud Run inject a reserved PORT env var that the
+	// container must listen on; it takes priority over HTTP_PORT.
 	port :=
-		os.Getenv("HTTP_PORT")
+		os.Getenv("PORT")
+
+	if port == "" {
+		port = os.Getenv("HTTP_PORT")
+	}
 
 	if port == "" {
 		port = "8089"
@@ -84,6 +110,7 @@ func main() {
 	userHandler :=
 		handler.NewUserHandler(
 			userClient.Client,
+			workClient.Client,
 		)
 
 	workHandler :=
@@ -111,6 +138,72 @@ func main() {
 		"/work-types",
 		middleware.AuthMiddleware(jwtSecret),
 		userHandler.ListWorkTypes,
+	)
+
+	api.GET(
+		"/work-categories",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkCategories,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/work-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypesByCategory,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/segments",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkSegmentsByCategory,
+	)
+
+	api.GET(
+		"/work-segments/:segmentId/work-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypesBySegment,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/fields",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeFields,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/rate-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeRateTypes,
+	)
+
+	api.GET(
+		"/work-segments/:segmentId/rate-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkSegmentRateTypes,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/skills",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeSkills,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/common-roles",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkTypeCommonRoles,
+	)
+
+	api.GET(
+		"/work-types/:workTypeId/configuration",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.GetWorkTypeConfiguration,
+	)
+
+	api.GET(
+		"/work-categories/:categoryId/rate-types",
+		middleware.AuthMiddleware(jwtSecret),
+		userHandler.ListWorkCategoryRateTypes,
 	)
 
 	authRoutes :=
@@ -153,6 +246,11 @@ func main() {
 		userHandler.CreateWorkerProfile,
 	)
 
+	userRoutes.PUT(
+		"/worker-profile",
+		userHandler.UpdateWorkerProfile,
+	)
+
 	workRoutes :=
 		api.Group("/work")
 
@@ -164,6 +262,176 @@ func main() {
 		"",
 		workHandler.CreateWork,
 	)
+
+	workRoutes.GET(
+		"",
+		workHandler.ListMyWorks,
+	)
+
+	workRoutes.GET(
+		"/applications",
+		workHandler.ListMyApplications,
+	)
+
+	workRoutes.GET(
+		"/recruitment/eligible",
+		workHandler.ListEligibleRecruitmentWorks,
+	)
+
+	workRoutes.GET(
+		"/invitations",
+		workHandler.ListMyInvitations,
+	)
+
+	workRoutes.POST(
+		"/invitations/:invitationId/accept",
+		workHandler.AcceptWorkInvitation,
+	)
+
+	workRoutes.POST(
+		"/invitations/:invitationId/decline",
+		workHandler.DeclineWorkInvitation,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications",
+		workHandler.ApplyToWork,
+	)
+
+	workRoutes.GET(
+		"/:workId/applications",
+		workHandler.ListWorkApplications,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/shortlist",
+		workHandler.ShortlistWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/accept",
+		workHandler.AcceptWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/reject",
+		workHandler.RejectWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/withdraw",
+		workHandler.WithdrawWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/applications/:applicationId/cancel",
+		workHandler.CancelWorkApplication,
+	)
+
+	workRoutes.POST(
+		"/:workId/invitations",
+		workHandler.CreateWorkInvitations,
+	)
+
+	workRoutes.GET(
+		"/:workId/invitations",
+		workHandler.ListWorkInvitations,
+	)
+
+	workRoutes.POST(
+		"/:workId/invitations/:invitationId/cancel",
+		workHandler.CancelWorkInvitation,
+	)
+
+	workRoutes.POST(
+		"/:workId/start",
+		workHandler.StartWork,
+	)
+
+	workRoutes.POST(
+		"/:workId/complete",
+		workHandler.CompleteWork,
+	)
+
+	workRoutes.POST(
+		"/:workId/confirm-completion",
+		workHandler.ConfirmWorkCompletion,
+	)
+
+	workRoutes.POST(
+		"/:workId/complete-job",
+		workHandler.CompleteJob,
+	)
+
+	workRoutes.POST(
+		"/:workId/close-applications",
+		workHandler.CloseApplications,
+	)
+
+	workRoutes.POST(
+		"/:workId/close",
+		workHandler.CloseWork,
+	)
+
+	workRoutes.POST(
+		"/:workId/cancel",
+		workHandler.CancelWork,
+	)
+
+	workRoutes.GET(
+		"/:workId/daily-logs",
+		workHandler.ListWorkDailyLogs,
+	)
+
+	workRoutes.GET(
+		"/:workId/settlement",
+		workHandler.GetWorkSettlement,
+	)
+
+	workRoutes.POST(
+		"/:workId/assignments/:assignmentId/payments",
+		workHandler.RecordAssignmentPayment,
+	)
+
+	workRoutes.GET("/:workId/work-records/summary", workHandler.GetWorkerWorkSummary)
+	workRoutes.GET("/:workId/work-records", workHandler.GetWorkDayRecords)
+	workRoutes.POST("/:workId/work-records", workHandler.SaveWorkDayRecords)
+	workRoutes.GET("/:workId/contractor-work-records/summary", workHandler.GetContractorWorkSummary)
+	workRoutes.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
+	workRoutes.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
+	workRoutes.GET("/:workId/payments", workHandler.GetWorkPayments)
+	workRoutes.GET("/:workId/reviews", workHandler.ListWorkReviews)
+
+	worksRoutes := api.Group("/works")
+	worksRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	worksRoutes.POST("/:workId/start", workHandler.StartWork)
+	worksRoutes.POST("/:workId/complete", workHandler.CompleteWork)
+	worksRoutes.POST("/:workId/close", workHandler.CloseWork)
+	worksRoutes.GET("/:workId/work-records/summary", workHandler.GetWorkerWorkSummary)
+	worksRoutes.GET("/:workId/work-records", workHandler.GetWorkDayRecords)
+	worksRoutes.POST("/:workId/work-records", workHandler.SaveWorkDayRecords)
+	worksRoutes.GET("/:workId/contractor-work-records/summary", workHandler.GetContractorWorkSummary)
+	worksRoutes.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
+	worksRoutes.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
+	worksRoutes.GET("/:workId/payments", workHandler.GetWorkPayments)
+
+	obligationRoutes := api.Group("/payment-obligations")
+	obligationRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	obligationRoutes.POST("/:paymentId/record-payment", workHandler.RecordObligationPayment)
+
+	assignmentRoutes := api.Group("/work-assignments")
+	assignmentRoutes.Use(middleware.AuthMiddleware(jwtSecret))
+	assignmentRoutes.POST("/:assignmentId/start", workHandler.StartAssignment)
+	assignmentRoutes.POST("/:assignmentId/complete", workHandler.CompleteAssignment)
+	assignmentRoutes.PUT("/:assignmentId/daily-logs/:date", workHandler.UpsertDailyLog)
+	assignmentRoutes.GET("/:assignmentId/daily-logs", workHandler.ListAssignmentDailyLogs)
+	assignmentRoutes.GET("/:assignmentId/payments", workHandler.ListAssignmentPayments)
+	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/confirm", workHandler.ConfirmAssignmentPayment)
+	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/dispute", workHandler.DisputeAssignmentPayment)
+	assignmentRoutes.POST("/:assignmentId/reviews", workHandler.CreateReview)
+
+	userRoutes.GET("/:userId/reviews", workHandler.ListUserReviews)
+	userRoutes.GET("/:userId/rating-summary", workHandler.GetUserRatingSummary)
 
 	searchRoutes :=
 		api.Group("/search")
@@ -182,12 +450,43 @@ func main() {
 		searchHandler.SearchWorkers,
 	)
 
-	log.Printf(
-		"API Gateway listening on :%s",
-		port,
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
 	)
 
-	if err := router.Run(":" + port); err != nil {
-		log.Fatal(err)
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+
+	httpServer := &http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
+	go func() {
+		log.Printf(
+			"API Gateway listening on :%s",
+			port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down cleanly instead of being killed mid-request.
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
+
+	log.Println("API Gateway shutting down...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("API Gateway shutdown error: %v", err)
 	}
 }

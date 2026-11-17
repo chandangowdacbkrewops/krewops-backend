@@ -23,6 +23,72 @@ func RegisterRoutes(
 			profileHandler.ListWorkTypes,
 		)
 
+		v1.GET(
+			"/work-categories",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkCategories,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/work-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypesByCategory,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/segments",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkSegmentsByCategory,
+		)
+
+		v1.GET(
+			"/work-segments/:segmentId/work-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypesBySegment,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/fields",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeFields,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/rate-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeRateTypes,
+		)
+
+		v1.GET(
+			"/work-segments/:segmentId/rate-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkSegmentRateTypes,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/skills",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeSkills,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/common-roles",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkTypeCommonRoles,
+		)
+
+		v1.GET(
+			"/work-types/:workTypeId/configuration",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.GetWorkTypeConfiguration,
+		)
+
+		v1.GET(
+			"/work-categories/:categoryId/rate-types",
+			middleware.AuthMiddleware(jwtSecret),
+			profileHandler.ListWorkCategoryRateTypes,
+		)
+
 		users := v1.Group("/users")
 		users.Use(middleware.AuthMiddleware(jwtSecret))
 		{
@@ -30,6 +96,7 @@ func RegisterRoutes(
 			users.POST("/profile", profileHandler.CreateProfile)
 			users.PUT("/profile", profileHandler.UpdateProfile)
 			users.POST("/worker-profile", profileHandler.CreateWorkerProfile)
+			users.PUT("/worker-profile", profileHandler.UpdateWorkerProfile)
 		}
 	}
 }

@@ -28,10 +28,13 @@ func (s *SearchServer) SearchWork(
 	result, err := s.searchService.SearchWork(ctx, model.WorkSearchFilters{
 		Keyword:         req.Keyword,
 		WorkTypeID:      req.WorkTypeId,
+		WorkCategoryID:  req.WorkCategoryId,
+		WorkSegmentID:   req.WorkSegmentId,
 		City:            req.City,
 		State:           req.State,
 		ExperienceLevel: req.ExperienceLevel,
-		PaymentType:     req.PaymentType,
+		RateBasis:       req.RateBasis,
+		RateUnit:        req.RateUnit,
 		MinBudgetRate:   req.MinBudgetRate,
 		MaxBudgetRate:   req.MaxBudgetRate,
 		Page:            int(req.GetPage()),
@@ -61,6 +64,7 @@ func (s *SearchServer) SearchWorkers(
 	result, err := s.searchService.SearchWorkers(ctx, model.WorkerSearchFilters{
 		Keyword:            req.Keyword,
 		WorkTypeID:         req.WorkTypeId,
+		WorkSegmentID:      req.WorkSegmentId,
 		City:               req.City,
 		State:              req.State,
 		WorkerType:         req.WorkerType,
@@ -88,27 +92,34 @@ func (s *SearchServer) SearchWorkers(
 
 func toWorkSummary(item model.WorkSearchResult) *searchv1.WorkSummary {
 	summary := &searchv1.WorkSummary{
-		Id:              item.ID,
-		UserId:          item.UserID,
-		Status:          item.Status,
-		Title:           item.Title,
-		WorkTypeId:      item.WorkTypeID,
-		WorkTypeName:    item.WorkTypeName,
-		Description:     item.Description,
-		Address:         item.Address,
-		City:            item.City,
-		State:           item.State,
-		Latitude:        item.Latitude,
-		Longitude:       item.Longitude,
-		WorkersNeeded:   intPtrToInt32Ptr(item.WorkersNeeded),
-		ExperienceLevel: item.ExperienceLevel,
-		Skills:          item.Skills,
-		DurationValue:   intPtrToInt32Ptr(item.DurationValue),
-		DurationUnit:    item.DurationUnit,
-		ShiftTiming:     item.ShiftTiming,
-		PaymentType:     item.PaymentType,
-		BudgetRate:      item.BudgetRate,
-		CreatedAt:       item.CreatedAt.Format(time.RFC3339),
+		Id:               item.ID,
+		UserId:           item.UserID,
+		Status:           item.Status,
+		Title:            item.Title,
+		WorkTypeId:       item.WorkTypeID,
+		WorkTypeName:     item.WorkTypeName,
+		WorkCategoryId:   item.WorkCategoryID,
+		WorkCategoryName: item.WorkCategoryName,
+		WorkSegmentId:    item.WorkSegmentID,
+		WorkSegmentName:  item.WorkSegmentName,
+		Description:      item.Description,
+		Address:          item.Address,
+		City:             item.City,
+		State:            item.State,
+		Latitude:         item.Latitude,
+		Longitude:        item.Longitude,
+		WorkersNeeded:    intPtrToInt32Ptr(item.WorkersNeeded),
+		WorkersSelected:  int32Ptr(int32(item.WorkersSelected)),
+		RemainingWorkers: int32Ptr(int32(item.RemainingWorkers)),
+		ExperienceLevel:  item.ExperienceLevel,
+		Skills:           item.Skills,
+		DurationValue:    intPtrToInt32Ptr(item.DurationValue),
+		DurationUnit:     item.DurationUnit,
+		ShiftTiming:      item.ShiftTiming,
+		RateBasis:        item.RateBasis,
+		RateUnit:         item.RateUnit,
+		BudgetRate:       item.BudgetRate,
+		CreatedAt:        item.CreatedAt.Format(time.RFC3339),
 	}
 
 	if item.StartDate != nil {
@@ -139,7 +150,10 @@ func toWorkerSummary(item model.WorkerSearchResult) *searchv1.WorkerSummary {
 		CrewSize:           int32(item.CrewSize),
 		ExperienceYears:    item.ExperienceYears,
 		ExpectedRate:       item.ExpectedRate,
-		RateType:           item.RateType,
+		ExpectedRateMin:    item.ExpectedRateMin,
+		ExpectedRateMax:    item.ExpectedRateMax,
+		RateBasis:          item.RateBasis,
+		RateUnit:           item.RateUnit,
 		AvailabilityStatus: item.AvailabilityStatus,
 		VerificationStatus: item.VerificationStatus,
 		Bio:                item.Bio,
@@ -163,4 +177,8 @@ func intPtrToInt32Ptr(value *int) *int32 {
 	}
 	converted := int32(*value)
 	return &converted
+}
+
+func int32Ptr(value int32) *int32 {
+	return &value
 }

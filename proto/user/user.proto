@@ -19,6 +19,9 @@ service UserService {
   rpc CreateWorkerProfile(CreateWorkerProfileRequest)
       returns (CreateWorkerProfileResponse);
 
+  rpc UpdateWorkerProfile(UpdateWorkerProfileRequest)
+      returns (UpdateWorkerProfileResponse);
+
   rpc CreateOwnerProfile(CreateOwnerProfileRequest)
       returns (CreateOwnerProfileResponse);
 
@@ -27,19 +30,48 @@ service UserService {
 
   rpc ListWorkTypes(ListWorkTypesRequest)
       returns (ListWorkTypesResponse);
+
+  rpc ListWorkCategories(ListWorkCategoriesRequest)
+      returns (ListWorkCategoriesResponse);
+
+  rpc ListWorkTypesByCategory(ListWorkTypesByCategoryRequest)
+      returns (ListWorkTypesResponse);
+
+  rpc ListWorkSegmentsByCategory(ListWorkSegmentsByCategoryRequest)
+      returns (ListWorkSegmentsResponse);
+
+  rpc ListWorkTypesBySegment(ListWorkTypesBySegmentRequest)
+      returns (ListWorkTypesResponse);
+
+  rpc ListWorkTypeFields(ListWorkTypeFieldsRequest)
+      returns (ListWorkTypeFieldsResponse);
+
+  rpc ListWorkTypeRateTypes(ListWorkTypeRateTypesRequest)
+      returns (ListRateTypesResponse);
+
+  rpc ListWorkSegmentRateTypes(ListWorkSegmentRateTypesRequest)
+      returns (ListRateTypesResponse);
+
+  rpc ListWorkCategoryRateTypes(ListWorkCategoryRateTypesRequest)
+      returns (ListRateTypesResponse);
+
+  rpc ListWorkTypeSkills(ListWorkTypeSkillsRequest)
+      returns (ListWorkTypeSkillsResponse);
+
+  rpc ListWorkTypeCommonRoles(ListWorkTypeCommonRolesRequest)
+      returns (ListWorkTypeCommonRolesResponse);
+
+  // Bundles skills + rate_types + common_roles + dynamic attribute fields
+  // for a single work type into one response, replacing the 4 separate
+  // list calls where convenient for clients.
+  rpc GetWorkTypeConfiguration(GetWorkTypeConfigurationRequest)
+      returns (GetWorkTypeConfigurationResponse);
 }
 
 enum WorkerType {
   WORKER_TYPE_UNSPECIFIED = 0;
   WORKER_TYPE_INDIVIDUAL = 1;
   WORKER_TYPE_CONTRACTOR = 2;
-}
-
-enum RateType {
-  RATE_TYPE_UNSPECIFIED = 0;
-  RATE_TYPE_HOURLY = 1;
-  RATE_TYPE_DAILY = 2;
-  RATE_TYPE_FIXED = 3;
 }
 
 message GetProfileRequest {
@@ -60,6 +92,7 @@ message CreateProfileRequest {
   string city = 6;
   string postal_code = 7;
   string user_type = 8;
+  optional string gender = 9;
 }
 
 message CreateProfileResponse {
@@ -76,6 +109,7 @@ message UpdateProfileRequest {
   string city = 6;
   string postal_code = 7;
   string user_type = 8;
+  optional string gender = 9;
 }
 
 message UpdateProfileResponse {
@@ -101,6 +135,15 @@ message UserProfile {
   string city = 12;
   string postal_code = 13;
   string preferred_language = 14;
+
+  reserved 15;
+  reserved "work_category";
+  repeated WorkerWorkCategory work_categories = 16;
+  optional double expected_rate_min = 17;
+  optional double expected_rate_max = 18;
+  optional string rate_basis = 19;
+  optional string rate_unit = 20;
+  optional string gender = 21;
 }
 
 message CreateWorkerProfileRequest {
@@ -112,12 +155,17 @@ message CreateWorkerProfileRequest {
 
   optional double experience_years = 5;
   optional double expected_rate = 6;
-  optional string rate_type = 7;
+  optional string rate_basis = 7;
+  optional string rate_unit = 14;
 
   optional string bio = 8;
 
-  repeated string work_type_ids = 9;
+  reserved 9;
+  reserved "work_category_id";
   optional string availability_status = 10;
+  repeated WorkerCategorySelection selections = 11;
+  optional double expected_rate_min = 12;
+  optional double expected_rate_max = 13;
 }
 
 message WorkerProfile {
@@ -131,7 +179,8 @@ message WorkerProfile {
 
   optional double experience_years = 6;
   optional double expected_rate = 7;
-  RateType rate_type = 8;
+  optional string rate_basis = 8;
+  optional string rate_unit = 17;
 
   string availability_status = 9;
   string verification_status = 10;
@@ -140,16 +189,73 @@ message WorkerProfile {
 
   bool profile_completed = 12;
 
-  repeated WorkerSkill skills = 13;
+  reserved 13;
+  reserved "work_category";
+  repeated WorkerWorkCategory work_categories = 14;
+  optional double expected_rate_min = 15;
+  optional double expected_rate_max = 16;
+}
+
+message WorkerCategorySelection {
+  string work_category_id = 1;
+  repeated WorkerTypeSelection work_types = 2;
+  repeated WorkerSegmentSelection segments = 3;
+}
+
+message WorkerSegmentSelection {
+  string work_segment_id = 1;
+  repeated WorkerTypeSelection work_types = 2;
+}
+
+message WorkerTypeSelection {
+  string work_type_id = 1;
+  repeated string skill_ids = 2;
 }
 
 message WorkerSkill {
-  string skill_id = 1;
+  string id = 1;
+  string work_type_id = 2;
+  string code = 3;
+  string name = 4;
+}
+
+message WorkerWorkType {
+  string work_type_id = 1;
+  string name = 2;
+  string category_id = 3;
+  bool is_primary = 4;
+  repeated WorkerSkill skills = 5;
+  string segment_id = 6;
+}
+
+message WorkerWorkSegment {
+  string work_segment_id = 1;
   string code = 2;
   string name = 3;
+  string category_id = 4;
+  repeated WorkerWorkType work_types = 5;
+}
+
+message WorkerWorkCategory {
+  string work_category_id = 1;
+  string code = 2;
+  string name = 3;
+  repeated WorkerWorkType work_types = 4;
+  repeated WorkerWorkSegment segments = 5;
 }
 
 message CreateWorkerProfileResponse {
+  WorkerProfile profile = 1;
+}
+
+message UpdateWorkerProfileRequest {
+  string user_id = 1;
+  repeated WorkerCategorySelection selections = 2;
+  optional string rate_basis = 3;
+  optional string rate_unit = 4;
+}
+
+message UpdateWorkerProfileResponse {
   WorkerProfile profile = 1;
 }
 
@@ -161,6 +267,37 @@ message BusinessType {
 message WorkType {
   string id = 1;
   string name = 2;
+  string category_id = 3;
+  string code = 4;
+  optional string description = 5;
+  int32 display_order = 6;
+  bool is_active = 7;
+  string segment_id = 8;
+}
+
+message WorkSegment {
+  string id = 1;
+  string category_id = 2;
+  string code = 3;
+  string name = 4;
+  optional string description = 5;
+  int32 display_order = 6;
+  bool is_active = 7;
+}
+
+message WorkCategory {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  optional string description = 4;
+  int32 display_order = 5;
+  bool is_active = 6;
+}
+
+message ListWorkCategoriesRequest {}
+
+message ListWorkCategoriesResponse {
+  repeated WorkCategory categories = 1;
 }
 
 message OwnerProfileDetails {
@@ -178,6 +315,7 @@ message OwnerProfile {
 
   string first_name = 3;
   optional string last_name = 4;
+  optional string gender = 13;
   string date_of_birth = 5;
   optional string email = 6;
   string country = 7;
@@ -209,6 +347,7 @@ message CreateOwnerProfileRequest {
   string preferred_language = 15;
 
   optional string business_description = 16;
+  optional string gender = 17;
 }
 
 message CreateOwnerProfileResponse {
@@ -225,4 +364,136 @@ message ListWorkTypesRequest {}
 
 message ListWorkTypesResponse {
   repeated WorkType work_types = 1;
+}
+
+message ListWorkTypesByCategoryRequest {
+  string category_id = 1;
+}
+
+message ListWorkSegmentsByCategoryRequest {
+  string category_id = 1;
+}
+
+message ListWorkSegmentsResponse {
+  repeated WorkSegment segments = 1;
+}
+
+message ListWorkTypesBySegmentRequest {
+  string segment_id = 1;
+}
+
+message WorkTypeFieldOption {
+  string id = 1;
+  string value = 2;
+  string label = 3;
+  int32 display_order = 4;
+  bool is_active = 5;
+  string field_key = 6;
+}
+
+message WorkTypeField {
+  string id = 1;
+  string work_type_id = 2;
+  string field_key = 3;
+  string label = 4;
+  string field_type = 5;
+  optional string placeholder = 6;
+  optional string help_text = 7;
+  bool is_required = 8;
+  optional string unit = 9;
+  optional double min_value = 10;
+  optional double max_value = 11;
+  optional int32 min_length = 12;
+  optional int32 max_length = 13;
+  int32 display_order = 14;
+  bool is_active = 15;
+  repeated WorkTypeFieldOption options = 16;
+  // WORKER_PROFILE | WORK_POST | BOTH - which context(s) this dynamic
+  // field applies to.
+  string context = 17;
+}
+
+message ListWorkTypeFieldsRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkTypeFieldsResponse {
+  repeated WorkTypeField fields = 1;
+}
+
+message RateOption {
+  string rate_basis = 1;
+  string rate_basis_name = 2;
+  optional string rate_unit = 3;
+  optional string rate_unit_name = 4;
+  bool is_default = 5;
+  string label = 6;
+}
+
+message ListWorkTypeRateTypesRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkSegmentRateTypesRequest {
+  string segment_id = 1;
+}
+
+message ListWorkCategoryRateTypesRequest {
+  string category_id = 1;
+}
+
+message ListRateTypesResponse {
+  repeated RateOption rate_types = 1;
+}
+
+// Skill is global, reusable master data (no longer tied 1:1 to a single
+// work type); its applicability to a work type is expressed via the
+// work_type_skills join table.
+message Skill {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  bool is_active = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  bool is_required = 7;
+}
+
+message ListWorkTypeSkillsRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkTypeSkillsResponse {
+  repeated Skill skills = 1;
+}
+
+// CommonRole is global reusable master data describing a job title/role
+// commonly associated with one or more work types (e.g. "Mason", "Picker").
+message CommonRole {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  bool is_active = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  bool is_primary = 7;
+}
+
+message ListWorkTypeCommonRolesRequest {
+  string work_type_id = 1;
+}
+
+message ListWorkTypeCommonRolesResponse {
+  repeated CommonRole common_roles = 1;
+}
+
+message GetWorkTypeConfigurationRequest {
+  string work_type_id = 1;
+}
+
+message GetWorkTypeConfigurationResponse {
+  repeated Skill skills = 1;
+  repeated CommonRole common_roles = 2;
+  repeated RateOption rate_types = 3;
+  repeated WorkTypeField fields = 4;
 }

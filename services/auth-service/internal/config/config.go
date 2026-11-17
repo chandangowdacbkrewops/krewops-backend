@@ -62,9 +62,9 @@ func Load() (*Config, error) {
 		JWTSecret:              os.Getenv("JWT_SECRET"),
 		JWTAccessExpiryMinutes: jwtExpiry,
 
-		OTPExpiryMinutes:         otpExpiry,
-		OTPResendMinimumSeconds:  otpResendMinSeconds,
-		OTPMaxRequests:           otpMaxRequests,
+		OTPExpiryMinutes:           otpExpiry,
+		OTPResendMinimumSeconds:    otpResendMinSeconds,
+		OTPMaxRequests:             otpMaxRequests,
 		OTPMaxRequestWindowMinutes: otpMaxRequestWindow,
 	}
 
@@ -74,6 +74,16 @@ func Load() (*Config, error) {
 
 	if cfg.GRPCPort == "" {
 		cfg.GRPCPort = "50051"
+	}
+
+	// Platforms like Cloud Run inject a reserved PORT env var and only route
+	// external traffic to a single port per container. Only the gRPC server
+	// needs to be reachable from outside the process in that environment
+	// (the gateway is the only HTTP-facing service), so prefer PORT over
+	// GRPC_PORT whenever it is set. Local/dev setups that don't set PORT are
+	// unaffected.
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		cfg.GRPCPort = envPort
 	}
 
 	if cfg.DatabaseURL == "" {

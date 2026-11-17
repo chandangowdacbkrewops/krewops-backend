@@ -13,6 +13,8 @@ type Config struct {
 	GRPCPort string
 
 	DatabaseURL string
+	MongoURI    string
+	MongoDB     string
 
 	JWTSecret string
 }
@@ -26,6 +28,8 @@ func Load() (*Config, error) {
 		GRPCPort: os.Getenv("GRPC_PORT"),
 
 		DatabaseURL: os.Getenv("DATABASE_URL"),
+		MongoURI:    os.Getenv("MONGO_URI"),
+		MongoDB:     os.Getenv("MONGO_DB"),
 
 		JWTSecret: os.Getenv("JWT_SECRET"),
 	}
@@ -38,8 +42,26 @@ func Load() (*Config, error) {
 		cfg.GRPCPort = "50054"
 	}
 
+	// Platforms like Cloud Run inject a reserved PORT env var and only route
+	// external traffic to a single port per container. Only the gRPC server
+	// needs to be reachable from outside the process in that environment
+	// (the gateway is the only HTTP-facing service), so prefer PORT over
+	// GRPC_PORT whenever it is set. Local/dev setups that don't set PORT are
+	// unaffected.
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		cfg.GRPCPort = envPort
+	}
+
+	if cfg.MongoDB == "" {
+		cfg.MongoDB = "krewops"
+	}
+
 	if cfg.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
+	}
+
+	if cfg.MongoURI == "" {
+		return nil, fmt.Errorf("MONGO_URI is required")
 	}
 
 	if cfg.JWTSecret == "" {

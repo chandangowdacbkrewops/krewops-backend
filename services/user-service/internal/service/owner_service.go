@@ -39,6 +39,12 @@ func (s *OwnerService) CreateOwnerProfile(
 		return nil, err
 	}
 
+	gender, err := normalizeGender(req.Gender)
+	if err != nil {
+		return nil, err
+	}
+	req.Gender = gender
+
 	dob, err := time.Parse("2006-01-02", req.DateOfBirth)
 	if err != nil {
 		return nil, fmt.Errorf("date_of_birth must be in YYYY-MM-DD format")
@@ -116,6 +122,7 @@ func buildOwnerProfileResponse(
 		UserType:          model.UserTypeUser,
 		FirstName:         derefString(profile.FirstName),
 		LastName:          profile.LastName,
+		Gender:            profile.Gender,
 		Email:             profile.Email,
 		Country:           derefString(profile.Country),
 		State:             derefString(profile.State),
@@ -152,6 +159,7 @@ func BuildProfileResponse(
 			OnboardingCompleted: true,
 			FirstName:           &ownerResp.FirstName,
 			LastName:            ownerResp.LastName,
+			Gender:              ownerResp.Gender,
 			UserType:            &ownerResp.UserType,
 			DateOfBirth:         &ownerResp.DateOfBirth,
 			Email:               ownerResp.Email,
@@ -175,6 +183,7 @@ func BuildProfileResponse(
 		OnboardingCompleted: profile.OnboardingCompleted,
 		FirstName:           profile.FirstName,
 		LastName:            profile.LastName,
+		Gender:              profile.Gender,
 		UserType:            profile.UserType,
 		Email:               profile.Email,
 		Country:             profile.Country,

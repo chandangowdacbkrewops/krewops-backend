@@ -1,0 +1,29 @@
+# Local MongoDB for job postings. PostgreSQL stays on the host (port 5432).
+#
+# Start:
+#   docker compose up -d
+#
+# Connection used by work-service and search-service:
+#   MONGO_URI=mongodb://localhost:27017
+#   MONGO_DB=krewops
+
+services:
+  mongo:
+    image: mongo:8
+    container_name: krewops-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: krewops
+    volumes:
+      - krewops_mongo_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  krewops_mongo_data:

@@ -1,0 +1,300 @@
+package repository
+
+import (
+	"context"
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+
+	"github.com/chandangowdacbkrewops/krewops-backend/services/work-service/internal/model"
+)
+
+const workApplicationsCollection = "work_applications"
+
+type quotationDocument struct {
+	Amount                 float64  `bson:"amount"`
+	Currency               string   `bson:"currency"`
+	RateBasis              string   `bson:"rate_basis"`
+	RateUnit               *string  `bson:"rate_unit,omitempty"`
+	PriceType              string   `bson:"price_type,omitempty"`
+	EstimatedDurationHours *float64 `bson:"estimated_duration_hours,omitempty"`
+	Message                *string  `bson:"message,omitempty"`
+}
+
+type applicationDocument struct {
+	ID                 string            `bson:"_id"`
+	WorkID             string            `bson:"work_id"`
+	WorkerID           string            `bson:"worker_id"`
+	Status             string            `bson:"status"`
+	Quotation          quotationDocument `bson:"quotation"`
+	ApplicantType      string            `bson:"applicant_type,omitempty"`
+	OfferedWorkerCount int               `bson:"offered_worker_count,omitempty"`
+	AppliedAt          time.Time         `bson:"applied_at"`
+	UpdatedAt          time.Time         `bson:"updated_at"`
+}
+
+type ApplicationRepository struct {
+	collection *mongo.Collection
+}
+
+func NewApplicationRepository(db *mongo.Database) *ApplicationRepository {
+	return &ApplicationRepository{
+		collection: db.Collection(workApplicationsCollection),
+	}
+}
+
+func (r *ApplicationRepository) EnsureIndexes(ctx context.Context) error {
+	_ = r.collection.Indexes().DropOne(ctx, "uniq_accepted_per_work")
+	_, err := r.collection.Indexes().CreateMany(ctx, []mongo.IndexModel{
+		{
+			Keys:    bson.D{{Key: "work_id", Value: 1}, {Key: "worker_id", Value: 1}},
+			Options: options.Index().SetUnique(true),
+		},
+		{Keys: bson.D{{Key: "work_id", Value: 1}, {Key: "status", Value: 1}, {Key: "applied_at", Value: -1}}},
+		{Keys: bson.D{{Key: "worker_id", Value: 1}, {Key: "applied_at", Value: -1}}},
+	})
+	return err
+}
+
+func (r *ApplicationRepository) Insert(
+	ctx context.Context,
+	record *model.WorkApplication,
+) (*model.WorkApplication, error) {
+	now := time.Now().UTC()
+	if record.ID == "" {
+		record.ID = uuid.NewString()
+	}
+	if record.AppliedAt.IsZero() {
+		record.AppliedAt = now
+	}
+	record.UpdatedAt = now
+
+	doc := toApplicationDocument(record)
+	if _, err := r.collection.InsertOne(ctx, doc); err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, ErrDuplicateApplication
+		}
+		return nil, err
+	}
+
+	return record, nil
+}
+
+func (r *ApplicationRepository) FindByID(
+	ctx context.Context,
+	id string,
+) (*model.WorkApplication, error) {
+	var doc applicationDocument
+	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.toRecord(), nil
+}
+
+func (r *ApplicationRepository) FindByWorkIDAndStatus(
+	ctx context.Context,
+	workID string,
+	status string,
+) (*model.WorkApplication, error) {
+	var doc applicationDocument
+	err := r.collection.FindOne(ctx, bson.M{
+		"work_id": workID,
+		"status":  status,
+	}).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.toRecord(), nil
+}
+
+func (r *ApplicationRepository) ListByWorkID(
+	ctx context.Context,
+	workID string,
+	status *string,
+) ([]model.WorkApplication, error) {
+	filter := bson.M{"work_id": workID}
+	if status != nil && *status != "" {
+		filter["status"] = *status
+	}
+
+	cursor, err := r.collection.Find(
+		ctx,
+		filter,
+		options.Find().SetSort(bson.D{{Key: "applied_at", Value: -1}}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	records := make([]model.WorkApplication, 0)
+	for cursor.Next(ctx) {
+		var doc applicationDocument
+		if err := cursor.Decode(&doc); err != nil {
+			return nil, err
+		}
+		records = append(records, *doc.toRecord())
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return records, nil
+}
+
+func (r *ApplicationRepository) ListByWorkerID(
+	ctx context.Context,
+	workerID string,
+	status *string,
+) ([]model.WorkApplication, error) {
+	filter := bson.M{"worker_id": workerID}
+	if status != nil && *status != "" {
+		filter["status"] = *status
+	}
+
+	cursor, err := r.collection.Find(
+		ctx,
+		filter,
+		options.Find().SetSort(bson.D{{Key: "applied_at", Value: -1}}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	records := make([]model.WorkApplication, 0)
+	for cursor.Next(ctx) {
+		var doc applicationDocument
+		if err := cursor.Decode(&doc); err != nil {
+			return nil, err
+		}
+		records = append(records, *doc.toRecord())
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return records, nil
+}
+
+func (r *ApplicationRepository) UpdateStatus(
+	ctx context.Context,
+	workID string,
+	applicationID string,
+	from []string,
+	to string,
+) (*model.WorkApplication, error) {
+	now := time.Now().UTC()
+	filter := bson.M{
+		"_id":     applicationID,
+		"work_id": workID,
+		"status":  bson.M{"$in": from},
+	}
+
+	var doc applicationDocument
+	err := r.collection.FindOneAndUpdate(
+		ctx,
+		filter,
+		bson.M{"$set": bson.M{"status": to, "updated_at": now}},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&doc)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.toRecord(), nil
+}
+
+func (r *ApplicationRepository) AcceptOne(
+	ctx context.Context,
+	workID string,
+	applicationID string,
+) (*model.WorkApplication, error) {
+	return r.UpdateStatus(
+		ctx,
+		workID,
+		applicationID,
+		[]string{model.ApplicationStatusApplied, model.ApplicationStatusShortlisted},
+		model.ApplicationStatusAccepted,
+	)
+}
+
+func toApplicationDocument(record *model.WorkApplication) applicationDocument {
+	return applicationDocument{
+		ID:       record.ID,
+		WorkID:   record.WorkID,
+		WorkerID: record.WorkerID,
+		Status:   record.Status,
+		Quotation: quotationDocument{
+			Amount:                 record.Quotation.Amount,
+			Currency:               record.Quotation.Currency,
+			RateBasis:              record.Quotation.RateBasis,
+			RateUnit:               record.Quotation.RateUnit,
+			EstimatedDurationHours: record.Quotation.EstimatedDurationHours,
+			Message:                record.Quotation.Message,
+		},
+		ApplicantType:      record.ApplicantType,
+		OfferedWorkerCount: record.OfferedWorkerCount,
+		AppliedAt:          record.AppliedAt,
+		UpdatedAt:          record.UpdatedAt,
+	}
+}
+
+func (d applicationDocument) toRecord() *model.WorkApplication {
+	return &model.WorkApplication{
+		ID:       d.ID,
+		WorkID:   d.WorkID,
+		WorkerID: d.WorkerID,
+		Status:   d.Status,
+		Quotation: model.Quotation{
+			Amount:                 d.Quotation.Amount,
+			Currency:               d.Quotation.Currency,
+			RateBasis:              quotationRateBasis(d.Quotation),
+			RateUnit:               quotationRateUnit(d.Quotation),
+			EstimatedDurationHours: d.Quotation.EstimatedDurationHours,
+			Message:                d.Quotation.Message,
+		},
+		ApplicantType:      d.ApplicantType,
+		OfferedWorkerCount: d.OfferedWorkerCount,
+		AppliedAt:          d.AppliedAt,
+		UpdatedAt:          d.UpdatedAt,
+	}
+}
+
+func quotationRateBasis(quotation quotationDocument) string {
+	if quotation.RateBasis != "" {
+		return quotation.RateBasis
+	}
+	basis, _, ok := mapLegacyPaymentType(&quotation.PriceType)
+	if !ok {
+		return quotation.PriceType
+	}
+	return basis
+}
+
+func quotationRateUnit(quotation quotationDocument) *string {
+	if quotation.RateBasis != "" {
+		return quotation.RateUnit
+	}
+	_, unit, ok := mapLegacyPaymentType(&quotation.PriceType)
+	if !ok || unit == "" {
+		return nil
+	}
+	return &unit
+}

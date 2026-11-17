@@ -35,6 +35,16 @@ func Load() (*Config, error) {
 		cfg.GRPCPort = "50053"
 	}
 
+	// Platforms like Cloud Run inject a reserved PORT env var and only route
+	// external traffic to a single port per container. Only the gRPC server
+	// needs to be reachable from outside the process in that environment
+	// (the gateway is the only HTTP-facing service), so prefer PORT over
+	// GRPC_PORT whenever it is set. Local/dev setups that don't set PORT are
+	// unaffected.
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		cfg.GRPCPort = envPort
+	}
+
 	if cfg.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
 	}

@@ -40,6 +40,43 @@ type VerifyOTPRequest struct {
 	OTP         string `json:"otp" binding:"required"`
 }
 
+// RequestOTPResponseData is the documented shape of the "data" field
+// returned by POST /auth/otp/request (built via gin.H at runtime).
+type RequestOTPResponseData struct {
+	Message string `json:"message"`
+}
+
+// VerifyOTPResponseUser is the authenticated user summary nested in the
+// VerifyOTP response.
+type VerifyOTPResponseUser struct {
+	ID            string `json:"id"`
+	PhoneNumber   string `json:"phone_number"`
+	PhoneVerified bool   `json:"phone_verified"`
+}
+
+// VerifyOTPResponseData is the documented shape of the "data" field
+// returned by POST /auth/otp/verify (built via gin.H at runtime).
+type VerifyOTPResponseData struct {
+	AccessToken         string                `json:"access_token"`
+	RefreshToken        string                `json:"refresh_token"`
+	IsNewUser           bool                  `json:"is_new_user"`
+	OnboardingCompleted bool                  `json:"onboarding_completed"`
+	User                VerifyOTPResponseUser `json:"user"`
+}
+
+// RequestOTP godoc
+//
+//	@Summary		Request an OTP
+//	@Description	Sends a one-time password via SMS to the given phone number. Used to start login/signup.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		RequestOTPRequest							true	"Phone number to send the OTP to"
+//	@Success		200		{object}	response.SuccessResponse{data=RequestOTPResponseData}
+//	@Failure		400		{object}	response.ErrorResponse
+//	@Failure		429		{object}	response.ErrorResponse	"Too many OTP requests for this phone number"
+//	@Failure		500		{object}	response.ErrorResponse
+//	@Router			/auth/otp/request [post]
 func (h *AuthHandler) RequestOTP(
 	c *gin.Context,
 ) {
@@ -87,6 +124,20 @@ func (h *AuthHandler) RequestOTP(
 	)
 }
 
+// VerifyOTP godoc
+//
+//	@Summary		Verify an OTP and log in
+//	@Description	Verifies the OTP sent to the given phone number. On success returns an access/refresh token pair
+//	@Description	and the authenticated user's profile completion state. Creates the user on first verification.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		VerifyOTPRequest	true	"Phone number and OTP code to verify"
+//	@Success		200		{object}	response.SuccessResponse{data=VerifyOTPResponseData}
+//	@Failure		400		{object}	response.ErrorResponse
+//	@Failure		401		{object}	response.ErrorResponse	"OTP is invalid or expired"
+//	@Failure		500		{object}	response.ErrorResponse
+//	@Router			/auth/otp/verify [post]
 func (h *AuthHandler) VerifyOTP(
 	c *gin.Context,
 ) {

@@ -10,9 +10,9 @@ import (
 // SearchService is the single point of entry for the "Search" domain: work
 // postings and worker profiles are queried independently, but both are
 // exposed through this one service so the gateway/mobile app has a single
-// place to go for search. Today both SearchWork and SearchWorkers query
-// PostgreSQL directly; either can move to a different backend (e.g.
-// Elasticsearch/OpenSearch) later without changing this API.
+// place to go for search. SearchWork reads MongoDB job documents;
+// SearchWorkers still queries PostgreSQL. Either backend can change later
+// without changing this API.
 type SearchService struct {
 	workSearchRepository   *repository.WorkSearchRepository
 	workerSearchRepository *repository.WorkerSearchRepository

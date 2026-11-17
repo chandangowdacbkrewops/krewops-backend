@@ -32,10 +32,13 @@ func NormalizePagination(page, pageSize int) (int, int) {
 type WorkSearchFilters struct {
 	Keyword         *string
 	WorkTypeID      *string
+	WorkCategoryID  *string
+	WorkSegmentID   *string
 	City            *string
 	State           *string
 	ExperienceLevel *string
-	PaymentType     *string
+	RateBasis       *string
+	RateUnit        *string
 	MinBudgetRate   *float64
 	MaxBudgetRate   *float64
 
@@ -43,18 +46,21 @@ type WorkSearchFilters struct {
 	PageSize int
 }
 
-// WorkSearchResult is a single work_postings row joined with its work type
-// name, projected for the search results list (not the full CreateWork
-// response shape).
+// WorkSearchResult is a single work_postings Mongo document projected
+// for the search results list (not the full CreateWork response shape).
 type WorkSearchResult struct {
 	ID     string
 	UserID string
 	Status string
 
-	Title        *string
-	WorkTypeID   *string
-	WorkTypeName *string
-	Description  *string
+	Title            *string
+	WorkTypeID       *string
+	WorkTypeName     *string
+	WorkCategoryID   *string
+	WorkCategoryName *string
+	WorkSegmentID    *string
+	WorkSegmentName  *string
+	Description      *string
 
 	Address   *string
 	City      *string
@@ -62,17 +68,20 @@ type WorkSearchResult struct {
 	Latitude  *float64
 	Longitude *float64
 
-	WorkersNeeded   *int
-	ExperienceLevel *string
-	Skills          []string
+	WorkersNeeded    *int
+	WorkersSelected  int
+	RemainingWorkers int
+	ExperienceLevel  *string
+	Skills           []string
 
 	StartDate     *time.Time
 	DurationValue *int
 	DurationUnit  *string
 	ShiftTiming   *string
 
-	PaymentType *string
-	BudgetRate  *float64
+	RateBasis  *string
+	RateUnit   *string
+	BudgetRate *float64
 
 	PublishedAt *time.Time
 	CreatedAt   time.Time
@@ -95,6 +104,7 @@ type WorkSearchResponse struct {
 type WorkerSearchFilters struct {
 	Keyword            *string
 	WorkTypeID         *string
+	WorkSegmentID      *string
 	City               *string
 	State              *string
 	WorkerType         *string
@@ -105,7 +115,7 @@ type WorkerSearchFilters struct {
 	PageSize int
 }
 
-// WorkerSkillResult is one worker_profile_skills row joined with its work
+// WorkerSkillResult is one worker_categories (WORK_TYPE node) row joined with its work
 // type name.
 type WorkerSkillResult struct {
 	WorkTypeID      string
@@ -131,7 +141,10 @@ type WorkerSearchResult struct {
 
 	ExperienceYears *float64
 	ExpectedRate    *float64
-	RateType        *string
+	ExpectedRateMin *float64
+	ExpectedRateMax *float64
+	RateBasis       *string
+	RateUnit        *string
 
 	AvailabilityStatus string
 	VerificationStatus string

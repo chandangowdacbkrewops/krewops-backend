@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
+	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -27,14 +32,6 @@ func main() {
 		log.Fatal("failed to load configuration: ", err)
 	}
 
-	if err := database.RunMigrations(
-		cfg.DatabaseURL,
-		"migrations",
-		"work_schema_migrations",
-	); err != nil {
-		log.Fatal("failed to run migrations: ", err)
-	}
-
 	db, err := database.NewPostgresPool(
 		ctx,
 		cfg.DatabaseURL,
@@ -45,13 +42,75 @@ func main() {
 
 	defer db.Close()
 
+	mongoClient, mongoDB, err := database.NewMongoDatabase(
+		ctx,
+		cfg.MongoURI,
+		cfg.MongoDB,
+	)
+	if err != nil {
+		log.Fatal("failed to connect mongo: ", err)
+	}
+	defer func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			log.Printf("failed to disconnect mongo: %v", err)
+		}
+	}()
+
 	// -------------------------
 	// Repositories
 	// -------------------------
 
-	workRepository := repository.NewWorkRepository(db)
+	workRepository := repository.NewWorkRepository(mongoDB)
+	if err := workRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work posting indexes: ", err)
+	}
+
+	applicationRepository := repository.NewApplicationRepository(mongoDB)
+	if err := applicationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work application indexes: ", err)
+	}
+
+	invitationRepository := repository.NewInvitationRepository(mongoDB)
+	if err := invitationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work invitation indexes: ", err)
+	}
+
+	assignmentRepository := repository.NewAssignmentRepository(mongoDB)
+	if err := assignmentRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work assignment indexes: ", err)
+	}
+
+	dailyLogRepository := repository.NewDailyLogRepository(mongoDB)
+	if err := dailyLogRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work daily log indexes: ", err)
+	}
+
+	paymentRepository := repository.NewPaymentRepository(mongoDB)
+	if err := paymentRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work payment indexes: ", err)
+	}
+
+	contractorRecordRepository := repository.NewContractorRecordRepository(mongoDB)
+	if err := contractorRecordRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure contractor work record indexes: ", err)
+	}
+
+	obligationRepository := repository.NewObligationRepository(mongoDB)
+	if err := obligationRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure payment obligation indexes: ", err)
+	}
+
+	reviewRepository := repository.NewReviewRepository(mongoDB)
+	if err := reviewRepository.EnsureIndexes(ctx); err != nil {
+		log.Fatal("failed to ensure work review indexes: ", err)
+	}
+
 	workOwnerRepository := repository.NewWorkOwnerRepository(db)
 	workTypeRepository := repository.NewWorkTypeRepository(db)
+	workCategoryRepository := repository.NewWorkCategoryRepository(db)
+	workSegmentRepository := repository.NewWorkSegmentRepository(db)
+	workTypeFieldRepository := repository.NewWorkTypeFieldRepository(db)
+	rateTypeRepository := repository.NewRateTypeRepository(db)
 
 	// -------------------------
 	// Services
@@ -59,8 +118,20 @@ func main() {
 
 	workService := service.NewWorkService(
 		workRepository,
+		applicationRepository,
+		assignmentRepository,
+		dailyLogRepository,
+		paymentRepository,
+		contractorRecordRepository,
+		obligationRepository,
 		workOwnerRepository,
 		workTypeRepository,
+		workCategoryRepository,
+		workSegmentRepository,
+		workTypeFieldRepository,
+		rateTypeRepository,
+		invitationRepository,
+		reviewRepository,
 	)
 
 	// -------------------------
@@ -118,17 +189,40 @@ func main() {
 	}()
 
 	// Start HTTP server
-	log.Printf(
-		"work-service HTTP listening on :%s",
-		cfg.Port,
-	)
-
-	if err := router.Run(
-		":" + cfg.Port,
-	); err != nil {
-		log.Fatal(
-			"HTTP server failed: ",
-			err,
-		)
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: router,
 	}
+
+	go func() {
+		log.Printf(
+			"work-service HTTP listening on :%s",
+			cfg.Port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(
+				"HTTP server failed: ",
+				err,
+			)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down both servers cleanly instead of being killed
+	// mid-request.
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-shutdownCtx.Done()
+
+	log.Println("work-service shutting down...")
+
+	httpShutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(httpShutdownCtx); err != nil {
+		log.Printf("work-service HTTP shutdown error: %v", err)
+	}
+
+	grpcServer.GracefulStop()
 }

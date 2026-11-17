@@ -22,6 +22,7 @@ type CreateOwnerProfileRequest struct {
 	GSTRegistrationNumber *string `json:"gst_registration_number"`
 	FirstName             string  `json:"first_name" binding:"required"`
 	LastName              *string `json:"last_name"`
+	Gender                *string `json:"gender"`
 	DateOfBirth           string  `json:"date_of_birth" binding:"required"`
 	Email                 *string `json:"email"`
 	Country               string  `json:"country" binding:"required"`
@@ -45,6 +46,7 @@ type OwnerProfileResponse struct {
 	UserType          string               `json:"user_type"`
 	FirstName         string               `json:"first_name"`
 	LastName          *string              `json:"last_name,omitempty"`
+	Gender            *string              `json:"gender,omitempty"`
 	DateOfBirth       string               `json:"date_of_birth"`
 	Email             *string              `json:"email,omitempty"`
 	Country           string               `json:"country"`
@@ -60,6 +62,7 @@ type ProfileRecord struct {
 	AuthUserID          string
 	FirstName           *string
 	LastName            *string
+	Gender              *string
 	UserType            *string
 	DateOfBirth         *time.Time
 	Email               *string

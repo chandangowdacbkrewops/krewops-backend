@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
+	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -30,21 +35,6 @@ func main() {
 	if err != nil {
 		log.Fatal(
 			"failed to load configuration: ",
-			err,
-		)
-	}
-
-	// -------------------------
-	// Database migrations
-	// -------------------------
-
-	if err := database.RunMigrations(
-		cfg.DatabaseURL,
-		"migrations",
-		"user_schema_migrations",
-	); err != nil {
-		log.Fatal(
-			"failed to run migrations: ",
 			err,
 		)
 	}
@@ -82,6 +72,24 @@ func main() {
 	workTypeRepository :=
 		repository.NewWorkTypeRepository(db)
 
+	workCategoryRepository :=
+		repository.NewWorkCategoryRepository(db)
+
+	workSegmentRepository :=
+		repository.NewWorkSegmentRepository(db)
+
+	workTypeFieldRepository :=
+		repository.NewWorkTypeFieldRepository(db)
+
+	rateTypeRepository :=
+		repository.NewRateTypeRepository(db)
+
+	skillRepository :=
+		repository.NewSkillRepository(db)
+
+	commonRoleRepository :=
+		repository.NewCommonRoleRepository(db)
+
 	// -------------------------
 	// Services
 	// -------------------------
@@ -97,6 +105,12 @@ func main() {
 			profileRepository,
 			ownerService,
 			workTypeRepository,
+			workCategoryRepository,
+			workSegmentRepository,
+			workTypeFieldRepository,
+			rateTypeRepository,
+			skillRepository,
+			commonRoleRepository,
 		)
 
 	userService :=
@@ -173,17 +187,40 @@ func main() {
 	// HTTP server
 	// -------------------------
 
-	log.Printf(
-		"user-service HTTP listening on :%s",
-		cfg.Port,
-	)
-
-	if err := router.Run(
-		":" + cfg.Port,
-	); err != nil {
-		log.Fatal(
-			"user-service HTTP server failed: ",
-			err,
-		)
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: router,
 	}
+
+	go func() {
+		log.Printf(
+			"user-service HTTP listening on :%s",
+			cfg.Port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(
+				"user-service HTTP server failed: ",
+				err,
+			)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down both servers cleanly instead of being killed
+	// mid-request.
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-shutdownCtx.Done()
+
+	log.Println("user-service shutting down...")
+
+	httpShutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(httpShutdownCtx); err != nil {
+		log.Printf("user-service HTTP shutdown error: %v", err)
+	}
+
+	grpcServer.GracefulStop()
 }

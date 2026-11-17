@@ -1,0 +1,63 @@
+package model
+
+import "time"
+
+const (
+	ApplicationStatusApplied     = "APPLIED"
+	ApplicationStatusShortlisted = "SHORTLISTED"
+	ApplicationStatusAccepted    = "ACCEPTED"
+	ApplicationStatusRejected    = "REJECTED"
+	ApplicationStatusWithdrawn   = "WITHDRAWN"
+	ApplicationStatusCancelled   = "CANCELLED"
+
+	ApplicantTypeIndividual = "individual"
+	ApplicantTypeContractor = "contractor"
+)
+
+func ValidApplicationStatus(status string) bool {
+	switch status {
+	case ApplicationStatusApplied,
+		ApplicationStatusShortlisted,
+		ApplicationStatusAccepted,
+		ApplicationStatusRejected,
+		ApplicationStatusWithdrawn,
+		ApplicationStatusCancelled:
+		return true
+	default:
+		return false
+	}
+}
+
+type Quotation struct {
+	Amount                 float64  `json:"amount"`
+	Currency               string   `json:"currency"`
+	RateBasis              string   `json:"rate_basis"`
+	RateUnit               *string  `json:"rate_unit,omitempty"`
+	EstimatedDurationHours *float64 `json:"estimated_duration_hours,omitempty"`
+	Message                *string  `json:"message,omitempty"`
+}
+
+type ApplyToWorkRequest struct {
+	Quotation          Quotation `json:"quotation"`
+	OfferedWorkerCount int       `json:"offered_worker_count"`
+}
+
+type WorkApplication struct {
+	ID                 string    `json:"id"`
+	WorkID             string    `json:"work_id"`
+	WorkerID           string    `json:"worker_id"`
+	Status             string    `json:"status"`
+	Quotation          Quotation `json:"quotation"`
+	ApplicantType      string    `json:"applicant_type,omitempty"`
+	OfferedWorkerCount int       `json:"offered_worker_count,omitempty"`
+	AssignmentID       string    `json:"assignment_id,omitempty"`
+	AppliedAt          time.Time `json:"applied_at"`
+	UpdatedAt          time.Time `json:"updated_at"`
+}
+
+type MyWorkApplication struct {
+	Application WorkApplication `json:"application"`
+	Work        *WorkResponse   `json:"work,omitempty"`
+	Assignment  *WorkAssignment `json:"assignment,omitempty"`
+	Payments    []WorkPayment   `json:"payments,omitempty"`
+}

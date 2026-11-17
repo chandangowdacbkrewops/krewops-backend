@@ -1,9 +1,31 @@
-# Docker Compose is optional for KrewOps local development.
 # PostgreSQL 18 is expected to run locally on port 5432 with a shared `krewops` database.
 #
 # To create the database (run once):
 #   psql -U postgres -c "CREATE DATABASE krewops;"
 #
 # Or use: go run ./scripts/init_db.go (from repo root, requires auth-service deps)
+#
+# MongoDB for job postings:
+#   docker compose -f docker.compose.yml up -d mongo
+#   or: docker compose up -d   (if using docker-compose.yml)
 
-services: {}
+services:
+  mongo:
+    image: mongo:8
+    container_name: krewops-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: krewops
+    volumes:
+      - krewops_mongo_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  krewops_mongo_data:

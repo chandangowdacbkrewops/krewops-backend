@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v7.36.0
-// source: user.proto
+// source: user/user.proto
 
 package userv1
 
@@ -19,13 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName          = "/user.v1.UserService/GetProfile"
-	UserService_CreateProfile_FullMethodName       = "/user.v1.UserService/CreateProfile"
-	UserService_UpdateProfile_FullMethodName       = "/user.v1.UserService/UpdateProfile"
-	UserService_CreateWorkerProfile_FullMethodName = "/user.v1.UserService/CreateWorkerProfile"
-	UserService_CreateOwnerProfile_FullMethodName  = "/user.v1.UserService/CreateOwnerProfile"
-	UserService_ListBusinessTypes_FullMethodName   = "/user.v1.UserService/ListBusinessTypes"
-	UserService_ListWorkTypes_FullMethodName       = "/user.v1.UserService/ListWorkTypes"
+	UserService_GetProfile_FullMethodName                 = "/user.v1.UserService/GetProfile"
+	UserService_CreateProfile_FullMethodName              = "/user.v1.UserService/CreateProfile"
+	UserService_UpdateProfile_FullMethodName              = "/user.v1.UserService/UpdateProfile"
+	UserService_CreateWorkerProfile_FullMethodName        = "/user.v1.UserService/CreateWorkerProfile"
+	UserService_UpdateWorkerProfile_FullMethodName        = "/user.v1.UserService/UpdateWorkerProfile"
+	UserService_CreateOwnerProfile_FullMethodName         = "/user.v1.UserService/CreateOwnerProfile"
+	UserService_ListBusinessTypes_FullMethodName          = "/user.v1.UserService/ListBusinessTypes"
+	UserService_ListWorkTypes_FullMethodName              = "/user.v1.UserService/ListWorkTypes"
+	UserService_ListWorkCategories_FullMethodName         = "/user.v1.UserService/ListWorkCategories"
+	UserService_ListWorkTypesByCategory_FullMethodName    = "/user.v1.UserService/ListWorkTypesByCategory"
+	UserService_ListWorkSegmentsByCategory_FullMethodName = "/user.v1.UserService/ListWorkSegmentsByCategory"
+	UserService_ListWorkTypesBySegment_FullMethodName     = "/user.v1.UserService/ListWorkTypesBySegment"
+	UserService_ListWorkTypeFields_FullMethodName         = "/user.v1.UserService/ListWorkTypeFields"
+	UserService_ListWorkTypeRateTypes_FullMethodName      = "/user.v1.UserService/ListWorkTypeRateTypes"
+	UserService_ListWorkSegmentRateTypes_FullMethodName   = "/user.v1.UserService/ListWorkSegmentRateTypes"
+	UserService_ListWorkCategoryRateTypes_FullMethodName  = "/user.v1.UserService/ListWorkCategoryRateTypes"
+	UserService_ListWorkTypeSkills_FullMethodName         = "/user.v1.UserService/ListWorkTypeSkills"
+	UserService_ListWorkTypeCommonRoles_FullMethodName    = "/user.v1.UserService/ListWorkTypeCommonRoles"
+	UserService_GetWorkTypeConfiguration_FullMethodName   = "/user.v1.UserService/GetWorkTypeConfiguration"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -36,9 +48,24 @@ type UserServiceClient interface {
 	CreateProfile(ctx context.Context, in *CreateProfileRequest, opts ...grpc.CallOption) (*CreateProfileResponse, error)
 	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error)
 	CreateWorkerProfile(ctx context.Context, in *CreateWorkerProfileRequest, opts ...grpc.CallOption) (*CreateWorkerProfileResponse, error)
+	UpdateWorkerProfile(ctx context.Context, in *UpdateWorkerProfileRequest, opts ...grpc.CallOption) (*UpdateWorkerProfileResponse, error)
 	CreateOwnerProfile(ctx context.Context, in *CreateOwnerProfileRequest, opts ...grpc.CallOption) (*CreateOwnerProfileResponse, error)
 	ListBusinessTypes(ctx context.Context, in *ListBusinessTypesRequest, opts ...grpc.CallOption) (*ListBusinessTypesResponse, error)
 	ListWorkTypes(ctx context.Context, in *ListWorkTypesRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error)
+	ListWorkCategories(ctx context.Context, in *ListWorkCategoriesRequest, opts ...grpc.CallOption) (*ListWorkCategoriesResponse, error)
+	ListWorkTypesByCategory(ctx context.Context, in *ListWorkTypesByCategoryRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error)
+	ListWorkSegmentsByCategory(ctx context.Context, in *ListWorkSegmentsByCategoryRequest, opts ...grpc.CallOption) (*ListWorkSegmentsResponse, error)
+	ListWorkTypesBySegment(ctx context.Context, in *ListWorkTypesBySegmentRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error)
+	ListWorkTypeFields(ctx context.Context, in *ListWorkTypeFieldsRequest, opts ...grpc.CallOption) (*ListWorkTypeFieldsResponse, error)
+	ListWorkTypeRateTypes(ctx context.Context, in *ListWorkTypeRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error)
+	ListWorkSegmentRateTypes(ctx context.Context, in *ListWorkSegmentRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error)
+	ListWorkCategoryRateTypes(ctx context.Context, in *ListWorkCategoryRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error)
+	ListWorkTypeSkills(ctx context.Context, in *ListWorkTypeSkillsRequest, opts ...grpc.CallOption) (*ListWorkTypeSkillsResponse, error)
+	ListWorkTypeCommonRoles(ctx context.Context, in *ListWorkTypeCommonRolesRequest, opts ...grpc.CallOption) (*ListWorkTypeCommonRolesResponse, error)
+	// Bundles skills + rate_types + common_roles + dynamic attribute fields
+	// for a single work type into one response, replacing the 4 separate
+	// list calls where convenient for clients.
+	GetWorkTypeConfiguration(ctx context.Context, in *GetWorkTypeConfigurationRequest, opts ...grpc.CallOption) (*GetWorkTypeConfigurationResponse, error)
 }
 
 type userServiceClient struct {
@@ -89,6 +116,16 @@ func (c *userServiceClient) CreateWorkerProfile(ctx context.Context, in *CreateW
 	return out, nil
 }
 
+func (c *userServiceClient) UpdateWorkerProfile(ctx context.Context, in *UpdateWorkerProfileRequest, opts ...grpc.CallOption) (*UpdateWorkerProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateWorkerProfileResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateWorkerProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) CreateOwnerProfile(ctx context.Context, in *CreateOwnerProfileRequest, opts ...grpc.CallOption) (*CreateOwnerProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOwnerProfileResponse)
@@ -119,6 +156,116 @@ func (c *userServiceClient) ListWorkTypes(ctx context.Context, in *ListWorkTypes
 	return out, nil
 }
 
+func (c *userServiceClient) ListWorkCategories(ctx context.Context, in *ListWorkCategoriesRequest, opts ...grpc.CallOption) (*ListWorkCategoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkCategoriesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypesByCategory(ctx context.Context, in *ListWorkTypesByCategoryRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypesByCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkSegmentsByCategory(ctx context.Context, in *ListWorkSegmentsByCategoryRequest, opts ...grpc.CallOption) (*ListWorkSegmentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkSegmentsResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkSegmentsByCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypesBySegment(ctx context.Context, in *ListWorkTypesBySegmentRequest, opts ...grpc.CallOption) (*ListWorkTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypesBySegment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypeFields(ctx context.Context, in *ListWorkTypeFieldsRequest, opts ...grpc.CallOption) (*ListWorkTypeFieldsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkTypeFieldsResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypeFields_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypeRateTypes(ctx context.Context, in *ListWorkTypeRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRateTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypeRateTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkSegmentRateTypes(ctx context.Context, in *ListWorkSegmentRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRateTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkSegmentRateTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkCategoryRateTypes(ctx context.Context, in *ListWorkCategoryRateTypesRequest, opts ...grpc.CallOption) (*ListRateTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRateTypesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkCategoryRateTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypeSkills(ctx context.Context, in *ListWorkTypeSkillsRequest, opts ...grpc.CallOption) (*ListWorkTypeSkillsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkTypeSkillsResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypeSkills_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListWorkTypeCommonRoles(ctx context.Context, in *ListWorkTypeCommonRolesRequest, opts ...grpc.CallOption) (*ListWorkTypeCommonRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkTypeCommonRolesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListWorkTypeCommonRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetWorkTypeConfiguration(ctx context.Context, in *GetWorkTypeConfigurationRequest, opts ...grpc.CallOption) (*GetWorkTypeConfigurationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkTypeConfigurationResponse)
+	err := c.cc.Invoke(ctx, UserService_GetWorkTypeConfiguration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -127,9 +274,24 @@ type UserServiceServer interface {
 	CreateProfile(context.Context, *CreateProfileRequest) (*CreateProfileResponse, error)
 	UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error)
 	CreateWorkerProfile(context.Context, *CreateWorkerProfileRequest) (*CreateWorkerProfileResponse, error)
+	UpdateWorkerProfile(context.Context, *UpdateWorkerProfileRequest) (*UpdateWorkerProfileResponse, error)
 	CreateOwnerProfile(context.Context, *CreateOwnerProfileRequest) (*CreateOwnerProfileResponse, error)
 	ListBusinessTypes(context.Context, *ListBusinessTypesRequest) (*ListBusinessTypesResponse, error)
 	ListWorkTypes(context.Context, *ListWorkTypesRequest) (*ListWorkTypesResponse, error)
+	ListWorkCategories(context.Context, *ListWorkCategoriesRequest) (*ListWorkCategoriesResponse, error)
+	ListWorkTypesByCategory(context.Context, *ListWorkTypesByCategoryRequest) (*ListWorkTypesResponse, error)
+	ListWorkSegmentsByCategory(context.Context, *ListWorkSegmentsByCategoryRequest) (*ListWorkSegmentsResponse, error)
+	ListWorkTypesBySegment(context.Context, *ListWorkTypesBySegmentRequest) (*ListWorkTypesResponse, error)
+	ListWorkTypeFields(context.Context, *ListWorkTypeFieldsRequest) (*ListWorkTypeFieldsResponse, error)
+	ListWorkTypeRateTypes(context.Context, *ListWorkTypeRateTypesRequest) (*ListRateTypesResponse, error)
+	ListWorkSegmentRateTypes(context.Context, *ListWorkSegmentRateTypesRequest) (*ListRateTypesResponse, error)
+	ListWorkCategoryRateTypes(context.Context, *ListWorkCategoryRateTypesRequest) (*ListRateTypesResponse, error)
+	ListWorkTypeSkills(context.Context, *ListWorkTypeSkillsRequest) (*ListWorkTypeSkillsResponse, error)
+	ListWorkTypeCommonRoles(context.Context, *ListWorkTypeCommonRolesRequest) (*ListWorkTypeCommonRolesResponse, error)
+	// Bundles skills + rate_types + common_roles + dynamic attribute fields
+	// for a single work type into one response, replacing the 4 separate
+	// list calls where convenient for clients.
+	GetWorkTypeConfiguration(context.Context, *GetWorkTypeConfigurationRequest) (*GetWorkTypeConfigurationResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -152,6 +314,9 @@ func (UnimplementedUserServiceServer) UpdateProfile(context.Context, *UpdateProf
 func (UnimplementedUserServiceServer) CreateWorkerProfile(context.Context, *CreateWorkerProfileRequest) (*CreateWorkerProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWorkerProfile not implemented")
 }
+func (UnimplementedUserServiceServer) UpdateWorkerProfile(context.Context, *UpdateWorkerProfileRequest) (*UpdateWorkerProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateWorkerProfile not implemented")
+}
 func (UnimplementedUserServiceServer) CreateOwnerProfile(context.Context, *CreateOwnerProfileRequest) (*CreateOwnerProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOwnerProfile not implemented")
 }
@@ -160,6 +325,39 @@ func (UnimplementedUserServiceServer) ListBusinessTypes(context.Context, *ListBu
 }
 func (UnimplementedUserServiceServer) ListWorkTypes(context.Context, *ListWorkTypesRequest) (*ListWorkTypesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypes not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkCategories(context.Context, *ListWorkCategoriesRequest) (*ListWorkCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkCategories not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypesByCategory(context.Context, *ListWorkTypesByCategoryRequest) (*ListWorkTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypesByCategory not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkSegmentsByCategory(context.Context, *ListWorkSegmentsByCategoryRequest) (*ListWorkSegmentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkSegmentsByCategory not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypesBySegment(context.Context, *ListWorkTypesBySegmentRequest) (*ListWorkTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypesBySegment not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypeFields(context.Context, *ListWorkTypeFieldsRequest) (*ListWorkTypeFieldsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypeFields not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypeRateTypes(context.Context, *ListWorkTypeRateTypesRequest) (*ListRateTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypeRateTypes not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkSegmentRateTypes(context.Context, *ListWorkSegmentRateTypesRequest) (*ListRateTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkSegmentRateTypes not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkCategoryRateTypes(context.Context, *ListWorkCategoryRateTypesRequest) (*ListRateTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkCategoryRateTypes not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypeSkills(context.Context, *ListWorkTypeSkillsRequest) (*ListWorkTypeSkillsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypeSkills not implemented")
+}
+func (UnimplementedUserServiceServer) ListWorkTypeCommonRoles(context.Context, *ListWorkTypeCommonRolesRequest) (*ListWorkTypeCommonRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkTypeCommonRoles not implemented")
+}
+func (UnimplementedUserServiceServer) GetWorkTypeConfiguration(context.Context, *GetWorkTypeConfigurationRequest) (*GetWorkTypeConfigurationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkTypeConfiguration not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -254,6 +452,24 @@ func _UserService_CreateWorkerProfile_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UpdateWorkerProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateWorkerProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateWorkerProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateWorkerProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateWorkerProfile(ctx, req.(*UpdateWorkerProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_CreateOwnerProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOwnerProfileRequest)
 	if err := dec(in); err != nil {
@@ -308,6 +524,204 @@ func _UserService_ListWorkTypes_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ListWorkCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkCategoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkCategories(ctx, req.(*ListWorkCategoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypesByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypesByCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypesByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypesByCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypesByCategory(ctx, req.(*ListWorkTypesByCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkSegmentsByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkSegmentsByCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkSegmentsByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkSegmentsByCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkSegmentsByCategory(ctx, req.(*ListWorkSegmentsByCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypesBySegment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypesBySegmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypesBySegment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypesBySegment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypesBySegment(ctx, req.(*ListWorkTypesBySegmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypeFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypeFieldsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypeFields(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypeFields_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypeFields(ctx, req.(*ListWorkTypeFieldsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypeRateTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypeRateTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypeRateTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypeRateTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypeRateTypes(ctx, req.(*ListWorkTypeRateTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkSegmentRateTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkSegmentRateTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkSegmentRateTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkSegmentRateTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkSegmentRateTypes(ctx, req.(*ListWorkSegmentRateTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkCategoryRateTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkCategoryRateTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkCategoryRateTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkCategoryRateTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkCategoryRateTypes(ctx, req.(*ListWorkCategoryRateTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypeSkills_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypeSkillsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypeSkills(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypeSkills_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypeSkills(ctx, req.(*ListWorkTypeSkillsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListWorkTypeCommonRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkTypeCommonRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListWorkTypeCommonRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListWorkTypeCommonRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListWorkTypeCommonRoles(ctx, req.(*ListWorkTypeCommonRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetWorkTypeConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkTypeConfigurationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetWorkTypeConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetWorkTypeConfiguration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetWorkTypeConfiguration(ctx, req.(*GetWorkTypeConfigurationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -332,6 +746,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_CreateWorkerProfile_Handler,
 		},
 		{
+			MethodName: "UpdateWorkerProfile",
+			Handler:    _UserService_UpdateWorkerProfile_Handler,
+		},
+		{
 			MethodName: "CreateOwnerProfile",
 			Handler:    _UserService_CreateOwnerProfile_Handler,
 		},
@@ -343,7 +761,51 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListWorkTypes",
 			Handler:    _UserService_ListWorkTypes_Handler,
 		},
+		{
+			MethodName: "ListWorkCategories",
+			Handler:    _UserService_ListWorkCategories_Handler,
+		},
+		{
+			MethodName: "ListWorkTypesByCategory",
+			Handler:    _UserService_ListWorkTypesByCategory_Handler,
+		},
+		{
+			MethodName: "ListWorkSegmentsByCategory",
+			Handler:    _UserService_ListWorkSegmentsByCategory_Handler,
+		},
+		{
+			MethodName: "ListWorkTypesBySegment",
+			Handler:    _UserService_ListWorkTypesBySegment_Handler,
+		},
+		{
+			MethodName: "ListWorkTypeFields",
+			Handler:    _UserService_ListWorkTypeFields_Handler,
+		},
+		{
+			MethodName: "ListWorkTypeRateTypes",
+			Handler:    _UserService_ListWorkTypeRateTypes_Handler,
+		},
+		{
+			MethodName: "ListWorkSegmentRateTypes",
+			Handler:    _UserService_ListWorkSegmentRateTypes_Handler,
+		},
+		{
+			MethodName: "ListWorkCategoryRateTypes",
+			Handler:    _UserService_ListWorkCategoryRateTypes_Handler,
+		},
+		{
+			MethodName: "ListWorkTypeSkills",
+			Handler:    _UserService_ListWorkTypeSkills_Handler,
+		},
+		{
+			MethodName: "ListWorkTypeCommonRoles",
+			Handler:    _UserService_ListWorkTypeCommonRoles_Handler,
+		},
+		{
+			MethodName: "GetWorkTypeConfiguration",
+			Handler:    _UserService_GetWorkTypeConfiguration_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "user.proto",
+	Metadata: "user/user.proto",
 }

@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
+	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -27,9 +32,9 @@ func main() {
 		log.Fatal("failed to load configuration: ", err)
 	}
 
-	// search-service owns no tables, so it does not run any migrations. It
-	// connects to the same shared database that work-service and
-	// user-service manage the schema for, and only issues read queries.
+	// search-service owns no tables. Worker search reads PostgreSQL tables
+	// owned by user-service; work search reads the Mongo work_postings
+	// collection owned by work-service.
 	db, err := database.NewPostgresPool(
 		ctx,
 		cfg.DatabaseURL,
@@ -40,11 +45,25 @@ func main() {
 
 	defer db.Close()
 
+	mongoClient, mongoDB, err := database.NewMongoDatabase(
+		ctx,
+		cfg.MongoURI,
+		cfg.MongoDB,
+	)
+	if err != nil {
+		log.Fatal("failed to connect mongo: ", err)
+	}
+	defer func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			log.Printf("failed to disconnect mongo: %v", err)
+		}
+	}()
+
 	// -------------------------
 	// Repositories
 	// -------------------------
 
-	workSearchRepository := repository.NewWorkSearchRepository(db)
+	workSearchRepository := repository.NewWorkSearchRepository(mongoDB)
 	workerSearchRepository := repository.NewWorkerSearchRepository(db)
 
 	// -------------------------
@@ -105,17 +124,40 @@ func main() {
 		}
 	}()
 
-	log.Printf(
-		"search-service HTTP listening on :%s",
-		cfg.Port,
-	)
-
-	if err := router.Run(
-		":" + cfg.Port,
-	); err != nil {
-		log.Fatal(
-			"HTTP server failed: ",
-			err,
-		)
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: router,
 	}
+
+	go func() {
+		log.Printf(
+			"search-service HTTP listening on :%s",
+			cfg.Port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(
+				"HTTP server failed: ",
+				err,
+			)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down both servers cleanly instead of being killed
+	// mid-request.
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-shutdownCtx.Done()
+
+	log.Println("search-service shutting down...")
+
+	httpShutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(httpShutdownCtx); err != nil {
+		log.Printf("search-service HTTP shutdown error: %v", err)
+	}
+
+	grpcServer.GracefulStop()
 }
