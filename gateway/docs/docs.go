@@ -727,6 +727,110 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{userId}/rating-summary": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the average rating and review count for a user, computed from all reviews they have received.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get a user's aggregate rating summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.GetUserRatingSummaryResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/reviews": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the reviews a user has received across all of their work, meant for display on their profile.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews received by a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.ListUserReviewsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/work": {
             "get": {
                 "security": [
@@ -848,6 +952,88 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/work-assignments/{assignmentId}/reviews": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lets the work owner or the assigned worker/contractor leave a 1-5 rating (with optional comment) about the other party, once the work has been paid out or closed. One review per assignment per reviewer; reviews cannot be edited or deleted.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Submit a review for a work assignment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Assignment ID",
+                        "name": "assignmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Review payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.CreateReviewRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.CreateReviewResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
                         }
@@ -2147,6 +2333,346 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/work/{workId}/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Work"
+                ],
+                "summary": "Cancel a work posting",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Work posting ID",
+                        "name": "workId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.WorkLifecycleResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/work/{workId}/complete": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Work"
+                ],
+                "summary": "Mark assigned work completed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Work posting ID",
+                        "name": "workId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.WorkLifecycleResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/work/{workId}/confirm-completion": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Work"
+                ],
+                "summary": "Confirm completed work and close it",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Work posting ID",
+                        "name": "workId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.WorkLifecycleResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/work/{workId}/reviews": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns all reviews left on a work posting. Visible to the work owner or any party with an assignment on that work.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews for a work posting",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Work ID",
+                        "name": "workId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.ListWorkReviewsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/work/{workId}/start": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Work"
+                ],
+                "summary": "Start assigned work",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Work posting ID",
+                        "name": "workId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/workv1.WorkLifecycleResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_chandangowdacbkrewops_krewops-backend_gateway_internal_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2202,6 +2728,9 @@ const docTemplate = `{
         "internal_handler.ApplyToWorkRequest": {
             "type": "object",
             "properties": {
+                "offered_worker_count": {
+                    "type": "integer"
+                },
                 "quotation": {
                     "$ref": "#/definitions/internal_handler.Quotation"
                 }
@@ -2245,6 +2774,20 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_handler.CreateReviewRequest": {
+            "type": "object",
+            "required": [
+                "rating"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_handler.CreateWorkRequest": {
             "type": "object",
             "properties": {
@@ -2276,6 +2819,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "experience_level": {
+                    "type": "string"
+                },
+                "hiring_mode": {
                     "type": "string"
                 },
                 "latitude": {
@@ -2322,6 +2868,9 @@ const docTemplate = `{
                 },
                 "tools_provided": {
                     "type": "boolean"
+                },
+                "visibility": {
+                    "type": "string"
                 },
                 "work_category_id": {
                     "type": "string"
@@ -2657,6 +3206,9 @@ const docTemplate = `{
                 "rate_unit": {
                     "type": "string"
                 },
+                "remaining_workers": {
+                    "type": "integer"
+                },
                 "shift_timing": {
                     "type": "string"
                 },
@@ -2700,6 +3252,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "workers_needed": {
+                    "type": "integer"
+                },
+                "workers_selected": {
                     "type": "integer"
                 }
             }
@@ -3395,6 +3950,26 @@ const docTemplate = `{
                 }
             }
         },
+        "workv1.AgreedPayment": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "fixed_amount_minor": {
+                    "type": "integer"
+                },
+                "rate_minor": {
+                    "type": "integer"
+                },
+                "rate_type": {
+                    "type": "string"
+                },
+                "rate_unit": {
+                    "type": "string"
+                }
+            }
+        },
         "workv1.ApplyToWorkResponse": {
             "type": "object",
             "properties": {
@@ -3403,11 +3978,33 @@ const docTemplate = `{
                 }
             }
         },
+        "workv1.CreateReviewResponse": {
+            "type": "object",
+            "properties": {
+                "review": {
+                    "$ref": "#/definitions/workv1.WorkReview"
+                }
+            }
+        },
         "workv1.CreateWorkResponse": {
             "type": "object",
             "properties": {
                 "work": {
                     "$ref": "#/definitions/workv1.WorkPosting"
+                }
+            }
+        },
+        "workv1.GetUserRatingSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "average_rating": {
+                    "type": "number"
+                },
+                "review_count": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -3433,6 +4030,17 @@ const docTemplate = `{
                 }
             }
         },
+        "workv1.ListUserReviewsResponse": {
+            "type": "object",
+            "properties": {
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/workv1.WorkReview"
+                    }
+                }
+            }
+        },
         "workv1.ListWorkApplicationsResponse": {
             "type": "object",
             "properties": {
@@ -3444,11 +4052,31 @@ const docTemplate = `{
                 }
             }
         },
+        "workv1.ListWorkReviewsResponse": {
+            "type": "object",
+            "properties": {
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/workv1.WorkReview"
+                    }
+                }
+            }
+        },
         "workv1.MyWorkApplication": {
             "type": "object",
             "properties": {
                 "application": {
                     "$ref": "#/definitions/workv1.WorkApplication"
+                },
+                "assignment": {
+                    "$ref": "#/definitions/workv1.WorkAssignment"
+                },
+                "payments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/workv1.WorkPayment"
+                    }
                 },
                 "work": {
                     "$ref": "#/definitions/workv1.WorkPosting"
@@ -3489,11 +4117,20 @@ const docTemplate = `{
         "workv1.WorkApplication": {
             "type": "object",
             "properties": {
+                "applicant_type": {
+                    "type": "string"
+                },
                 "applied_at": {
+                    "type": "string"
+                },
+                "assignment_id": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
+                },
+                "offered_worker_count": {
+                    "type": "integer"
                 },
                 "quotation": {
                     "$ref": "#/definitions/workv1.Quotation"
@@ -3512,6 +4149,144 @@ const docTemplate = `{
                 }
             }
         },
+        "workv1.WorkAssignment": {
+            "type": "object",
+            "properties": {
+                "agreed_payment": {
+                    "$ref": "#/definitions/workv1.AgreedPayment"
+                },
+                "agreed_quotation": {
+                    "$ref": "#/definitions/workv1.Quotation"
+                },
+                "application_id": {
+                    "type": "string"
+                },
+                "assigned_at": {
+                    "type": "string"
+                },
+                "assigned_worker_count": {
+                    "type": "integer"
+                },
+                "assignment_type": {
+                    "type": "string"
+                },
+                "committed_worker_count": {
+                    "type": "integer"
+                },
+                "completed_at": {
+                    "type": "string"
+                },
+                "contractor_profile_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "days_worked": {
+                    "type": "number"
+                },
+                "full_days": {
+                    "type": "integer"
+                },
+                "half_days": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invitation_id": {
+                    "type": "string"
+                },
+                "joined_at": {
+                    "type": "string"
+                },
+                "logs_frozen": {
+                    "type": "boolean"
+                },
+                "payable_amount": {
+                    "type": "number"
+                },
+                "payable_currency": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string"
+                },
+                "started_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "work_id": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                },
+                "worker_profile_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "workv1.WorkLifecycleResponse": {
+            "type": "object",
+            "properties": {
+                "work": {
+                    "$ref": "#/definitions/workv1.WorkPosting"
+                }
+            }
+        },
+        "workv1.WorkPayment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "assignment_id": {
+                    "type": "string"
+                },
+                "confirmed_at": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "dispute_message": {
+                    "type": "string"
+                },
+                "disputed_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "receipt_status": {
+                    "type": "string"
+                },
+                "recorded_at": {
+                    "type": "string"
+                },
+                "reference": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "work_id": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                }
+            }
+        },
         "workv1.WorkPosting": {
             "type": "object",
             "properties": {
@@ -3520,6 +4295,9 @@ const docTemplate = `{
                 },
                 "address": {
                     "type": "string"
+                },
+                "applications_open": {
+                    "type": "boolean"
                 },
                 "attributes": {
                     "type": "object",
@@ -3546,6 +4324,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "experience_level": {
+                    "type": "string"
+                },
+                "hiring_mode": {
                     "type": "string"
                 },
                 "id": {
@@ -3575,6 +4356,9 @@ const docTemplate = `{
                 "rate_unit": {
                     "type": "string"
                 },
+                "remaining_workers": {
+                    "type": "integer"
+                },
                 "shift_timing": {
                     "type": "string"
                 },
@@ -3585,6 +4369,9 @@ const docTemplate = `{
                     }
                 },
                 "start_date": {
+                    "type": "string"
+                },
+                "started_at": {
                     "type": "string"
                 },
                 "state": {
@@ -3603,6 +4390,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                },
+                "visibility": {
                     "type": "string"
                 },
                 "work_category_id": {
@@ -3625,6 +4415,47 @@ const docTemplate = `{
                 },
                 "workers_needed": {
                     "type": "integer"
+                },
+                "workers_selected": {
+                    "type": "integer"
+                }
+            }
+        },
+        "workv1.WorkReview": {
+            "type": "object",
+            "properties": {
+                "assignment_id": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "reviewee_id": {
+                    "type": "string"
+                },
+                "reviewee_name": {
+                    "type": "string"
+                },
+                "reviewer_id": {
+                    "type": "string"
+                },
+                "reviewer_name": {
+                    "type": "string"
+                },
+                "reviewer_role": {
+                    "type": "string"
+                },
+                "work_id": {
+                    "type": "string"
                 }
             }
         }

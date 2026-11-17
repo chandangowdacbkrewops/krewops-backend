@@ -132,6 +132,18 @@ service WorkService {
 
   rpc CancelWorkInvitation(CancelWorkInvitationRequest)
       returns (RespondWorkInvitationResponse);
+
+  rpc CreateReview(CreateReviewRequest)
+      returns (CreateReviewResponse);
+
+  rpc ListWorkReviews(ListWorkReviewsRequest)
+      returns (ListWorkReviewsResponse);
+
+  rpc ListUserReviews(ListUserReviewsRequest)
+      returns (ListUserReviewsResponse);
+
+  rpc GetUserRatingSummary(GetUserRatingSummaryRequest)
+      returns (GetUserRatingSummaryResponse);
 }
 
 message CreateWorkRequest {
@@ -743,4 +755,58 @@ message RecordPaymentRequest {
 
 message RecordPaymentResponse {
   PaymentTransaction transaction = 1;
+}
+
+message WorkReview {
+  string id = 1;
+  string work_id = 2;
+  string assignment_id = 3;
+  string reviewer_id = 4;
+  string reviewer_role = 5;
+  string reviewee_id = 6;
+  optional string reviewer_name = 7;
+  optional string reviewee_name = 8;
+  int32 rating = 9;
+  optional string comment = 10;
+  string created_at = 11;
+}
+
+message CreateReviewRequest {
+  string user_id = 1;
+  string assignment_id = 2;
+  int32 rating = 3;
+  optional string comment = 4;
+}
+
+message CreateReviewResponse {
+  WorkReview review = 1;
+}
+
+message ListWorkReviewsRequest {
+  string user_id = 1;
+  string work_id = 2;
+}
+
+message ListWorkReviewsResponse {
+  repeated WorkReview reviews = 1;
+}
+
+message ListUserReviewsRequest {
+  string user_id = 1;
+  string target_user_id = 2;
+}
+
+message ListUserReviewsResponse {
+  repeated WorkReview reviews = 1;
+}
+
+message GetUserRatingSummaryRequest {
+  string user_id = 1;
+  string target_user_id = 2;
+}
+
+message GetUserRatingSummaryResponse {
+  string user_id = 1;
+  double average_rating = 2;
+  int32 review_count = 3;
 }

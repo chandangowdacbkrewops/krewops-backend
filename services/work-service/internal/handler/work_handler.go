@@ -386,7 +386,8 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		errors.Is(err, service.ErrNotApplicationWorker),
 		errors.Is(err, service.ErrNotAssignedWorker),
 		errors.Is(err, service.ErrNotInvitationWorker),
-		errors.Is(err, service.ErrContractorRequired):
+		errors.Is(err, service.ErrContractorRequired),
+		errors.Is(err, service.ErrNotAuthorizedToReview):
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotFound),
 		errors.Is(err, service.ErrApplicationNotFound),
@@ -397,7 +398,8 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		errors.Is(err, service.ErrApplicationAlreadyAccepted),
 		errors.Is(err, service.ErrNoWorkerSeats),
 		errors.Is(err, service.ErrOfferedWorkersExceedRemaining),
-		errors.Is(err, service.ErrWorkerAlreadyAssigned):
+		errors.Is(err, service.ErrWorkerAlreadyAssigned),
+		errors.Is(err, service.ErrDuplicateReview):
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
@@ -419,6 +421,8 @@ func writeApplicationError(c *gin.Context, err error, fallback string) {
 		errors.Is(err, service.ErrPaymentAdjustmentRequired),
 		errors.Is(err, service.ErrOverpayment),
 		errors.Is(err, service.ErrIndividualWorkersNotAllowed),
+		errors.Is(err, service.ErrReviewWorkNotSettled),
+		errors.Is(err, service.ErrInvalidReviewAssignment),
 		isValidationError(err):
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	default:
@@ -602,6 +606,9 @@ func isValidationError(err error) bool {
 		"worker_id",
 		"invitation_id",
 		"offered_payment",
+		"rating",
+		"comment",
+		"target_user_id",
 	}
 	for _, prefix := range validationPrefixes {
 		if strings.HasPrefix(msg, prefix) {

@@ -10,12 +10,14 @@ import (
 
 	"github.com/chandangowdacbkrewops/krewops-backend/gateway/internal/response"
 	userv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/user/v1"
+	workv1 "github.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type UserHandler struct {
 	userClient userv1.UserServiceClient
+	workClient workv1.WorkServiceClient
 }
 
 type CreateProfileRequest struct {
@@ -78,10 +80,12 @@ type UpdateWorkerProfileRequest struct {
 
 func NewUserHandler(
 	userClient userv1.UserServiceClient,
+	workClient workv1.WorkServiceClient,
 ) *UserHandler {
 
 	return &UserHandler{
 		userClient: userClient,
+		workClient: workClient,
 	}
 }
 
@@ -470,11 +474,44 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
+	ratingSummary := fetchRatingSummary(c, h.workClient, userIDString)
+
 	response.Success(
 		c,
 		http.StatusOK,
-		profileResp,
+		gin.H{
+			"profile":        profileResp.Profile,
+			"rating_summary": ratingSummary,
+		},
 	)
+}
+
+// fetchRatingSummary resolves a user's aggregate rating summary from
+// work-service. It is intentionally best-effort: any failure (including
+// the client being unset or the call erroring) must not fail the overall
+// profile response, so it falls back to a zeroed summary.
+func fetchRatingSummary(
+	c *gin.Context,
+	workClient workv1.WorkServiceClient,
+	userID string,
+) *workv1.GetUserRatingSummaryResponse {
+	fallback := &workv1.GetUserRatingSummaryResponse{UserId: userID}
+	if workClient == nil {
+		return fallback
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+	defer cancel()
+
+	summary, err := workClient.GetUserRatingSummary(ctx, &workv1.GetUserRatingSummaryRequest{
+		UserId:       userID,
+		TargetUserId: userID,
+	})
+	if err != nil || summary == nil {
+		log.Printf("fetch rating summary failed: user_id=%s error=%v", userID, err)
+		return fallback
+	}
+	return summary
 }
 
 // CreateProfile godoc

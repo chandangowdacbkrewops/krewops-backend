@@ -29,6 +29,7 @@ type WorkService struct {
 	workTypeFieldRepository    *repository.WorkTypeFieldRepository
 	rateTypeRepository         *repository.RateTypeRepository
 	invitationRepository       *repository.InvitationRepository
+	reviewRepository           *repository.ReviewRepository
 }
 
 func NewWorkService(
@@ -46,6 +47,7 @@ func NewWorkService(
 	workTypeFieldRepository *repository.WorkTypeFieldRepository,
 	rateTypeRepository *repository.RateTypeRepository,
 	invitationRepository *repository.InvitationRepository,
+	reviewRepository *repository.ReviewRepository,
 ) *WorkService {
 	return &WorkService{
 		workRepository:             workRepository,
@@ -62,6 +64,7 @@ func NewWorkService(
 		workTypeFieldRepository:    workTypeFieldRepository,
 		rateTypeRepository:         rateTypeRepository,
 		invitationRepository:       invitationRepository,
+		reviewRepository:           reviewRepository,
 	}
 }
 

@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
+	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -119,17 +124,40 @@ func main() {
 		}
 	}()
 
-	log.Printf(
-		"search-service HTTP listening on :%s",
-		cfg.Port,
-	)
-
-	if err := router.Run(
-		":" + cfg.Port,
-	); err != nil {
-		log.Fatal(
-			"HTTP server failed: ",
-			err,
-		)
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: router,
 	}
+
+	go func() {
+		log.Printf(
+			"search-service HTTP listening on :%s",
+			cfg.Port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(
+				"HTTP server failed: ",
+				err,
+			)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down both servers cleanly instead of being killed
+	// mid-request.
+	shutdownCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-shutdownCtx.Done()
+
+	log.Println("search-service shutting down...")
+
+	httpShutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(httpShutdownCtx); err != nil {
+		log.Printf("search-service HTTP shutdown error: %v", err)
+	}
+
+	grpcServer.GracefulStop()
 }

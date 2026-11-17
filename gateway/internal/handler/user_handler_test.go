@@ -123,7 +123,7 @@ func TestUserHandlerListWorkTypes(t *testing.T) {
 			}
 			return &userv1.ListWorkTypesResponse{WorkTypes: []*userv1.WorkType{{Id: "work-type-1", Name: "Carpenter"}}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -145,7 +145,7 @@ func TestUserHandlerListWorkTypesReturnsInternalError(t *testing.T) {
 		listWorkTypes: func(context.Context, *userv1.ListWorkTypesRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
 			return nil, errors.New("user service unavailable")
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -170,7 +170,7 @@ func TestUserHandlerListWorkCategories(t *testing.T) {
 			}
 			return &userv1.ListWorkCategoriesResponse{Categories: []*userv1.WorkCategory{{Id: "category-1", Code: "construction", Name: "Construction"}}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -192,7 +192,7 @@ func TestUserHandlerListWorkCategoriesReturnsInternalError(t *testing.T) {
 		listWorkCategories: func(context.Context, *userv1.ListWorkCategoriesRequest, ...grpc.CallOption) (*userv1.ListWorkCategoriesResponse, error) {
 			return nil, errors.New("user service unavailable")
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -217,7 +217,7 @@ func TestUserHandlerListWorkTypesByCategory(t *testing.T) {
 			}
 			return &userv1.ListWorkTypesResponse{WorkTypes: []*userv1.WorkType{{Id: "work-type-1", Name: "Carpenter", CategoryId: "category-1"}}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -240,7 +240,7 @@ func TestUserHandlerListWorkTypesByCategoryReturnsInternalError(t *testing.T) {
 		listWorkTypesByCategory: func(context.Context, *userv1.ListWorkTypesByCategoryRequest, ...grpc.CallOption) (*userv1.ListWorkTypesResponse, error) {
 			return nil, errors.New("user service unavailable")
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -266,7 +266,7 @@ func TestUserHandlerListWorkTypeFields(t *testing.T) {
 			}
 			return &userv1.ListWorkTypeFieldsResponse{Fields: []*userv1.WorkTypeField{{Id: "field-1", WorkTypeId: "work-type-1", FieldKey: "wire_gauge", Label: "Wire Gauge", FieldType: "TEXT"}}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -289,7 +289,7 @@ func TestUserHandlerListWorkTypeFieldsReturnsInternalError(t *testing.T) {
 		listWorkTypeFields: func(context.Context, *userv1.ListWorkTypeFieldsRequest, ...grpc.CallOption) (*userv1.ListWorkTypeFieldsResponse, error) {
 			return nil, errors.New("user service unavailable")
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -318,7 +318,7 @@ func TestUserHandlerUpdateProfileUsesAuthenticatedUser(t *testing.T) {
 			}
 			return &userv1.UpdateProfileResponse{Profile: &userv1.UserProfile{Id: "profile-123", FirstName: "Ada"}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -347,7 +347,7 @@ func TestUserHandlerCreateProfileForwardsUserType(t *testing.T) {
 			}
 			return &userv1.CreateProfileResponse{Profile: &userv1.UserProfile{UserType: req.UserType}}, nil
 		},
-	})
+	}, nil)
 
 	recorder := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(recorder)
@@ -370,7 +370,7 @@ func TestWorkTypesRouteRequiresAuthentication(t *testing.T) {
 	router.GET(
 		"/api/v1/work-types",
 		middleware.AuthMiddleware("test-secret"),
-		NewUserHandler(userServiceClientStub{}).ListWorkTypes,
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypes,
 	)
 
 	recorder := httptest.NewRecorder()
@@ -387,7 +387,7 @@ func TestWorkCategoriesRouteRequiresAuthentication(t *testing.T) {
 	router.GET(
 		"/api/v1/work-categories",
 		middleware.AuthMiddleware("test-secret"),
-		NewUserHandler(userServiceClientStub{}).ListWorkCategories,
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkCategories,
 	)
 
 	recorder := httptest.NewRecorder()
@@ -404,7 +404,7 @@ func TestWorkTypesByCategoryRouteRequiresAuthentication(t *testing.T) {
 	router.GET(
 		"/api/v1/work-categories/:categoryId/work-types",
 		middleware.AuthMiddleware("test-secret"),
-		NewUserHandler(userServiceClientStub{}).ListWorkTypesByCategory,
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypesByCategory,
 	)
 
 	recorder := httptest.NewRecorder()
@@ -421,7 +421,7 @@ func TestWorkTypeFieldsRouteRequiresAuthentication(t *testing.T) {
 	router.GET(
 		"/api/v1/work-types/:workTypeId/fields",
 		middleware.AuthMiddleware("test-secret"),
-		NewUserHandler(userServiceClientStub{}).ListWorkTypeFields,
+		NewUserHandler(userServiceClientStub{}, nil).ListWorkTypeFields,
 	)
 
 	recorder := httptest.NewRecorder()

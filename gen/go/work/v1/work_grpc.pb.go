@@ -61,6 +61,10 @@ const (
 	WorkService_AcceptWorkInvitation_FullMethodName         = "/work.v1.WorkService/AcceptWorkInvitation"
 	WorkService_DeclineWorkInvitation_FullMethodName        = "/work.v1.WorkService/DeclineWorkInvitation"
 	WorkService_CancelWorkInvitation_FullMethodName         = "/work.v1.WorkService/CancelWorkInvitation"
+	WorkService_CreateReview_FullMethodName                 = "/work.v1.WorkService/CreateReview"
+	WorkService_ListWorkReviews_FullMethodName              = "/work.v1.WorkService/ListWorkReviews"
+	WorkService_ListUserReviews_FullMethodName              = "/work.v1.WorkService/ListUserReviews"
+	WorkService_GetUserRatingSummary_FullMethodName         = "/work.v1.WorkService/GetUserRatingSummary"
 )
 
 // WorkServiceClient is the client API for WorkService service.
@@ -109,6 +113,10 @@ type WorkServiceClient interface {
 	AcceptWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
 	DeclineWorkInvitation(ctx context.Context, in *RespondWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
 	CancelWorkInvitation(ctx context.Context, in *CancelWorkInvitationRequest, opts ...grpc.CallOption) (*RespondWorkInvitationResponse, error)
+	CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*CreateReviewResponse, error)
+	ListWorkReviews(ctx context.Context, in *ListWorkReviewsRequest, opts ...grpc.CallOption) (*ListWorkReviewsResponse, error)
+	ListUserReviews(ctx context.Context, in *ListUserReviewsRequest, opts ...grpc.CallOption) (*ListUserReviewsResponse, error)
+	GetUserRatingSummary(ctx context.Context, in *GetUserRatingSummaryRequest, opts ...grpc.CallOption) (*GetUserRatingSummaryResponse, error)
 }
 
 type workServiceClient struct {
@@ -539,6 +547,46 @@ func (c *workServiceClient) CancelWorkInvitation(ctx context.Context, in *Cancel
 	return out, nil
 }
 
+func (c *workServiceClient) CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*CreateReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateReviewResponse)
+	err := c.cc.Invoke(ctx, WorkService_CreateReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListWorkReviews(ctx context.Context, in *ListWorkReviewsRequest, opts ...grpc.CallOption) (*ListWorkReviewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkReviewsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListWorkReviews_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) ListUserReviews(ctx context.Context, in *ListUserReviewsRequest, opts ...grpc.CallOption) (*ListUserReviewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserReviewsResponse)
+	err := c.cc.Invoke(ctx, WorkService_ListUserReviews_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workServiceClient) GetUserRatingSummary(ctx context.Context, in *GetUserRatingSummaryRequest, opts ...grpc.CallOption) (*GetUserRatingSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserRatingSummaryResponse)
+	err := c.cc.Invoke(ctx, WorkService_GetUserRatingSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkServiceServer is the server API for WorkService service.
 // All implementations must embed UnimplementedWorkServiceServer
 // for forward compatibility.
@@ -585,6 +633,10 @@ type WorkServiceServer interface {
 	AcceptWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
 	DeclineWorkInvitation(context.Context, *RespondWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
 	CancelWorkInvitation(context.Context, *CancelWorkInvitationRequest) (*RespondWorkInvitationResponse, error)
+	CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewResponse, error)
+	ListWorkReviews(context.Context, *ListWorkReviewsRequest) (*ListWorkReviewsResponse, error)
+	ListUserReviews(context.Context, *ListUserReviewsRequest) (*ListUserReviewsResponse, error)
+	GetUserRatingSummary(context.Context, *GetUserRatingSummaryRequest) (*GetUserRatingSummaryResponse, error)
 	mustEmbedUnimplementedWorkServiceServer()
 }
 
@@ -720,6 +772,18 @@ func (UnimplementedWorkServiceServer) DeclineWorkInvitation(context.Context, *Re
 }
 func (UnimplementedWorkServiceServer) CancelWorkInvitation(context.Context, *CancelWorkInvitationRequest) (*RespondWorkInvitationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelWorkInvitation not implemented")
+}
+func (UnimplementedWorkServiceServer) CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateReview not implemented")
+}
+func (UnimplementedWorkServiceServer) ListWorkReviews(context.Context, *ListWorkReviewsRequest) (*ListWorkReviewsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorkReviews not implemented")
+}
+func (UnimplementedWorkServiceServer) ListUserReviews(context.Context, *ListUserReviewsRequest) (*ListUserReviewsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserReviews not implemented")
+}
+func (UnimplementedWorkServiceServer) GetUserRatingSummary(context.Context, *GetUserRatingSummaryRequest) (*GetUserRatingSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserRatingSummary not implemented")
 }
 func (UnimplementedWorkServiceServer) mustEmbedUnimplementedWorkServiceServer() {}
 func (UnimplementedWorkServiceServer) testEmbeddedByValue()                     {}
@@ -1498,6 +1562,78 @@ func _WorkService_CancelWorkInvitation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkService_CreateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).CreateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_CreateReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).CreateReview(ctx, req.(*CreateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListWorkReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkReviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListWorkReviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListWorkReviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListWorkReviews(ctx, req.(*ListWorkReviewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_ListUserReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserReviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).ListUserReviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_ListUserReviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).ListUserReviews(ctx, req.(*ListUserReviewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkService_GetUserRatingSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRatingSummaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkServiceServer).GetUserRatingSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkService_GetUserRatingSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkServiceServer).GetUserRatingSummary(ctx, req.(*GetUserRatingSummaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkService_ServiceDesc is the grpc.ServiceDesc for WorkService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1672,6 +1808,22 @@ var WorkService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelWorkInvitation",
 			Handler:    _WorkService_CancelWorkInvitation_Handler,
+		},
+		{
+			MethodName: "CreateReview",
+			Handler:    _WorkService_CreateReview_Handler,
+		},
+		{
+			MethodName: "ListWorkReviews",
+			Handler:    _WorkService_ListWorkReviews_Handler,
+		},
+		{
+			MethodName: "ListUserReviews",
+			Handler:    _WorkService_ListUserReviews_Handler,
+		},
+		{
+			MethodName: "GetUserRatingSummary",
+			Handler:    _WorkService_GetUserRatingSummary_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

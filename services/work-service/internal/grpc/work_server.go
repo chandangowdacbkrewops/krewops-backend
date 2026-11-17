@@ -740,6 +740,9 @@ func isValidationError(err error) bool {
 		"worker_id",
 		"invitation_id",
 		"offered_payment",
+		"rating",
+		"comment",
+		"target_user_id",
 	}
 	for _, prefix := range validationPrefixes {
 		if len(msg) >= len(prefix) && msg[:len(prefix)] == prefix {
@@ -853,7 +856,8 @@ func mapApplicationError(err error, fallback string) error {
 		errors.Is(err, service.ErrApplicationAlreadyAccepted),
 		errors.Is(err, service.ErrNoWorkerSeats),
 		errors.Is(err, service.ErrOfferedWorkersExceedRemaining),
-		errors.Is(err, service.ErrWorkerAlreadyAssigned):
+		errors.Is(err, service.ErrWorkerAlreadyAssigned),
+		errors.Is(err, service.ErrDuplicateReview):
 		return status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, service.ErrWorkNotPublished),
 		errors.Is(err, service.ErrInvalidApplicationStatus),
@@ -874,8 +878,12 @@ func mapApplicationError(err error, fallback string) error {
 		errors.Is(err, service.ErrHiringModeMismatch),
 		errors.Is(err, service.ErrPaymentAdjustmentRequired),
 		errors.Is(err, service.ErrOverpayment),
-		errors.Is(err, service.ErrIndividualWorkersNotAllowed):
+		errors.Is(err, service.ErrIndividualWorkersNotAllowed),
+		errors.Is(err, service.ErrReviewWorkNotSettled),
+		errors.Is(err, service.ErrInvalidReviewAssignment):
 		return status.Error(codes.FailedPrecondition, err.Error())
+	case errors.Is(err, service.ErrNotAuthorizedToReview):
+		return status.Error(codes.PermissionDenied, err.Error())
 	case isValidationError(err):
 		return status.Error(codes.InvalidArgument, err.Error())
 	default:

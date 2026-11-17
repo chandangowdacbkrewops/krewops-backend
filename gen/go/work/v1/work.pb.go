@@ -5753,6 +5753,546 @@ func (x *RecordPaymentResponse) GetTransaction() *PaymentTransaction {
 	return nil
 }
 
+type WorkReview struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,3,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	ReviewerId    string                 `protobuf:"bytes,4,opt,name=reviewer_id,json=reviewerId,proto3" json:"reviewer_id,omitempty"`
+	ReviewerRole  string                 `protobuf:"bytes,5,opt,name=reviewer_role,json=reviewerRole,proto3" json:"reviewer_role,omitempty"`
+	RevieweeId    string                 `protobuf:"bytes,6,opt,name=reviewee_id,json=revieweeId,proto3" json:"reviewee_id,omitempty"`
+	ReviewerName  *string                `protobuf:"bytes,7,opt,name=reviewer_name,json=reviewerName,proto3,oneof" json:"reviewer_name,omitempty"`
+	RevieweeName  *string                `protobuf:"bytes,8,opt,name=reviewee_name,json=revieweeName,proto3,oneof" json:"reviewee_name,omitempty"`
+	Rating        int32                  `protobuf:"varint,9,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       *string                `protobuf:"bytes,10,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WorkReview) Reset() {
+	*x = WorkReview{}
+	mi := &file_work_work_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WorkReview) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WorkReview) ProtoMessage() {}
+
+func (x *WorkReview) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WorkReview.ProtoReflect.Descriptor instead.
+func (*WorkReview) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *WorkReview) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *WorkReview) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerId() string {
+	if x != nil {
+		return x.ReviewerId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerRole() string {
+	if x != nil {
+		return x.ReviewerRole
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRevieweeId() string {
+	if x != nil {
+		return x.RevieweeId
+	}
+	return ""
+}
+
+func (x *WorkReview) GetReviewerName() string {
+	if x != nil && x.ReviewerName != nil {
+		return *x.ReviewerName
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRevieweeName() string {
+	if x != nil && x.RevieweeName != nil {
+		return *x.RevieweeName
+	}
+	return ""
+}
+
+func (x *WorkReview) GetRating() int32 {
+	if x != nil {
+		return x.Rating
+	}
+	return 0
+}
+
+func (x *WorkReview) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
+func (x *WorkReview) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type CreateReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AssignmentId  string                 `protobuf:"bytes,2,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	Rating        int32                  `protobuf:"varint,3,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       *string                `protobuf:"bytes,4,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReviewRequest) Reset() {
+	*x = CreateReviewRequest{}
+	mi := &file_work_work_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReviewRequest) ProtoMessage() {}
+
+func (x *CreateReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReviewRequest.ProtoReflect.Descriptor instead.
+func (*CreateReviewRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *CreateReviewRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateReviewRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *CreateReviewRequest) GetRating() int32 {
+	if x != nil {
+		return x.Rating
+	}
+	return 0
+}
+
+func (x *CreateReviewRequest) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
+type CreateReviewResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Review        *WorkReview            `protobuf:"bytes,1,opt,name=review,proto3" json:"review,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReviewResponse) Reset() {
+	*x = CreateReviewResponse{}
+	mi := &file_work_work_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReviewResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReviewResponse) ProtoMessage() {}
+
+func (x *CreateReviewResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReviewResponse.ProtoReflect.Descriptor instead.
+func (*CreateReviewResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *CreateReviewResponse) GetReview() *WorkReview {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
+type ListWorkReviewsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkId        string                 `protobuf:"bytes,2,opt,name=work_id,json=workId,proto3" json:"work_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkReviewsRequest) Reset() {
+	*x = ListWorkReviewsRequest{}
+	mi := &file_work_work_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkReviewsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkReviewsRequest) ProtoMessage() {}
+
+func (x *ListWorkReviewsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkReviewsRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkReviewsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *ListWorkReviewsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListWorkReviewsRequest) GetWorkId() string {
+	if x != nil {
+		return x.WorkId
+	}
+	return ""
+}
+
+type ListWorkReviewsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reviews       []*WorkReview          `protobuf:"bytes,1,rep,name=reviews,proto3" json:"reviews,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWorkReviewsResponse) Reset() {
+	*x = ListWorkReviewsResponse{}
+	mi := &file_work_work_proto_msgTypes[79]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWorkReviewsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorkReviewsResponse) ProtoMessage() {}
+
+func (x *ListWorkReviewsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[79]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorkReviewsResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkReviewsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *ListWorkReviewsResponse) GetReviews() []*WorkReview {
+	if x != nil {
+		return x.Reviews
+	}
+	return nil
+}
+
+type ListUserReviewsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TargetUserId  string                 `protobuf:"bytes,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserReviewsRequest) Reset() {
+	*x = ListUserReviewsRequest{}
+	mi := &file_work_work_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserReviewsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserReviewsRequest) ProtoMessage() {}
+
+func (x *ListUserReviewsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserReviewsRequest.ProtoReflect.Descriptor instead.
+func (*ListUserReviewsRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *ListUserReviewsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListUserReviewsRequest) GetTargetUserId() string {
+	if x != nil {
+		return x.TargetUserId
+	}
+	return ""
+}
+
+type ListUserReviewsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reviews       []*WorkReview          `protobuf:"bytes,1,rep,name=reviews,proto3" json:"reviews,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserReviewsResponse) Reset() {
+	*x = ListUserReviewsResponse{}
+	mi := &file_work_work_proto_msgTypes[81]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserReviewsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserReviewsResponse) ProtoMessage() {}
+
+func (x *ListUserReviewsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[81]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserReviewsResponse.ProtoReflect.Descriptor instead.
+func (*ListUserReviewsResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *ListUserReviewsResponse) GetReviews() []*WorkReview {
+	if x != nil {
+		return x.Reviews
+	}
+	return nil
+}
+
+type GetUserRatingSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TargetUserId  string                 `protobuf:"bytes,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRatingSummaryRequest) Reset() {
+	*x = GetUserRatingSummaryRequest{}
+	mi := &file_work_work_proto_msgTypes[82]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRatingSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRatingSummaryRequest) ProtoMessage() {}
+
+func (x *GetUserRatingSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[82]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRatingSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRatingSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{82}
+}
+
+func (x *GetUserRatingSummaryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetUserRatingSummaryRequest) GetTargetUserId() string {
+	if x != nil {
+		return x.TargetUserId
+	}
+	return ""
+}
+
+type GetUserRatingSummaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AverageRating float64                `protobuf:"fixed64,2,opt,name=average_rating,json=averageRating,proto3" json:"average_rating,omitempty"`
+	ReviewCount   int32                  `protobuf:"varint,3,opt,name=review_count,json=reviewCount,proto3" json:"review_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRatingSummaryResponse) Reset() {
+	*x = GetUserRatingSummaryResponse{}
+	mi := &file_work_work_proto_msgTypes[83]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRatingSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRatingSummaryResponse) ProtoMessage() {}
+
+func (x *GetUserRatingSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_work_work_proto_msgTypes[83]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRatingSummaryResponse.ProtoReflect.Descriptor instead.
+func (*GetUserRatingSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_work_work_proto_rawDescGZIP(), []int{83}
+}
+
+func (x *GetUserRatingSummaryResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetUserRatingSummaryResponse) GetAverageRating() float64 {
+	if x != nil {
+		return x.AverageRating
+	}
+	return 0
+}
+
+func (x *GetUserRatingSummaryResponse) GetReviewCount() int32 {
+	if x != nil {
+		return x.ReviewCount
+	}
+	return 0
+}
+
 var File_work_work_proto protoreflect.FileDescriptor
 
 const file_work_work_proto_rawDesc = "" +
@@ -6425,7 +6965,54 @@ const file_work_work_proto_rawDesc = "" +
 	"\n" +
 	"\b_paid_at\"V\n" +
 	"\x15RecordPaymentResponse\x12=\n" +
-	"\vtransaction\x18\x01 \x01(\v2\x1b.work.v1.PaymentTransactionR\vtransaction2\xb9\x1f\n" +
+	"\vtransaction\x18\x01 \x01(\v2\x1b.work.v1.PaymentTransactionR\vtransaction\"\x9b\x03\n" +
+	"\n" +
+	"WorkReview\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\x12#\n" +
+	"\rassignment_id\x18\x03 \x01(\tR\fassignmentId\x12\x1f\n" +
+	"\vreviewer_id\x18\x04 \x01(\tR\n" +
+	"reviewerId\x12#\n" +
+	"\rreviewer_role\x18\x05 \x01(\tR\freviewerRole\x12\x1f\n" +
+	"\vreviewee_id\x18\x06 \x01(\tR\n" +
+	"revieweeId\x12(\n" +
+	"\rreviewer_name\x18\a \x01(\tH\x00R\freviewerName\x88\x01\x01\x12(\n" +
+	"\rreviewee_name\x18\b \x01(\tH\x01R\frevieweeName\x88\x01\x01\x12\x16\n" +
+	"\x06rating\x18\t \x01(\x05R\x06rating\x12\x1d\n" +
+	"\acomment\x18\n" +
+	" \x01(\tH\x02R\acomment\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAtB\x10\n" +
+	"\x0e_reviewer_nameB\x10\n" +
+	"\x0e_reviewee_nameB\n" +
+	"\n" +
+	"\b_comment\"\x96\x01\n" +
+	"\x13CreateReviewRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rassignment_id\x18\x02 \x01(\tR\fassignmentId\x12\x16\n" +
+	"\x06rating\x18\x03 \x01(\x05R\x06rating\x12\x1d\n" +
+	"\acomment\x18\x04 \x01(\tH\x00R\acomment\x88\x01\x01B\n" +
+	"\n" +
+	"\b_comment\"C\n" +
+	"\x14CreateReviewResponse\x12+\n" +
+	"\x06review\x18\x01 \x01(\v2\x13.work.v1.WorkReviewR\x06review\"J\n" +
+	"\x16ListWorkReviewsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\awork_id\x18\x02 \x01(\tR\x06workId\"H\n" +
+	"\x17ListWorkReviewsResponse\x12-\n" +
+	"\areviews\x18\x01 \x03(\v2\x13.work.v1.WorkReviewR\areviews\"W\n" +
+	"\x16ListUserReviewsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
+	"\x0etarget_user_id\x18\x02 \x01(\tR\ftargetUserId\"H\n" +
+	"\x17ListUserReviewsResponse\x12-\n" +
+	"\areviews\x18\x01 \x03(\v2\x13.work.v1.WorkReviewR\areviews\"\\\n" +
+	"\x1bGetUserRatingSummaryRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
+	"\x0etarget_user_id\x18\x02 \x01(\tR\ftargetUserId\"\x81\x01\n" +
+	"\x1cGetUserRatingSummaryResponse\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12%\n" +
+	"\x0eaverage_rating\x18\x02 \x01(\x01R\raverageRating\x12!\n" +
+	"\freview_count\x18\x03 \x01(\x05R\vreviewCount2\x97\"\n" +
 	"\vWorkService\x12E\n" +
 	"\n" +
 	"CreateWork\x12\x1a.work.v1.CreateWorkRequest\x1a\x1b.work.v1.CreateWorkResponse\x12H\n" +
@@ -6470,7 +7057,11 @@ const file_work_work_proto_rawDesc = "" +
 	"\x11ListMyInvitations\x12!.work.v1.ListMyInvitationsRequest\x1a\".work.v1.ListMyInvitationsResponse\x12e\n" +
 	"\x14AcceptWorkInvitation\x12%.work.v1.RespondWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12f\n" +
 	"\x15DeclineWorkInvitation\x12%.work.v1.RespondWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12d\n" +
-	"\x14CancelWorkInvitation\x12$.work.v1.CancelWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
+	"\x14CancelWorkInvitation\x12$.work.v1.CancelWorkInvitationRequest\x1a&.work.v1.RespondWorkInvitationResponse\x12K\n" +
+	"\fCreateReview\x12\x1c.work.v1.CreateReviewRequest\x1a\x1d.work.v1.CreateReviewResponse\x12T\n" +
+	"\x0fListWorkReviews\x12\x1f.work.v1.ListWorkReviewsRequest\x1a .work.v1.ListWorkReviewsResponse\x12T\n" +
+	"\x0fListUserReviews\x12\x1f.work.v1.ListUserReviewsRequest\x1a .work.v1.ListUserReviewsResponse\x12c\n" +
+	"\x14GetUserRatingSummary\x12$.work.v1.GetUserRatingSummaryRequest\x1a%.work.v1.GetUserRatingSummaryResponseBHZFgithub.com/chandangowdacbkrewops/krewops-backend/gen/go/work/v1;workv1b\x06proto3"
 
 var (
 	file_work_work_proto_rawDescOnce sync.Once
@@ -6484,7 +7075,7 @@ func file_work_work_proto_rawDescGZIP() []byte {
 	return file_work_work_proto_rawDescData
 }
 
-var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 77)
+var file_work_work_proto_msgTypes = make([]protoimpl.MessageInfo, 86)
 var file_work_work_proto_goTypes = []any{
 	(*CreateWorkRequest)(nil),                    // 0: work.v1.CreateWorkRequest
 	(*CreateWorkResponse)(nil),                   // 1: work.v1.CreateWorkResponse
@@ -6561,13 +7152,22 @@ var file_work_work_proto_goTypes = []any{
 	(*CancelWorkInvitationRequest)(nil),          // 72: work.v1.CancelWorkInvitationRequest
 	(*RecordPaymentRequest)(nil),                 // 73: work.v1.RecordPaymentRequest
 	(*RecordPaymentResponse)(nil),                // 74: work.v1.RecordPaymentResponse
-	nil,                                          // 75: work.v1.CreateWorkRequest.AttributesEntry
-	nil,                                          // 76: work.v1.WorkPosting.AttributesEntry
+	(*WorkReview)(nil),                           // 75: work.v1.WorkReview
+	(*CreateReviewRequest)(nil),                  // 76: work.v1.CreateReviewRequest
+	(*CreateReviewResponse)(nil),                 // 77: work.v1.CreateReviewResponse
+	(*ListWorkReviewsRequest)(nil),               // 78: work.v1.ListWorkReviewsRequest
+	(*ListWorkReviewsResponse)(nil),              // 79: work.v1.ListWorkReviewsResponse
+	(*ListUserReviewsRequest)(nil),               // 80: work.v1.ListUserReviewsRequest
+	(*ListUserReviewsResponse)(nil),              // 81: work.v1.ListUserReviewsResponse
+	(*GetUserRatingSummaryRequest)(nil),          // 82: work.v1.GetUserRatingSummaryRequest
+	(*GetUserRatingSummaryResponse)(nil),         // 83: work.v1.GetUserRatingSummaryResponse
+	nil,                                          // 84: work.v1.CreateWorkRequest.AttributesEntry
+	nil,                                          // 85: work.v1.WorkPosting.AttributesEntry
 }
 var file_work_work_proto_depIdxs = []int32{
-	75, // 0: work.v1.CreateWorkRequest.attributes:type_name -> work.v1.CreateWorkRequest.AttributesEntry
+	84, // 0: work.v1.CreateWorkRequest.attributes:type_name -> work.v1.CreateWorkRequest.AttributesEntry
 	2,  // 1: work.v1.CreateWorkResponse.work:type_name -> work.v1.WorkPosting
-	76, // 2: work.v1.WorkPosting.attributes:type_name -> work.v1.WorkPosting.AttributesEntry
+	85, // 2: work.v1.WorkPosting.attributes:type_name -> work.v1.WorkPosting.AttributesEntry
 	3,  // 3: work.v1.WorkApplication.quotation:type_name -> work.v1.Quotation
 	3,  // 4: work.v1.ApplyToWorkRequest.quotation:type_name -> work.v1.Quotation
 	4,  // 5: work.v1.ApplyToWorkResponse.application:type_name -> work.v1.WorkApplication
@@ -6611,95 +7211,106 @@ var file_work_work_proto_depIdxs = []int32{
 	59, // 43: work.v1.ListMyInvitationsResponse.invitations:type_name -> work.v1.WorkInvitation
 	59, // 44: work.v1.RespondWorkInvitationResponse.invitation:type_name -> work.v1.WorkInvitation
 	53, // 45: work.v1.RecordPaymentResponse.transaction:type_name -> work.v1.PaymentTransaction
-	0,  // 46: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
-	11, // 47: work.v1.WorkService.ListMyWorks:input_type -> work.v1.ListMyWorksRequest
-	5,  // 48: work.v1.WorkService.ApplyToWork:input_type -> work.v1.ApplyToWorkRequest
-	14, // 49: work.v1.WorkService.ListMyApplications:input_type -> work.v1.ListMyApplicationsRequest
-	7,  // 50: work.v1.WorkService.ListWorkApplications:input_type -> work.v1.ListWorkApplicationsRequest
-	9,  // 51: work.v1.WorkService.ShortlistWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 52: work.v1.WorkService.AcceptWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 53: work.v1.WorkService.RejectWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 54: work.v1.WorkService.WithdrawWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	9,  // 55: work.v1.WorkService.CancelWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
-	16, // 56: work.v1.WorkService.StartWork:input_type -> work.v1.WorkLifecycleRequest
-	16, // 57: work.v1.WorkService.CompleteWork:input_type -> work.v1.WorkLifecycleRequest
-	16, // 58: work.v1.WorkService.ConfirmWorkCompletion:input_type -> work.v1.WorkLifecycleRequest
-	16, // 59: work.v1.WorkService.CancelWork:input_type -> work.v1.WorkLifecycleRequest
-	16, // 60: work.v1.WorkService.CloseApplications:input_type -> work.v1.WorkLifecycleRequest
-	16, // 61: work.v1.WorkService.CompleteJob:input_type -> work.v1.WorkLifecycleRequest
-	16, // 62: work.v1.WorkService.CloseWork:input_type -> work.v1.WorkLifecycleRequest
-	21, // 63: work.v1.WorkService.StartAssignment:input_type -> work.v1.AssignmentLifecycleRequest
-	21, // 64: work.v1.WorkService.CompleteAssignment:input_type -> work.v1.AssignmentLifecycleRequest
-	23, // 65: work.v1.WorkService.UpsertDailyLog:input_type -> work.v1.UpsertDailyLogRequest
-	25, // 66: work.v1.WorkService.ListAssignmentDailyLogs:input_type -> work.v1.ListAssignmentDailyLogsRequest
-	26, // 67: work.v1.WorkService.ListWorkDailyLogs:input_type -> work.v1.ListWorkDailyLogsRequest
-	28, // 68: work.v1.WorkService.GetWorkSettlement:input_type -> work.v1.GetWorkSettlementRequest
-	31, // 69: work.v1.WorkService.RecordAssignmentPayment:input_type -> work.v1.RecordAssignmentPaymentRequest
-	33, // 70: work.v1.WorkService.ListAssignmentPayments:input_type -> work.v1.ListAssignmentPaymentsRequest
-	35, // 71: work.v1.WorkService.ConfirmAssignmentPayment:input_type -> work.v1.UpdateAssignmentPaymentRequest
-	36, // 72: work.v1.WorkService.DisputeAssignmentPayment:input_type -> work.v1.DisputeAssignmentPaymentRequest
-	39, // 73: work.v1.WorkService.GetWorkDayRecords:input_type -> work.v1.GetWorkDayRecordsRequest
-	42, // 74: work.v1.WorkService.SaveWorkDayRecords:input_type -> work.v1.SaveWorkDayRecordsRequest
-	44, // 75: work.v1.WorkService.GetWorkerWorkSummary:input_type -> work.v1.GetWorkerWorkSummaryRequest
-	48, // 76: work.v1.WorkService.GetContractorWorkRecords:input_type -> work.v1.GetContractorWorkRecordsRequest
-	50, // 77: work.v1.WorkService.SaveContractorWorkRecord:input_type -> work.v1.SaveContractorWorkRecordRequest
-	51, // 78: work.v1.WorkService.GetContractorWorkSummary:input_type -> work.v1.GetContractorWorkSummaryRequest
-	56, // 79: work.v1.WorkService.GetWorkPayments:input_type -> work.v1.GetWorkPaymentsRequest
-	73, // 80: work.v1.WorkService.RecordPayment:input_type -> work.v1.RecordPaymentRequest
-	62, // 81: work.v1.WorkService.ListEligibleRecruitmentWorks:input_type -> work.v1.ListEligibleRecruitmentWorksRequest
-	64, // 82: work.v1.WorkService.CreateWorkInvitations:input_type -> work.v1.CreateWorkInvitationsRequest
-	66, // 83: work.v1.WorkService.ListWorkInvitations:input_type -> work.v1.ListWorkInvitationsRequest
-	68, // 84: work.v1.WorkService.ListMyInvitations:input_type -> work.v1.ListMyInvitationsRequest
-	70, // 85: work.v1.WorkService.AcceptWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
-	70, // 86: work.v1.WorkService.DeclineWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
-	72, // 87: work.v1.WorkService.CancelWorkInvitation:input_type -> work.v1.CancelWorkInvitationRequest
-	1,  // 88: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
-	12, // 89: work.v1.WorkService.ListMyWorks:output_type -> work.v1.ListMyWorksResponse
-	6,  // 90: work.v1.WorkService.ApplyToWork:output_type -> work.v1.ApplyToWorkResponse
-	15, // 91: work.v1.WorkService.ListMyApplications:output_type -> work.v1.ListMyApplicationsResponse
-	8,  // 92: work.v1.WorkService.ListWorkApplications:output_type -> work.v1.ListWorkApplicationsResponse
-	10, // 93: work.v1.WorkService.ShortlistWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 94: work.v1.WorkService.AcceptWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 95: work.v1.WorkService.RejectWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 96: work.v1.WorkService.WithdrawWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	10, // 97: work.v1.WorkService.CancelWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
-	17, // 98: work.v1.WorkService.StartWork:output_type -> work.v1.WorkLifecycleResponse
-	17, // 99: work.v1.WorkService.CompleteWork:output_type -> work.v1.WorkLifecycleResponse
-	17, // 100: work.v1.WorkService.ConfirmWorkCompletion:output_type -> work.v1.WorkLifecycleResponse
-	17, // 101: work.v1.WorkService.CancelWork:output_type -> work.v1.WorkLifecycleResponse
-	17, // 102: work.v1.WorkService.CloseApplications:output_type -> work.v1.WorkLifecycleResponse
-	17, // 103: work.v1.WorkService.CompleteJob:output_type -> work.v1.WorkLifecycleResponse
-	17, // 104: work.v1.WorkService.CloseWork:output_type -> work.v1.WorkLifecycleResponse
-	22, // 105: work.v1.WorkService.StartAssignment:output_type -> work.v1.AssignmentLifecycleResponse
-	22, // 106: work.v1.WorkService.CompleteAssignment:output_type -> work.v1.AssignmentLifecycleResponse
-	24, // 107: work.v1.WorkService.UpsertDailyLog:output_type -> work.v1.UpsertDailyLogResponse
-	27, // 108: work.v1.WorkService.ListAssignmentDailyLogs:output_type -> work.v1.ListDailyLogsResponse
-	27, // 109: work.v1.WorkService.ListWorkDailyLogs:output_type -> work.v1.ListDailyLogsResponse
-	30, // 110: work.v1.WorkService.GetWorkSettlement:output_type -> work.v1.GetWorkSettlementResponse
-	32, // 111: work.v1.WorkService.RecordAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
-	34, // 112: work.v1.WorkService.ListAssignmentPayments:output_type -> work.v1.ListAssignmentPaymentsResponse
-	32, // 113: work.v1.WorkService.ConfirmAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
-	32, // 114: work.v1.WorkService.DisputeAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
-	40, // 115: work.v1.WorkService.GetWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
-	40, // 116: work.v1.WorkService.SaveWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
-	45, // 117: work.v1.WorkService.GetWorkerWorkSummary:output_type -> work.v1.GetWorkerWorkSummaryResponse
-	49, // 118: work.v1.WorkService.GetContractorWorkRecords:output_type -> work.v1.GetContractorWorkRecordsResponse
-	49, // 119: work.v1.WorkService.SaveContractorWorkRecord:output_type -> work.v1.GetContractorWorkRecordsResponse
-	52, // 120: work.v1.WorkService.GetContractorWorkSummary:output_type -> work.v1.GetContractorWorkSummaryResponse
-	57, // 121: work.v1.WorkService.GetWorkPayments:output_type -> work.v1.GetWorkPaymentsResponse
-	74, // 122: work.v1.WorkService.RecordPayment:output_type -> work.v1.RecordPaymentResponse
-	63, // 123: work.v1.WorkService.ListEligibleRecruitmentWorks:output_type -> work.v1.ListEligibleRecruitmentWorksResponse
-	65, // 124: work.v1.WorkService.CreateWorkInvitations:output_type -> work.v1.CreateWorkInvitationsResponse
-	67, // 125: work.v1.WorkService.ListWorkInvitations:output_type -> work.v1.ListWorkInvitationsResponse
-	69, // 126: work.v1.WorkService.ListMyInvitations:output_type -> work.v1.ListMyInvitationsResponse
-	71, // 127: work.v1.WorkService.AcceptWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
-	71, // 128: work.v1.WorkService.DeclineWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
-	71, // 129: work.v1.WorkService.CancelWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
-	88, // [88:130] is the sub-list for method output_type
-	46, // [46:88] is the sub-list for method input_type
-	46, // [46:46] is the sub-list for extension type_name
-	46, // [46:46] is the sub-list for extension extendee
-	0,  // [0:46] is the sub-list for field type_name
+	75, // 46: work.v1.CreateReviewResponse.review:type_name -> work.v1.WorkReview
+	75, // 47: work.v1.ListWorkReviewsResponse.reviews:type_name -> work.v1.WorkReview
+	75, // 48: work.v1.ListUserReviewsResponse.reviews:type_name -> work.v1.WorkReview
+	0,  // 49: work.v1.WorkService.CreateWork:input_type -> work.v1.CreateWorkRequest
+	11, // 50: work.v1.WorkService.ListMyWorks:input_type -> work.v1.ListMyWorksRequest
+	5,  // 51: work.v1.WorkService.ApplyToWork:input_type -> work.v1.ApplyToWorkRequest
+	14, // 52: work.v1.WorkService.ListMyApplications:input_type -> work.v1.ListMyApplicationsRequest
+	7,  // 53: work.v1.WorkService.ListWorkApplications:input_type -> work.v1.ListWorkApplicationsRequest
+	9,  // 54: work.v1.WorkService.ShortlistWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 55: work.v1.WorkService.AcceptWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 56: work.v1.WorkService.RejectWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 57: work.v1.WorkService.WithdrawWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	9,  // 58: work.v1.WorkService.CancelWorkApplication:input_type -> work.v1.UpdateWorkApplicationRequest
+	16, // 59: work.v1.WorkService.StartWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 60: work.v1.WorkService.CompleteWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 61: work.v1.WorkService.ConfirmWorkCompletion:input_type -> work.v1.WorkLifecycleRequest
+	16, // 62: work.v1.WorkService.CancelWork:input_type -> work.v1.WorkLifecycleRequest
+	16, // 63: work.v1.WorkService.CloseApplications:input_type -> work.v1.WorkLifecycleRequest
+	16, // 64: work.v1.WorkService.CompleteJob:input_type -> work.v1.WorkLifecycleRequest
+	16, // 65: work.v1.WorkService.CloseWork:input_type -> work.v1.WorkLifecycleRequest
+	21, // 66: work.v1.WorkService.StartAssignment:input_type -> work.v1.AssignmentLifecycleRequest
+	21, // 67: work.v1.WorkService.CompleteAssignment:input_type -> work.v1.AssignmentLifecycleRequest
+	23, // 68: work.v1.WorkService.UpsertDailyLog:input_type -> work.v1.UpsertDailyLogRequest
+	25, // 69: work.v1.WorkService.ListAssignmentDailyLogs:input_type -> work.v1.ListAssignmentDailyLogsRequest
+	26, // 70: work.v1.WorkService.ListWorkDailyLogs:input_type -> work.v1.ListWorkDailyLogsRequest
+	28, // 71: work.v1.WorkService.GetWorkSettlement:input_type -> work.v1.GetWorkSettlementRequest
+	31, // 72: work.v1.WorkService.RecordAssignmentPayment:input_type -> work.v1.RecordAssignmentPaymentRequest
+	33, // 73: work.v1.WorkService.ListAssignmentPayments:input_type -> work.v1.ListAssignmentPaymentsRequest
+	35, // 74: work.v1.WorkService.ConfirmAssignmentPayment:input_type -> work.v1.UpdateAssignmentPaymentRequest
+	36, // 75: work.v1.WorkService.DisputeAssignmentPayment:input_type -> work.v1.DisputeAssignmentPaymentRequest
+	39, // 76: work.v1.WorkService.GetWorkDayRecords:input_type -> work.v1.GetWorkDayRecordsRequest
+	42, // 77: work.v1.WorkService.SaveWorkDayRecords:input_type -> work.v1.SaveWorkDayRecordsRequest
+	44, // 78: work.v1.WorkService.GetWorkerWorkSummary:input_type -> work.v1.GetWorkerWorkSummaryRequest
+	48, // 79: work.v1.WorkService.GetContractorWorkRecords:input_type -> work.v1.GetContractorWorkRecordsRequest
+	50, // 80: work.v1.WorkService.SaveContractorWorkRecord:input_type -> work.v1.SaveContractorWorkRecordRequest
+	51, // 81: work.v1.WorkService.GetContractorWorkSummary:input_type -> work.v1.GetContractorWorkSummaryRequest
+	56, // 82: work.v1.WorkService.GetWorkPayments:input_type -> work.v1.GetWorkPaymentsRequest
+	73, // 83: work.v1.WorkService.RecordPayment:input_type -> work.v1.RecordPaymentRequest
+	62, // 84: work.v1.WorkService.ListEligibleRecruitmentWorks:input_type -> work.v1.ListEligibleRecruitmentWorksRequest
+	64, // 85: work.v1.WorkService.CreateWorkInvitations:input_type -> work.v1.CreateWorkInvitationsRequest
+	66, // 86: work.v1.WorkService.ListWorkInvitations:input_type -> work.v1.ListWorkInvitationsRequest
+	68, // 87: work.v1.WorkService.ListMyInvitations:input_type -> work.v1.ListMyInvitationsRequest
+	70, // 88: work.v1.WorkService.AcceptWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
+	70, // 89: work.v1.WorkService.DeclineWorkInvitation:input_type -> work.v1.RespondWorkInvitationRequest
+	72, // 90: work.v1.WorkService.CancelWorkInvitation:input_type -> work.v1.CancelWorkInvitationRequest
+	76, // 91: work.v1.WorkService.CreateReview:input_type -> work.v1.CreateReviewRequest
+	78, // 92: work.v1.WorkService.ListWorkReviews:input_type -> work.v1.ListWorkReviewsRequest
+	80, // 93: work.v1.WorkService.ListUserReviews:input_type -> work.v1.ListUserReviewsRequest
+	82, // 94: work.v1.WorkService.GetUserRatingSummary:input_type -> work.v1.GetUserRatingSummaryRequest
+	1,  // 95: work.v1.WorkService.CreateWork:output_type -> work.v1.CreateWorkResponse
+	12, // 96: work.v1.WorkService.ListMyWorks:output_type -> work.v1.ListMyWorksResponse
+	6,  // 97: work.v1.WorkService.ApplyToWork:output_type -> work.v1.ApplyToWorkResponse
+	15, // 98: work.v1.WorkService.ListMyApplications:output_type -> work.v1.ListMyApplicationsResponse
+	8,  // 99: work.v1.WorkService.ListWorkApplications:output_type -> work.v1.ListWorkApplicationsResponse
+	10, // 100: work.v1.WorkService.ShortlistWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 101: work.v1.WorkService.AcceptWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 102: work.v1.WorkService.RejectWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 103: work.v1.WorkService.WithdrawWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	10, // 104: work.v1.WorkService.CancelWorkApplication:output_type -> work.v1.UpdateWorkApplicationResponse
+	17, // 105: work.v1.WorkService.StartWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 106: work.v1.WorkService.CompleteWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 107: work.v1.WorkService.ConfirmWorkCompletion:output_type -> work.v1.WorkLifecycleResponse
+	17, // 108: work.v1.WorkService.CancelWork:output_type -> work.v1.WorkLifecycleResponse
+	17, // 109: work.v1.WorkService.CloseApplications:output_type -> work.v1.WorkLifecycleResponse
+	17, // 110: work.v1.WorkService.CompleteJob:output_type -> work.v1.WorkLifecycleResponse
+	17, // 111: work.v1.WorkService.CloseWork:output_type -> work.v1.WorkLifecycleResponse
+	22, // 112: work.v1.WorkService.StartAssignment:output_type -> work.v1.AssignmentLifecycleResponse
+	22, // 113: work.v1.WorkService.CompleteAssignment:output_type -> work.v1.AssignmentLifecycleResponse
+	24, // 114: work.v1.WorkService.UpsertDailyLog:output_type -> work.v1.UpsertDailyLogResponse
+	27, // 115: work.v1.WorkService.ListAssignmentDailyLogs:output_type -> work.v1.ListDailyLogsResponse
+	27, // 116: work.v1.WorkService.ListWorkDailyLogs:output_type -> work.v1.ListDailyLogsResponse
+	30, // 117: work.v1.WorkService.GetWorkSettlement:output_type -> work.v1.GetWorkSettlementResponse
+	32, // 118: work.v1.WorkService.RecordAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	34, // 119: work.v1.WorkService.ListAssignmentPayments:output_type -> work.v1.ListAssignmentPaymentsResponse
+	32, // 120: work.v1.WorkService.ConfirmAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	32, // 121: work.v1.WorkService.DisputeAssignmentPayment:output_type -> work.v1.RecordAssignmentPaymentResponse
+	40, // 122: work.v1.WorkService.GetWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
+	40, // 123: work.v1.WorkService.SaveWorkDayRecords:output_type -> work.v1.GetWorkDayRecordsResponse
+	45, // 124: work.v1.WorkService.GetWorkerWorkSummary:output_type -> work.v1.GetWorkerWorkSummaryResponse
+	49, // 125: work.v1.WorkService.GetContractorWorkRecords:output_type -> work.v1.GetContractorWorkRecordsResponse
+	49, // 126: work.v1.WorkService.SaveContractorWorkRecord:output_type -> work.v1.GetContractorWorkRecordsResponse
+	52, // 127: work.v1.WorkService.GetContractorWorkSummary:output_type -> work.v1.GetContractorWorkSummaryResponse
+	57, // 128: work.v1.WorkService.GetWorkPayments:output_type -> work.v1.GetWorkPaymentsResponse
+	74, // 129: work.v1.WorkService.RecordPayment:output_type -> work.v1.RecordPaymentResponse
+	63, // 130: work.v1.WorkService.ListEligibleRecruitmentWorks:output_type -> work.v1.ListEligibleRecruitmentWorksResponse
+	65, // 131: work.v1.WorkService.CreateWorkInvitations:output_type -> work.v1.CreateWorkInvitationsResponse
+	67, // 132: work.v1.WorkService.ListWorkInvitations:output_type -> work.v1.ListWorkInvitationsResponse
+	69, // 133: work.v1.WorkService.ListMyInvitations:output_type -> work.v1.ListMyInvitationsResponse
+	71, // 134: work.v1.WorkService.AcceptWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	71, // 135: work.v1.WorkService.DeclineWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	71, // 136: work.v1.WorkService.CancelWorkInvitation:output_type -> work.v1.RespondWorkInvitationResponse
+	77, // 137: work.v1.WorkService.CreateReview:output_type -> work.v1.CreateReviewResponse
+	79, // 138: work.v1.WorkService.ListWorkReviews:output_type -> work.v1.ListWorkReviewsResponse
+	81, // 139: work.v1.WorkService.ListUserReviews:output_type -> work.v1.ListUserReviewsResponse
+	83, // 140: work.v1.WorkService.GetUserRatingSummary:output_type -> work.v1.GetUserRatingSummaryResponse
+	95, // [95:141] is the sub-list for method output_type
+	49, // [49:95] is the sub-list for method input_type
+	49, // [49:49] is the sub-list for extension type_name
+	49, // [49:49] is the sub-list for extension extendee
+	0,  // [0:49] is the sub-list for field type_name
 }
 
 func init() { file_work_work_proto_init() }
@@ -6728,13 +7339,15 @@ func file_work_work_proto_init() {
 	file_work_work_proto_msgTypes[59].OneofWrappers = []any{}
 	file_work_work_proto_msgTypes[68].OneofWrappers = []any{}
 	file_work_work_proto_msgTypes[73].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[75].OneofWrappers = []any{}
+	file_work_work_proto_msgTypes[76].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_work_work_proto_rawDesc), len(file_work_work_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   77,
+			NumMessages:   86,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -53,6 +53,7 @@ func RegisterRoutes(
 			work.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
 			work.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
 			work.GET("/:workId/payments", workHandler.GetWorkPayments)
+			work.GET("/:workId/reviews", workHandler.ListWorkReviews)
 		}
 
 		works := v1.Group("/works")
@@ -86,6 +87,14 @@ func RegisterRoutes(
 			assignments.GET("/:assignmentId/payments", workHandler.ListAssignmentPayments)
 			assignments.POST("/:assignmentId/payments/:paymentId/confirm", workHandler.ConfirmAssignmentPayment)
 			assignments.POST("/:assignmentId/payments/:paymentId/dispute", workHandler.DisputeAssignmentPayment)
+			assignments.POST("/:assignmentId/reviews", workHandler.CreateReview)
+		}
+
+		users := v1.Group("/users")
+		users.Use(middleware.AuthMiddleware(jwtSecret))
+		{
+			users.GET("/:userId/reviews", workHandler.ListUserReviews)
+			users.GET("/:userId/rating-summary", workHandler.GetUserRatingSummary)
 		}
 	}
 }

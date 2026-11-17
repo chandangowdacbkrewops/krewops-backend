@@ -1,8 +1,14 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -46,8 +52,14 @@ func main() {
 	jwtSecret :=
 		os.Getenv("JWT_SECRET")
 
+	// Platforms like Cloud Run inject a reserved PORT env var that the
+	// container must listen on; it takes priority over HTTP_PORT.
 	port :=
-		os.Getenv("HTTP_PORT")
+		os.Getenv("PORT")
+
+	if port == "" {
+		port = os.Getenv("HTTP_PORT")
+	}
 
 	if port == "" {
 		port = "8089"
@@ -98,6 +110,7 @@ func main() {
 	userHandler :=
 		handler.NewUserHandler(
 			userClient.Client,
+			workClient.Client,
 		)
 
 	workHandler :=
@@ -387,6 +400,7 @@ func main() {
 	workRoutes.GET("/:workId/contractor-work-records", workHandler.GetContractorWorkRecords)
 	workRoutes.POST("/:workId/contractor-work-records", workHandler.SaveContractorWorkRecord)
 	workRoutes.GET("/:workId/payments", workHandler.GetWorkPayments)
+	workRoutes.GET("/:workId/reviews", workHandler.ListWorkReviews)
 
 	worksRoutes := api.Group("/works")
 	worksRoutes.Use(middleware.AuthMiddleware(jwtSecret))
@@ -414,6 +428,10 @@ func main() {
 	assignmentRoutes.GET("/:assignmentId/payments", workHandler.ListAssignmentPayments)
 	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/confirm", workHandler.ConfirmAssignmentPayment)
 	assignmentRoutes.POST("/:assignmentId/payments/:paymentId/dispute", workHandler.DisputeAssignmentPayment)
+	assignmentRoutes.POST("/:assignmentId/reviews", workHandler.CreateReview)
+
+	userRoutes.GET("/:userId/reviews", workHandler.ListUserReviews)
+	userRoutes.GET("/:userId/rating-summary", workHandler.GetUserRatingSummary)
 
 	searchRoutes :=
 		api.Group("/search")
@@ -437,12 +455,38 @@ func main() {
 		ginSwagger.WrapHandler(swaggerFiles.Handler),
 	)
 
-	log.Printf(
-		"API Gateway listening on :%s",
-		port,
-	)
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
 
-	if err := router.Run(":" + port); err != nil {
-		log.Fatal(err)
+	httpServer := &http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
+	go func() {
+		log.Printf(
+			"API Gateway listening on :%s",
+			port,
+		)
+
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	// Wait for SIGINT/SIGTERM (Cloud Run sends SIGTERM on scale-down or
+	// redeploy) and shut down cleanly instead of being killed mid-request.
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
+
+	log.Println("API Gateway shutting down...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("API Gateway shutdown error: %v", err)
 	}
 }
