@@ -135,6 +135,7 @@ func (h *ProfileHandler) UpdateWorkerProfile(c *gin.Context) {
 
 	profile, err := h.profileService.UpdateWorkerProfile(c.Request.Context(), authUserID, req)
 	if err != nil {
+		println("Error updating worker profile:", err) // Debugging line
 		switch {
 		case errors.Is(err, repository.ErrWorkerProfileNotFound):
 			c.JSON(http.StatusNotFound, gin.H{"error": "worker profile not found"})
